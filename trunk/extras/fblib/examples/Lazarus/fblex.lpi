@@ -1,0 +1,324 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="9"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <LRSInOutputDirectory Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="2">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="fblib"/>
+        <MinVersion Minor="8" Release="4" Valid="True"/>
+      </Item2>
+    </RequiredPackages>
+    <Units Count="13">
+      <Unit0>
+        <Filename Value="fblex.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fblex"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="44" Y="6"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="ufblex.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmFblex"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ufblex"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="278"/>
+        <CursorPos X="60" Y="292"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="udblogin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmDbLogin"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="udblogin"/>
+        <EditorIndex Value="7"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="23" Y="3"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="C:\FPC\lazarus\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <TopLine Value="554"/>
+        <CursorPos X="67" Y="560"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\..\FBLTransaction.pas"/>
+        <UnitName Value="FBLTransaction"/>
+        <TopLine Value="50"/>
+        <CursorPos X="35" Y="60"/>
+        <UsageCount Value="10"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\..\..\..\uib2\source\jvuib.pas"/>
+        <UnitName Value="jvuib"/>
+        <TopLine Value="1105"/>
+        <CursorPos X="43" Y="1115"/>
+        <UsageCount Value="10"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\..\FBLEvents.pas"/>
+        <UnitName Value="FBLEvents"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="24"/>
+        <CursorPos X="44" Y="37"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\..\FBLDataset.pas"/>
+        <UnitName Value="FBLDataset"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="205"/>
+        <CursorPos X="37" Y="195"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="C:\FPC\2.0.4\src\fpcsrc\fcl\db\db.pp"/>
+        <UnitName Value="db"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="177"/>
+        <CursorPos X="5" Y="177"/>
+        <UsageCount Value="10"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\..\FBLDsql.pas"/>
+        <UnitName Value="FBLDsql"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1275"/>
+        <CursorPos X="35" Y="1286"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\..\FBLBuffer.pas"/>
+        <UnitName Value="FBLBuffer"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="29"/>
+        <CursorPos X="15" Y="36"/>
+        <UsageCount Value="10"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="ufblex.lfm"/>
+        <ComponentName Value="frmFblex"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\..\FBLExcept.pas"/>
+        <UnitName Value="FBLExcept"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="82"/>
+        <CursorPos X="1" Y="99"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit12>
+    </Units>
+    <JumpHistory Count="29" HistoryIndex="28">
+      <Position1>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="307" Column="61" TopLine="279"/>
+      </Position1>
+      <Position2>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="306" Column="61" TopLine="278"/>
+      </Position2>
+      <Position3>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="305" Column="61" TopLine="277"/>
+      </Position3>
+      <Position4>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="320" Column="61" TopLine="292"/>
+      </Position4>
+      <Position5>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="319" Column="61" TopLine="291"/>
+      </Position5>
+      <Position6>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="318" Column="61" TopLine="290"/>
+      </Position6>
+      <Position7>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="317" Column="61" TopLine="289"/>
+      </Position7>
+      <Position8>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="316" Column="61" TopLine="288"/>
+      </Position8>
+      <Position9>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="315" Column="61" TopLine="287"/>
+      </Position9>
+      <Position10>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="314" Column="61" TopLine="286"/>
+      </Position10>
+      <Position11>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="313" Column="61" TopLine="285"/>
+      </Position11>
+      <Position12>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="312" Column="61" TopLine="284"/>
+      </Position12>
+      <Position13>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="311" Column="61" TopLine="283"/>
+      </Position13>
+      <Position14>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="310" Column="61" TopLine="282"/>
+      </Position14>
+      <Position15>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="309" Column="61" TopLine="281"/>
+      </Position15>
+      <Position16>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="320" Column="61" TopLine="292"/>
+      </Position16>
+      <Position17>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="319" Column="61" TopLine="291"/>
+      </Position17>
+      <Position18>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="320" Column="61" TopLine="292"/>
+      </Position18>
+      <Position19>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="319" Column="61" TopLine="291"/>
+      </Position19>
+      <Position20>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="320" Column="61" TopLine="292"/>
+      </Position20>
+      <Position21>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="319" Column="61" TopLine="291"/>
+      </Position21>
+      <Position22>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="320" Column="61" TopLine="292"/>
+      </Position22>
+      <Position23>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="319" Column="61" TopLine="291"/>
+      </Position23>
+      <Position24>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="320" Column="61" TopLine="292"/>
+      </Position24>
+      <Position25>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="319" Column="61" TopLine="291"/>
+      </Position25>
+      <Position26>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="320" Column="61" TopLine="292"/>
+      </Position26>
+      <Position27>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="319" Column="61" TopLine="291"/>
+      </Position27>
+      <Position28>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="295" Column="22" TopLine="186"/>
+      </Position28>
+      <Position29>
+        <Filename Value="ufblex.pas"/>
+        <Caret Line="292" Column="60" TopLine="278"/>
+      </Position29>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <SrcPath Value="$(LazarusDir)\lcl;$(LazarusDir)\lcl\interfaces\$(LCLWidgetType)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="2">
+      <Item1>
+        <Name Value="ECodetoolError"/>
+      </Item1>
+      <Item2>
+        <Name Value="EFOpenError"/>
+      </Item2>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

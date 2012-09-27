@@ -1,0 +1,136 @@
+object LoginForm: TLoginForm
+  Left = 563
+  Height = 173
+  Top = 323
+  Width = 223
+  HorzScrollBar.Page = 219
+  VertScrollBar.Page = 147
+  BorderStyle = bsDialog
+  Caption = 'Login UserDB'
+  ClientHeight = 173
+  ClientWidth = 223
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  LCLVersion = '1.0.1.3'
+  object Panel1: TPanel
+    Left = 0
+    Height = 28
+    Top = 0
+    Width = 223
+    Align = alTop
+    BevelOuter = bvNone
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 28
+    ClientWidth = 223
+    FullRepaint = False
+    TabOrder = 0
+    object AliasLabel: TLabel
+      Left = 41
+      Height = 28
+      Top = 0
+      Width = 178
+      Align = alClient
+      Caption = 'alias'
+      Layout = tlCenter
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label1: TLabel
+      Left = 4
+      Height = 28
+      Top = 0
+      Width = 37
+      Align = alLeft
+      Caption = ' Alias: '
+      Font.Style = [fsBold]
+      Layout = tlCenter
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 36
+    Top = 137
+    Width = 223
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 36
+    ClientWidth = 223
+    FullRepaint = False
+    TabOrder = 1
+    object Bevel1: TBevel
+      Left = 0
+      Height = 5
+      Top = 0
+      Width = 223
+      Align = alTop
+      Shape = bsTopLine
+    end
+    object BitBtn1: TBitBtn
+      Left = 138
+      Height = 26
+      Top = 5
+      Width = 75
+      Anchors = [akTop, akRight]
+      BorderSpacing.InnerBorder = 2
+      Caption = '&OK'
+      Default = True
+      Kind = bkOK
+      ModalResult = 1
+      NumGlyphs = 0
+      TabOrder = 0
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 109
+    Top = 28
+    Width = 223
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 109
+    ClientWidth = 223
+    TabOrder = 2
+    object UserEdit: TLabeledEdit
+      Left = 10
+      Height = 21
+      Top = 20
+      Width = 200
+      EditLabel.AnchorSideLeft.Control = UserEdit
+      EditLabel.AnchorSideRight.Control = UserEdit
+      EditLabel.AnchorSideRight.Side = asrBottom
+      EditLabel.AnchorSideBottom.Control = UserEdit
+      EditLabel.Left = 10
+      EditLabel.Height = 14
+      EditLabel.Top = 3
+      EditLabel.Width = 200
+      EditLabel.Caption = '&User'
+      EditLabel.ParentColor = False
+      MaxLength = 31
+      TabOrder = 0
+    end
+    object PasswordEdit: TLabeledEdit
+      Left = 10
+      Height = 21
+      Top = 68
+      Width = 200
+      EchoMode = emPassword
+      EditLabel.AnchorSideLeft.Control = PasswordEdit
+      EditLabel.AnchorSideRight.Control = PasswordEdit
+      EditLabel.AnchorSideRight.Side = asrBottom
+      EditLabel.AnchorSideBottom.Control = PasswordEdit
+      EditLabel.Left = 10
+      EditLabel.Height = 14
+      EditLabel.Top = 51
+      EditLabel.Width = 200
+      EditLabel.Caption = '&Password'
+      EditLabel.ParentColor = False
+      MaxLength = 31
+      PasswordChar = '*'
+      TabOrder = 1
+    end
+  end
+end

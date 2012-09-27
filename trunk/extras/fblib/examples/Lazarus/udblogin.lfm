@@ -1,0 +1,86 @@
+object frmDbLogin: TfrmDbLogin
+  Left = 328
+  Height = 143
+  Top = 174
+  Width = 280
+  HorzScrollBar.Page = 279
+  VertScrollBar.Page = 142
+  ActiveControl = BitBtn1
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'database login'
+  OnShow = FormShow
+  object Label1: TLabel
+    Left = 16
+    Height = 14
+    Top = 24
+    Width = 23
+    Caption = 'User'
+    Color = clNone
+    Layout = tlCenter
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 14
+    Top = 72
+    Width = 47
+    Caption = 'Password'
+    Color = clNone
+    Layout = tlCenter
+    ParentColor = False
+  end
+  object Panel1: TPanel
+    Height = 33
+    Top = 110
+    Width = 280
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 0
+    object Bevel1: TBevel
+      Height = 4
+      Width = 280
+      Align = alTop
+      Shape = bsTopLine
+    end
+    object BitBtn1: TBitBtn
+      Left = 200
+      Height = 23
+      Top = 8
+      Width = 75
+      Caption = '&OK'
+      Default = True
+      Kind = bkOK
+      ModalResult = 1
+      NumGlyphs = 0
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 120
+      Height = 23
+      Top = 8
+      Width = 75
+      Caption = 'Annulla'
+      Kind = bkCancel
+      ModalResult = 2
+      NumGlyphs = 0
+      TabOrder = 1
+    end
+  end
+  object edUser: TEdit
+    Left = 96
+    Height = 23
+    Top = 24
+    Width = 159
+    TabOrder = 1
+  end
+  object edPassword: TEdit
+    Left = 96
+    Height = 23
+    Top = 64
+    Width = 160
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 2
+  end
+end

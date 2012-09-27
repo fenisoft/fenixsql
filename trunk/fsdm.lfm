@@ -1,0 +1,35 @@
+object MainDataModule: TMainDataModule
+  OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
+  OldCreateOrder = False
+  Height = 275
+  HorizontalOffset = 570
+  VerticalOffset = 159
+  Width = 404
+  object SynSQLSyn1: TSynSQLSyn
+    DefaultFilter = 'File SQL (*.sql)|*.sql'
+    Enabled = False
+    CommentAttri.Foreground = clTeal
+    CommentAttri.FrameEdges = sfeAround
+    DataTypeAttri.FrameEdges = sfeAround
+    DefaultPackageAttri.FrameEdges = sfeAround
+    ExceptionAttri.FrameEdges = sfeAround
+    FunctionAttri.FrameEdges = sfeAround
+    IdentifierAttri.FrameEdges = sfeAround
+    KeyAttri.FrameEdges = sfeAround
+    NumberAttri.FrameEdges = sfeAround
+    PLSQLAttri.FrameEdges = sfeAround
+    SpaceAttri.FrameEdges = sfeAround
+    SQLPlusAttri.FrameEdges = sfeAround
+    StringAttri.Foreground = clRed
+    StringAttri.FrameEdges = sfeAround
+    SymbolAttri.FrameEdges = sfeAround
+    TableNameAttri.Foreground = clFuchsia
+    TableNameAttri.FrameEdges = sfeAround
+    TableNameAttri.Style = [fsUnderline]
+    VariableAttri.FrameEdges = sfeAround
+    SQLDialect = sqlInterbase6
+    left = 320
+    top = 16
+  end
+end

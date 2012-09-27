@@ -1,0 +1,10 @@
+del *.dcu
+del *.~*
+del *.o
+del *.ppu
+del *.bak
+del *.fdb
+del *.gbk
+del *.html
+del *.sql
+del *.exe
