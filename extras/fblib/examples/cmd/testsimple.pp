@@ -1,0 +1,1 @@
+{$I testsimple.dpr}

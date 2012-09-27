@@ -1,0 +1,202 @@
+object frmFblex: TfrmFblex
+  Left = 552
+  Height = 411
+  Top = 245
+  Width = 551
+  HorzScrollBar.Page = 550
+  VertScrollBar.Page = 370
+  ActiveControl = mMsg
+  Caption = 'fblib examples'
+  ClientHeight = 391
+  ClientWidth = 551
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  LCLVersion = '1.0.1.3'
+  object Panel1: TPanel
+    Left = 0
+    Height = 40
+    Top = 0
+    Width = 551
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 40
+    ClientWidth = 551
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      Left = 8
+      Height = 21
+      Top = 8
+      Width = 75
+      Action = aCommit
+      Default = True
+      Kind = bkOK
+      NumGlyphs = 0
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 88
+      Height = 21
+      Top = 8
+      Width = 75
+      Action = aRollback
+      Kind = bkCancel
+      NumGlyphs = 0
+      TabOrder = 1
+    end
+  end
+  object mMsg: TMemo
+    Left = 0
+    Height = 351
+    Top = 40
+    Width = 551
+    Align = alClient
+    Font.Pitch = fpFixed
+    ParentFont = False
+    TabOrder = 1
+  end
+  object MainMenu1: TMainMenu
+    left = 336
+    top = 72
+    object MenuItem1: TMenuItem
+      Caption = '&Database'
+      object MenuItem5: TMenuItem
+        Action = aConnect
+      end
+      object MenuItem4: TMenuItem
+        Action = aDisconnect
+      end
+      object MenuItem3: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem2: TMenuItem
+        Action = aCreateDb
+      end
+      object MenuItem6: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem7: TMenuItem
+        Caption = '&Exit'
+        OnClick = MenuItem7Click
+      end
+    end
+    object MenuItem8: TMenuItem
+      Caption = '&Sql'
+      object MenuItem9: TMenuItem
+        Action = aInsertRecord
+        OnClick = aInsertExecute
+      end
+      object MenuItem10: TMenuItem
+        Action = aDelete
+        OnClick = aDeleteExecute
+      end
+      object MenuItem11: TMenuItem
+        Action = aSelect
+        OnClick = aSelectExecute
+      end
+    end
+    object MenuItem12: TMenuItem
+      Caption = '&Action'
+      object MenuItem13: TMenuItem
+        Action = aMetadata
+      end
+      object MenuItem14: TMenuItem
+        Action = aBackup
+      end
+    end
+  end
+  object ActionList1: TActionList
+    left = 440
+    top = 72
+    object aCreateDb: TAction
+      Caption = 'Create database'
+      OnExecute = aCreateDbExecute
+    end
+    object aConnect: TAction
+      Caption = 'Connect'
+      OnExecute = aConnectExecute
+    end
+    object aInsertRecord: TAction
+      Caption = 'Insert'
+      Enabled = False
+      OnExecute = aInsertExecute
+    end
+    object aCommit: TAction
+      Caption = 'Commit'
+      Enabled = False
+      OnExecute = aCommitExecute
+    end
+    object aRollback: TAction
+      Caption = 'Rollback'
+      Enabled = False
+      OnExecute = aRollbackExecute
+    end
+    object aDisconnect: TAction
+      Caption = 'Disconnect'
+      Enabled = False
+      OnExecute = aDisconnectExecute
+    end
+    object aMetadata: TAction
+      Caption = 'Metadata'
+      Enabled = False
+      OnExecute = aMetadataExecute
+    end
+    object aBackup: TAction
+      Caption = 'Backup'
+      OnExecute = aBackupExecute
+    end
+    object aDelete: TAction
+      Caption = 'Delete'
+      Enabled = False
+      OnExecute = aDeleteExecute
+    end
+    object aSelect: TAction
+      Caption = 'Select'
+      Enabled = False
+      OnExecute = aSelectExecute
+    end
+  end
+  object fbevt: TFBLEvent
+    EventList.Strings = (
+      'AFTER_INSERT'
+      'AFTER_DELETE'
+    )
+    Database = fbdb
+    OnPostEvent = fbevtPostEvent
+    left = 112
+    top = 216
+  end
+  object fbsrv: TFBLService
+    Protocol = ptLocal
+    OnWriteOutput = fbsrvWriteOutput
+    left = 32
+    top = 216
+  end
+  object fbdb: TFBLDatabase
+    Protocol = ptLocal
+    OnConnect = fbdbConnect
+    OnDisconnect = fbdbDisconnect
+    SQLDialect = 1
+    left = 32
+    top = 72
+  end
+  object fbtr: TFBLTransaction
+    Database = fbdb
+    OnStartTransaction = fbtrStartTransaction
+    OnEndTransaction = fbtrEndTransaction
+    TableReservationMode = rmShared
+    left = 112
+    top = 72
+  end
+  object fbsql: TFBLDsql
+    Transaction = fbtr
+    left = 32
+    top = 144
+  end
+  object fbmd: TFBLMetadata
+    Database = fbdb
+    Terminator = '^'
+    SetTerm = True
+    left = 112
+    top = 144
+  end
+end

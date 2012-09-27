@@ -1,0 +1,56 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TfrmFblex','FORMDATA',[
+  'TPF0'#9'TfrmFblex'#8'frmFblex'#4'Left'#3'('#2#6'Height'#3#155#1#3'Top'#3#245
+  +#0#5'Width'#3''''#2#18'HorzScrollBar.Page'#3'&'#2#18'VertScrollBar.Page'#3'r'
+  +#1#13'ActiveControl'#7#4'mMsg'#7'Caption'#6#14'fblib examples'#12'ClientHeig'
+  +'ht'#3#135#1#11'ClientWidth'#3''''#2#4'Menu'#7#9'MainMenu1'#8'OnCreate'#7#10
+  +'FormCreate'#10'LCLVersion'#6#7'1.0.1.3'#0#6'TPanel'#6'Panel1'#4'Left'#2#0#6
+  +'Height'#2'('#3'Top'#2#0#5'Width'#3''''#2#5'Align'#7#5'alTop'#10'BevelOuter'
+  +#7#6'bvNone'#12'ClientHeight'#2'('#11'ClientWidth'#3''''#2#8'TabOrder'#2#0#0
+  +#7'TBitBtn'#7'BitBtn1'#4'Left'#2#8#6'Height'#2#21#3'Top'#2#8#5'Width'#2'K'#6
+  +'Action'#7#7'aCommit'#7'Default'#9#4'Kind'#7#4'bkOK'#9'NumGlyphs'#2#0#8'TabO'
+  +'rder'#2#0#0#0#7'TBitBtn'#7'BitBtn2'#4'Left'#2'X'#6'Height'#2#21#3'Top'#2#8#5
+  +'Width'#2'K'#6'Action'#7#9'aRollback'#4'Kind'#7#8'bkCancel'#9'NumGlyphs'#2#0
+  +#8'TabOrder'#2#1#0#0#0#5'TMemo'#4'mMsg'#4'Left'#2#0#6'Height'#3'_'#1#3'Top'#2
+  +'('#5'Width'#3''''#2#5'Align'#7#8'alClient'#10'Font.Pitch'#7#7'fpFixed'#10'P'
+  +'arentFont'#8#8'TabOrder'#2#1#0#0#9'TMainMenu'#9'MainMenu1'#4'left'#3'P'#1#3
+  +'top'#2'H'#0#9'TMenuItem'#9'MenuItem1'#7'Caption'#6#9'&Database'#0#9'TMenuIt'
+  +'em'#9'MenuItem5'#6'Action'#7#8'aConnect'#0#0#9'TMenuItem'#9'MenuItem4'#6'Ac'
+  +'tion'#7#11'aDisconnect'#0#0#9'TMenuItem'#9'MenuItem3'#7'Caption'#6#1'-'#0#0
+  +#9'TMenuItem'#9'MenuItem2'#6'Action'#7#9'aCreateDb'#0#0#9'TMenuItem'#9'MenuI'
+  +'tem6'#7'Caption'#6#1'-'#0#0#9'TMenuItem'#9'MenuItem7'#7'Caption'#6#5'&Exit'
+  +#7'OnClick'#7#14'MenuItem7Click'#0#0#0#9'TMenuItem'#9'MenuItem8'#7'Caption'#6
+  +#4'&Sql'#0#9'TMenuItem'#9'MenuItem9'#6'Action'#7#13'aInsertRecord'#7'OnClick'
+  +#7#14'aInsertExecute'#0#0#9'TMenuItem'#10'MenuItem10'#6'Action'#7#7'aDelete'
+  +#7'OnClick'#7#14'aDeleteExecute'#0#0#9'TMenuItem'#10'MenuItem11'#6'Action'#7
+  +#7'aSelect'#7'OnClick'#7#14'aSelectExecute'#0#0#0#9'TMenuItem'#10'MenuItem12'
+  +#7'Caption'#6#7'&Action'#0#9'TMenuItem'#10'MenuItem13'#6'Action'#7#9'aMetada'
+  +'ta'#0#0#9'TMenuItem'#10'MenuItem14'#6'Action'#7#7'aBackup'#0#0#0#0#11'TActi'
+  +'onList'#11'ActionList1'#4'left'#3#184#1#3'top'#2'H'#0#7'TAction'#9'aCreateD'
+  +'b'#7'Caption'#6#15'Create database'#9'OnExecute'#7#16'aCreateDbExecute'#0#0
+  +#7'TAction'#8'aConnect'#7'Caption'#6#7'Connect'#9'OnExecute'#7#15'aConnectEx'
+  +'ecute'#0#0#7'TAction'#13'aInsertRecord'#7'Caption'#6#6'Insert'#7'Enabled'#8
+  +#9'OnExecute'#7#14'aInsertExecute'#0#0#7'TAction'#7'aCommit'#7'Caption'#6#6
+  +'Commit'#7'Enabled'#8#9'OnExecute'#7#14'aCommitExecute'#0#0#7'TAction'#9'aRo'
+  +'llback'#7'Caption'#6#8'Rollback'#7'Enabled'#8#9'OnExecute'#7#16'aRollbackEx'
+  +'ecute'#0#0#7'TAction'#11'aDisconnect'#7'Caption'#6#10'Disconnect'#7'Enabled'
+  +#8#9'OnExecute'#7#18'aDisconnectExecute'#0#0#7'TAction'#9'aMetadata'#7'Capti'
+  +'on'#6#8'Metadata'#7'Enabled'#8#9'OnExecute'#7#16'aMetadataExecute'#0#0#7'TA'
+  +'ction'#7'aBackup'#7'Caption'#6#6'Backup'#9'OnExecute'#7#14'aBackupExecute'#0
+  +#0#7'TAction'#7'aDelete'#7'Caption'#6#6'Delete'#7'Enabled'#8#9'OnExecute'#7
+  +#14'aDeleteExecute'#0#0#7'TAction'#7'aSelect'#7'Caption'#6#6'Select'#7'Enabl'
+  +'ed'#8#9'OnExecute'#7#14'aSelectExecute'#0#0#0#9'TFBLEvent'#5'fbevt'#17'Even'
+  +'tList.Strings'#1#6#12'AFTER_INSERT'#6#12'AFTER_DELETE'#0#8'Database'#7#4'fb'
+  +'db'#11'OnPostEvent'#7#14'fbevtPostEvent'#4'left'#2'p'#3'top'#3#216#0#0#0#11
+  +'TFBLService'#5'fbsrv'#8'Protocol'#7#7'ptLocal'#13'OnWriteOutput'#7#16'fbsrv'
+  +'WriteOutput'#4'left'#2' '#3'top'#3#216#0#0#0#12'TFBLDatabase'#4'fbdb'#8'Pro'
+  +'tocol'#7#7'ptLocal'#9'OnConnect'#7#11'fbdbConnect'#12'OnDisconnect'#7#14'fb'
+  +'dbDisconnect'#10'SQLDialect'#2#1#4'left'#2' '#3'top'#2'H'#0#0#15'TFBLTransa'
+  +'ction'#4'fbtr'#8'Database'#7#4'fbdb'#18'OnStartTransaction'#7#20'fbtrStartT'
+  +'ransaction'#16'OnEndTransaction'#7#18'fbtrEndTransaction'#20'TableReservati'
+  +'onMode'#7#8'rmShared'#4'left'#2'p'#3'top'#2'H'#0#0#8'TFBLDsql'#5'fbsql'#11
+  +'Transaction'#7#4'fbtr'#4'left'#2' '#3'top'#3#144#0#0#0#12'TFBLMetadata'#4'f'
+  +'bmd'#8'Database'#7#4'fbdb'#10'Terminator'#6#1'^'#7'SetTerm'#9#4'left'#2'p'#3
+  +'top'#3#144#0#0#0#0
+]);

@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="9"/>
+    <PathDelim Value="\"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="fenixsql"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MinorVersionNr Value="9"/>
+      <RevisionNr Value="1"/>
+      <StringTable Comments="fenixsql - simple admin tool fo firebird" ProductVersion=""/>
+    </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="2">
+      <Item1>
+        <PackageName Value="SynEdit"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
+    </RequiredPackages>
+    <Units Count="24">
+      <Unit0>
+        <Filename Value="fenixsql.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fenixsql"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="fsusers.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="UsersForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsusers"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="fsabout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsabout"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="fsbackup.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BackupForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsbackup"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="fsblobinput.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BlobInputForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsblobinput"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="fsblobtext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BlobTextForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsblobtext"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="fsblobviewdialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BlobViewDialogForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsblobviewdialog"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="fsbrowser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BrowserForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsbrowser"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="fsconfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsconfig"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="fscreatedb.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CreateDbForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fscreatedb"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="fsdbconnections.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DbConnectionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsdbconnections"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="fsdescription.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DescriptionForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsdescription"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="fsdialogtran.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DialogTransForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsdialogtran"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="fsdm.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainDataModule"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="fsdm"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="fsgridintf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsgridintf"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="fslogin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="LoginForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fslogin"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="fsmixf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsmixf"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="fsoptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="OptionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsoptions"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="fsparaminput.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ParamForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsparaminput"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="fsservice.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ServiceForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsservice"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="fstablefilter.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TableFilterForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fstablefilter"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="fstableview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TableViewForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fstableview"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="fstextoptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TextOptionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fstextoptions"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="fsusermod.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="UserModForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsusermod"/>
+      </Unit23>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="fenixsql"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="extras\fblib"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerMessages>
+        <MsgFileName Value=""/>
+      </CompilerMessages>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

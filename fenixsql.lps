@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="28">
+      <Unit0>
+        <Filename Value="fenixsql.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fenixsql"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="50" Y="14"/>
+        <UsageCount Value="42"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="fsusers.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="UsersForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsusers"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="21"/>
+        <CursorPos X="20" Y="124"/>
+        <UsageCount Value="42"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="fsabout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsabout"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="61"/>
+        <CursorPos X="84" Y="68"/>
+        <UsageCount Value="42"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="fsbackup.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BackupForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsbackup"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="90"/>
+        <CursorPos X="13" Y="146"/>
+        <UsageCount Value="42"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="fsblobinput.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BlobInputForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsblobinput"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="63"/>
+        <CursorPos X="48" Y="89"/>
+        <UsageCount Value="42"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="fsblobtext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BlobTextForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsblobtext"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="82"/>
+        <CursorPos X="29" Y="79"/>
+        <UsageCount Value="42"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="fsblobviewdialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BlobViewDialogForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsblobviewdialog"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="19"/>
+        <CursorPos X="68" Y="20"/>
+        <UsageCount Value="42"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="fsbrowser.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BrowserForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsbrowser"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1093"/>
+        <CursorPos X="1" Y="1110"/>
+        <UsageCount Value="42"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="fsconfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsconfig"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="367"/>
+        <CursorPos X="65" Y="69"/>
+        <UsageCount Value="42"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="fscreatedb.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CreateDbForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fscreatedb"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="116"/>
+        <CursorPos X="67" Y="121"/>
+        <UsageCount Value="42"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="fsdbconnections.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DbConnectionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsdbconnections"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="297"/>
+        <CursorPos X="3" Y="314"/>
+        <UsageCount Value="42"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="fsdescription.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DescriptionForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsdescription"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="25"/>
+        <CursorPos X="73" Y="35"/>
+        <UsageCount Value="42"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="fsdialogtran.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DialogTransForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsdialogtran"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="58" Y="29"/>
+        <UsageCount Value="42"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="fsdm.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainDataModule"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="fsdm"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="38"/>
+        <CursorPos X="16" Y="52"/>
+        <UsageCount Value="42"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="fsgridintf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsgridintf"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="18" Y="2"/>
+        <UsageCount Value="42"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="fslogin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="LoginForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fslogin"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="32"/>
+        <CursorPos X="19" Y="38"/>
+        <UsageCount Value="42"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="fsmixf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsmixf"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="13"/>
+        <CursorPos X="52" Y="18"/>
+        <UsageCount Value="42"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="fsoptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="OptionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsoptions"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="12"/>
+        <CursorPos X="14" Y="19"/>
+        <UsageCount Value="42"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="fsparaminput.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ParamForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsparaminput"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="384"/>
+        <CursorPos X="44" Y="372"/>
+        <UsageCount Value="42"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="fsservice.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ServiceForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsservice"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="441"/>
+        <CursorPos X="49" Y="432"/>
+        <UsageCount Value="42"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="fstablefilter.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TableFilterForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fstablefilter"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="28"/>
+        <CursorPos X="64" Y="40"/>
+        <UsageCount Value="42"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="fstableview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TableViewForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fstableview"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="64"/>
+        <CursorPos X="66" Y="71"/>
+        <UsageCount Value="42"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="fstextoptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TextOptionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fstextoptions"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="66"/>
+        <CursorPos X="43" Y="79"/>
+        <UsageCount Value="42"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="fsusermod.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="UserModForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsusermod"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="154"/>
+        <CursorPos X="40" Y="23"/>
+        <UsageCount Value="42"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="u_temp.pas"/>
+        <ComponentName Value="Form1"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="u_temp"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="63" Y="5"/>
+        <UsageCount Value="20"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="extras\fblib\FBLExcept.pas"/>
+        <UnitName Value="FBLExcept"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="85"/>
+        <CursorPos X="1" Y="99"/>
+        <UsageCount Value="10"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="C:\FPC\lazarus\lcl\maskedit.pp"/>
+        <UnitName Value="MaskEdit"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1237"/>
+        <CursorPos X="1" Y="1251"/>
+        <UsageCount Value="10"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="extras\fblib\FBLDsql.pas"/>
+        <UnitName Value="FBLDsql"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1863"/>
+        <CursorPos X="95" Y="1875"/>
+        <UsageCount Value="10"/>
+      </Unit27>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
+  </ProjectSession>
+</CONFIG>
