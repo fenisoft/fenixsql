@@ -1,5 +1,3 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TTextOptionsForm','FORMDATA',[
   'TPF0'#16'TTextOptionsForm'#15'TextOptionsForm'#4'Left'#3's'#1#6'Height'#3'x'
   +#1#3'Top'#3'7'#1#5'Width'#3'+'#2#11'BorderIcons'#11#12'biSystemMenu'#0#11'Bo'

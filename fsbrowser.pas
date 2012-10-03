@@ -57,11 +57,14 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    ExportToCsvAction: TAction;
     CommitAction: TAction;
     ClearHistoryAction: TAction;
     BackupDatabaseAction: TAction;
     CreateDbAction: TAction;
     ClearMessagesAction: TAction;
+    MenuItem15: TMenuItem;
+    MenuItem16: TMenuItem;
     MenuItem49: TMenuItem;
     MenuItem9: TMenuItem;
     SelectAllSynMemoAction: TAction;
@@ -193,6 +196,7 @@ type
     procedure ClearMessagesActionExecute(Sender: TObject);
     procedure CreateDbActionExecute(Sender: TObject);
     procedure DbConnectionsActionExecute(Sender: TObject);
+    procedure ExportToCsvActionExecute(Sender: TObject);
     procedure ExportToSqlActionExecute(Sender: TObject);
     procedure ServiceMgrActionExecute(Sender: TObject);
     procedure ShowAboutActionExecute(Sender: TObject);
@@ -387,7 +391,7 @@ uses
   fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext,
   fslogin, fsdialogtran, fstableview, fscreatedb,
   fsdescription, fsoptions, fstextoptions, fsservice, fsusers, fsbackup,
-  fsabout, fsdbconnections, fsgridintf;
+  fsabout, fsdbconnections, fsgridintf, fsexport;
 
 { TNodeDesc }
 
@@ -2900,6 +2904,7 @@ begin
   end;
 end;
 
+
 //------------------------------------------------------------------------------
 
 procedure TBrowserForm.UsersActionExecute(Sender: TObject);
@@ -3097,6 +3102,35 @@ begin
         LineEnding + Format('SQL Code : %d', [E.SqlCode]) + LineEnding +
         E.Message);
   end;
+end;
+
+procedure TBrowserForm.ExportToCsvActionExecute(Sender: TObject);
+begin
+   if not MainDataModule.BrowserTr.InTransaction then
+      MainDataModule.BrowserTr.StartTransaction;
+
+   if Assigned(DbTreeView.Selected.Data) then
+    if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
+      (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
+    begin
+      try
+
+        MainDataModule.BrowserQry.SQL.Text := 'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName ;
+        MainDataModule.BrowserQry.ExecSQL;
+        SaveDialog.DefaultExt := 'csv';
+        SaveDialog.Filter := 'comma separated values (*.csv)|*.csv|Text (*.txt)|*.txt|Any(*.*)|*.*';
+        SaveDialog.Title := 'Export table ::' +
+          TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To csv';
+        if SaveDialog.Execute then
+        begin
+           ExportToCsvFile2(MainDataModule.BrowserQry,SaveDialog.FileName);
+           ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
+             IntToStr(MainDataModule.BrowserQry.FetchCount) + ' record exported');
+        end;
+      finally
+         MainDataModule.BrowserQry.UnPrepare;
+      end;
+    end;
 end;
 
 //------------------------------------------------------------------------------
@@ -3480,6 +3514,7 @@ begin
       if Assigned(DbTreeView.Selected.Data) then
       begin
         ExportToSqlAction.Enabled := False;
+        ExportToCsvAction.Enabled := False;
         ViewDataAction.Enabled := False;
         GrantMgrAction.Enabled := False;
         case TNodeDesc(DbTreeView.Selected.Data).Nodetype of
@@ -3495,6 +3530,7 @@ begin
           CNT_TABLE:
           begin
             ExportToSqlAction.Enabled := True;
+            ExportToCsvAction.Enabled := True;
             ViewDataAction.Enabled := True;
             GrantMgrAction.Enabled := True;
             ShowOptionDescriptionAction.Enabled := True;
@@ -3550,6 +3586,7 @@ begin
           begin
             ViewDataAction.Enabled := True;
             ExportToSqlAction.Enabled := True;
+            ExportToCsvAction.Enabled := True;
             ItemPopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X + X,
               (Sender as TTreeView).ClientOrigin.Y + Y);
           end;

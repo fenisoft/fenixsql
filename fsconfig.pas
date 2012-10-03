@@ -42,7 +42,7 @@ var
 
 const
   APP_TITLE = 'fenixsql';
-  APP_VERSION = '0.9.1 beta';
+  APP_VERSION = '0.9.2 beta';
   APP_PROJECT_URL = 'http://code.google.com/p/fenixsql';
   ALIAS_INI_FILE = 'aliases.ini';
   CONFIG_INI_FILE = 'config.ini';
