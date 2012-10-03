@@ -17,7 +17,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MinorVersionNr Value="9"/>
-      <RevisionNr Value="1"/>
+      <RevisionNr Value="2"/>
       <StringTable Comments="fenixsql - simple admin tool fo firebird" ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="1">
@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="24">
+    <Units Count="25">
       <Unit0>
         <Filename Value="fenixsql.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -222,6 +222,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fsusermod"/>
       </Unit23>
+      <Unit24>
+        <Filename Value="fsexport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsexport"/>
+      </Unit24>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

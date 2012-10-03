@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 438
+  Left = 209
   Height = 526
-  Top = 232
+  Top = 182
   Width = 781
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -30,7 +30,7 @@ object BrowserForm: TBrowserForm
       Top = 1
       Width = 174
       Align = alClient
-      DefaultItemHeight = 16
+      DefaultItemHeight = 18
       Images = ImageListTreeView
       ParentShowHint = False
       ReadOnly = True
@@ -84,7 +84,7 @@ object BrowserForm: TBrowserForm
       OnChange = MainPageControlChange
       object DdlTabSheet: TTabSheet
         Caption = 'DDL'
-        ClientHeight = 452
+        ClientHeight = 450
         ClientWidth = 590
         object pTitle: TPanel
           Left = 0
@@ -621,21 +621,21 @@ object BrowserForm: TBrowserForm
       end
       object SqlTabSheet: TTabSheet
         Caption = 'SQL'
-        ClientHeight = 452
+        ClientHeight = 450
         ClientWidth = 590
         object SqlDownPanel: TPanel
           Left = 0
-          Height = 283
+          Height = 281
           Top = 169
           Width = 590
           Align = alClient
           BevelOuter = bvNone
-          ClientHeight = 283
+          ClientHeight = 281
           ClientWidth = 590
           TabOrder = 0
           object sqlPageControl: TPageControl
             Left = 0
-            Height = 283
+            Height = 281
             Top = 0
             Width = 590
             ActivePage = messagesTabSheet
@@ -644,11 +644,11 @@ object BrowserForm: TBrowserForm
             TabOrder = 0
             object messagesTabSheet: TTabSheet
               Caption = 'Messages'
-              ClientHeight = 257
+              ClientHeight = 253
               ClientWidth = 582
               object MessagesListBox: TListBox
                 Left = 0
-                Height = 257
+                Height = 253
                 Top = 0
                 Width = 582
                 Align = alClient
@@ -687,7 +687,7 @@ object BrowserForm: TBrowserForm
             end
             object ResultSetTabSheet: TTabSheet
               Caption = 'Result Set'
-              ClientHeight = 257
+              ClientHeight = 253
               ClientWidth = 582
               object ResultSetStringGrid: TStringGrid
                 Left = 30
@@ -1996,7 +1996,7 @@ object BrowserForm: TBrowserForm
       OnExecute = CreateDbActionExecute
     end
     object ExportToSqlAction: TAction
-      Caption = 'Export to sql script'
+      Caption = 'To SQL script'
       OnExecute = ExportToSqlActionExecute
     end
     object GrantMgrAction: TAction
@@ -2060,6 +2060,10 @@ object BrowserForm: TBrowserForm
     object SelectAllSynMemoAction: TAction
       Caption = 'Select All'
       OnExecute = SelectAllSynMemoActionExecute
+    end
+    object ExportToCsvAction: TAction
+      Caption = 'To Csv'
+      OnExecute = ExportToCsvActionExecute
     end
   end
   object MainMenu: TMainMenu
@@ -2744,8 +2748,14 @@ object BrowserForm: TBrowserForm
       Caption = '-'
     end
     object MenuItem14: TMenuItem
-      Action = ExportToSqlAction
+      Caption = 'Export'
       OnClick = ExportToSqlActionExecute
+      object MenuItem15: TMenuItem
+        Action = ExportToSqlAction
+      end
+      object MenuItem16: TMenuItem
+        Action = ExportToCsvAction
+      end
     end
     object MenuItem17: TMenuItem
       Caption = '-'

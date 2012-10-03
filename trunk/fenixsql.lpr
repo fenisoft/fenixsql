@@ -7,10 +7,10 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, fsusers, fsabout, fsbackup, fsblobinput, fsblobtext,
-  fsblobviewdialog, fsbrowser, fsconfig, fscreatedb, fsdbconnections,
-  fsdescription, fsdialogtran, fsdm, fsgridintf, fslogin, fsmixf, fsoptions,
-  fsparaminput, fsservice, fstablefilter, fstableview, fstextoptions, fsusermod
+  Forms, fsusers, fsabout, fsbackup, fsblobinput, fsblobtext, fsblobviewdialog,
+  fsbrowser, fsconfig, fscreatedb, fsdbconnections, fsdescription, fsdialogtran,
+  fsdm, fsgridintf, fslogin, fsmixf, fsoptions, fsparaminput, fsservice,
+  fstablefilter, fstableview, fstextoptions, fsusermod, fsexport
   { you can add units after this };
 
 {$R *.res}
