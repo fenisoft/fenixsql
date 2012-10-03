@@ -2749,7 +2749,6 @@ object BrowserForm: TBrowserForm
     end
     object MenuItem14: TMenuItem
       Caption = 'Export'
-      OnClick = ExportToSqlActionExecute
       object MenuItem15: TMenuItem
         Action = ExportToSqlAction
       end
