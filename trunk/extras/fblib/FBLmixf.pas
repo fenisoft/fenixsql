@@ -223,7 +223,7 @@ begin
   M := 0;
   D := 0;
   DecodeDate(ADateTime, Y, M, D);
-  Result := Format('%d-%d-%d', [Y, M, D]);
+  Result := Format('%.4d-%.2d-%.2d', [Y, M, D]);
 end;
 
 //------------------------------------------------------------------------------
@@ -237,7 +237,11 @@ begin
   S := 0;
   MS := 0;
   DecodeTime(ADateTime, H, M, S, MS);
-  Result := Format('%d:%d.%d.%d', [H, M, S, MS]);
+  if MS = 0 then
+    Result := Format('%.2d:%.2d:%:2d', [H, M, S])
+  else
+    Result := Format('%.2d:%.2d:%:2d.%.4d', [H, M, S, MS]);
+
 end;
 
 //------------------------------------------------------------------------------
@@ -247,7 +251,10 @@ var
   Y, M, D, H, MI, S, MS: word;
 begin
   DecodeDateTime(ADateTime, Y, M, D, H, MI, S, MS);
-  Result := Format('%d-%d-%d %d:%d.%d.%d', [Y, M, D, H, MI, S, MS]);
+  if MS = 0  then
+  Result := Format('%.4d-%.2d-%.2d %.2d:%.2d:%.2d', [Y, M, D, H, MI, S])
+  else
+  Result := Format('%.4d-%.2d-%.2d %.2d:%.2d:%.2d.%.4d', [Y, M, D, H, MI, S, MS]);
 end;
 
 //------------------------------------------------------------------------------
