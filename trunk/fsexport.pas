@@ -24,19 +24,20 @@ unit fsexport;
 interface
 
 uses
-  Classes, SysUtils, FBLDSql;
+  Classes, SysUtils, FBLDSql, ibase_h, FBLMixf;
 
 function FieldForCsv(const AString: string): string;
 procedure ExportToCsvFile(AQuery: TFBLDsql; const AFilename: string);
-procedure ExportToCsvFile2(AQuery: TFBLDsql; const AFilename: string);
+procedure ExportToSQLScript(AQuery: TFBLDsql; const ATablename, AFilename: string);
+procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string);
 
 implementation
 
 function FieldForCsv(const AString: string): string;
 var
-  i: Integer;
+  i: integer;
   SepChar: string;
-  NeedDoubleQuoted: Boolean;
+  NeedDoubleQuoted: boolean;
 begin
   NeedDoubleQuoted := False;
   if DefaultFormatSettings.DecimalSeparator = ',' then
@@ -63,51 +64,11 @@ begin
   end;
 
   if NeedDoubleQuoted then
-     Result := '"' + Result + '"';
+    Result := '"' + Result + '"';
 end;
+
 
 procedure ExportToCsvFile(AQuery: TFBLDsql; const AFilename: string);
-var
-  Line: string;
-  i: integer;
-  List: TStringList;
-  SepChar: string;
-begin
-  if DefaultFormatSettings.DecimalSeparator = ',' then
-    SepChar := ';'
-  else
-    SepChar := ',';
-  List := TStringList.Create;
-  try
-    Line := '';
-    for i := 0 to AQuery.FieldCount - 1 do
-    begin
-      Line := Line + FieldForCsv(AQuery.FieldName(i));
-      if i < (AQuery.FieldCount - 1) then
-        Line := Line + SepChar;
-    end;
-    List.Add(Line);
-    while not AQuery.EOF do
-    begin
-      Line := '';
-      for i := 0 to AQuery.FieldCount - 1 do
-      begin
-        if not AQuery.FieldIsNull(i) then
-          Line := Line + FieldForCsv(AQuery.FieldAsString(i));
-        if i < (AQuery.FieldCount - 1) then
-          Line := Line + SepChar;
-      end;
-      List.Add(Line);
-      AQuery.Next;
-    end;
-    List.SaveToFile(AFilename);
-  finally
-    List.Free;
-  end;
-end;
-
-
-procedure ExportToCsvFile2(AQuery: TFBLDsql; const AFilename: string);
 var
   Line: string;
   i: integer;
@@ -119,7 +80,7 @@ begin
   else
     SepChar := ',';
 
-  AssignFile(f,AFilename);
+  AssignFile(f, AFilename);
   try
     ReWrite(f);
     Line := '';
@@ -129,7 +90,7 @@ begin
       if i < (AQuery.FieldCount - 1) then
         Line := Line + SepChar;
     end;
-    WriteLn(f,Line);
+    WriteLn(f, Line);
     while not AQuery.EOF do
     begin
       Line := '';
@@ -140,11 +101,145 @@ begin
         if i < (AQuery.FieldCount - 1) then
           Line := Line + SepChar;
       end;
-      WriteLn(f,Line);
+      WriteLn(f, Line);
       AQuery.Next;
     end;
   finally
     CloseFile(f);
   end;
 end;
+
+procedure ExportToSQLScript(AQuery: TFBLDsql; const ATableName, AFileName: string);
+var
+  i: integer;
+  Line: string;
+  f: TextFile;
+  TempDecimalSeparator: char;
+begin
+  AssignFile(f, AFilename);
+  try
+    ReWrite(f);
+    while not AQuery.EOF do
+    begin
+      Line := 'insert into ' + ATableName + ' (';
+      for i := 0 to AQuery.FieldCount - 1 do
+      begin
+        if not (AQuery.FieldIsNull(i) or
+          ((AQuery.FieldType(i) = SQL_BLOB) and
+          (AQuery.FieldSubType(i) <> isc_blob_text))) then
+          Line := Line + AQuery.FieldName(i) + ',';
+      end;
+      Line := LeftStr(Line, Length(Line) - 1) + ') values (';
+
+      for i := 0 to AQuery.FieldCount - 1 do
+      begin
+        if not (AQuery.FieldIsNull(i) or
+          ((AQuery.FieldType(i) = SQL_BLOB) and
+          (AQuery.FieldSubType(i) <> isc_blob_text))) then
+        begin
+          case AQuery.FieldType(i) of
+            SQL_VARYING, SQL_TEXT:
+              Line := Line + QuotedStr(Trim(AQuery.FieldAsString(i)));
+            SQL_TYPE_DATE:
+              Line := Line + QuotedStr(DateToSql(AQuery.FieldAsDateTime(i)));
+            SQL_TYPE_TIME:
+              Line := Line + QuotedStr(TimeToSql(AQuery.FieldAsDateTime(i)));
+            SQL_TIMESTAMP:
+              Line := Line + QuotedStr(DateTimeToSql(AQuery.FieldAsDateTime(i)));
+            SQL_BLOB:
+            begin
+              if AQuery.FieldSubType(i) = isc_blob_text then
+                Line := Line + QuotedStr(AQuery.BlobFieldAsString(i));
+            end
+            else
+            begin
+              TempDecimalSeparator := DefaultFormatSettings.DecimalSeparator;
+              try
+                DefaultFormatSettings.DecimalSeparator := '.';
+                Line := Line + AQuery.FieldAsString(i);
+              finally
+                DefaultFormatSettings.DecimalSeparator := TempDecimalSeparator
+              end;
+            end;
+          end;
+          Line := Line + ',';
+        end;
+
+      end;
+      Line := LeftStr(Line, Length(Line) - 1) + ');';
+      WriteLn(f, Line);
+      AQuery.Next;
+    end;
+  finally
+    CloseFile(f);
+  end;
+end;
+
+procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string);
+var
+  Line: string;
+  f: TextFile;
+  TempDecimalSeparator: char;
+  i: integer;
+
+  function StringForJson(AString: string): string;    // to do
+  begin
+    Result := '"' + AnsiToUTF8(AString) + '"';
+  end;
+
+begin
+  AssignFile(f, AFilename);
+  try
+    ReWrite(f);
+    while not AQuery.EOF do
+    begin
+      if Aquery.FetchCount = 1 then
+       Line := '[{'
+      else
+        Line := '{';
+      for i := 0 to AQuery.FieldCount - 1 do
+      begin
+        if not (AQuery.FieldIsNull(i) or
+          ((AQuery.FieldType(i) = SQL_BLOB) and
+          (AQuery.FieldSubType(i) <> isc_blob_text))) then
+        begin
+          case AQuery.FieldType(i) of
+            SQL_BLOB:
+            begin
+              if AQuery.FieldSubType(i) = isc_blob_text then
+                Line :=
+                  Line + AQuery.FieldName(i) + ':' +
+                  StringForJson(AQuery.BlobFieldAsString(i)) + ',';
+            end;
+            SQL_VARYING, SQL_TEXT, SQL_TYPE_DATE, SQL_TYPE_TIME, SQL_TIMESTAMP:
+              Line := Line + AQuery.FieldName(i) + ':' +
+                StringForJson(AQuery.FieldAsString(i)) + ',';
+            else
+            begin
+              TempDecimalSeparator := DefaultFormatSettings.DecimalSeparator;
+              try
+                DefaultFormatSettings.DecimalSeparator := '.';
+                Line :=
+                  Line + AQuery.FieldName(i) + ':' + AQuery.FieldAsString(i) + ',';
+              finally
+                DefaultFormatSettings.DecimalSeparator := TempDecimalSeparator
+              end;
+            end;
+          end;
+
+        end;
+      end;
+      AQuery.Next;
+      Line := LeftStr(Line, Length(Line) - 1) + '}';
+      if Aquery.EOF then
+         Line := Line + ']'
+      else
+         Line := Line + ',';
+      Writeln(f, Line);
+    end;
+  finally
+    CloseFile(f);
+  end;
+end;
+
 end.
