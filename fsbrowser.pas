@@ -2741,39 +2741,33 @@ begin
 end;
 
 
-
-
 //------------------------------------------------------------------------------
 
 procedure TBrowserForm.ExportToSqlActionExecute(Sender: TObject);
-var
-  sqlScript: TStringList;
-  exp: TFBLTableToSqlScriptExport;
 begin
-  if Assigned(DbTreeView.Selected.Data) then
+ if not MainDataModule.BrowserTr.InTransaction then
+      MainDataModule.BrowserTr.StartTransaction;
+   if Assigned(DbTreeView.Selected.Data) then
     if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
       (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
     begin
       try
-        sqlScript := TStringList.Create;
-        exp := TFBLTableToSqlScriptExport.Create(
-          MainDataModule.MainDb, TNodeDesc(DbTreeView.Selected.Data).ObjName);
+        MainDataModule.BrowserQry.SQL.Text := 'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName ;
+        MainDataModule.BrowserQry.ExecSQL;
         SaveDialog.DefaultExt := 'sql';
-        SaveDialog.Filter := 'Sql script (*.sql)|*.sql|Text (*.txt)|*.txt|Any(*.*)|*.*';
+        SaveDialog.Filter := 'sql script (*.sql)|*.sql|Text (*.txt)|*.txt|Any(*.*)|*.*';
         SaveDialog.Title := 'Export table ::' +
-          TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: to sql script';
+          TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To sql script';
         if SaveDialog.Execute then
         begin
-          while not exp.EOF do
-          begin
-            sqlScript.Add(exp.CurrentLine);
-            exp.NextLine;
-          end;
-          sqlScript.SaveToFile(SaveDialog.FileName);
+           ExportToSQLScript(MainDataModule.BrowserQry,
+             TNodeDesc(DbTreeView.Selected.Data).ObjName,
+             SaveDialog.FileName);
+           ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
+             IntToStr(MainDataModule.BrowserQry.FetchCount) + ' record exported');
         end;
       finally
-        sqlScript.Free;
-        exp.Free;
+         MainDataModule.BrowserQry.UnPrepare;
       end;
     end;
 end;
@@ -3123,7 +3117,7 @@ begin
           TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To csv';
         if SaveDialog.Execute then
         begin
-           ExportToCsvFile2(MainDataModule.BrowserQry,SaveDialog.FileName);
+           ExportToCsvFile(MainDataModule.BrowserQry,SaveDialog.FileName);
            ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
              IntToStr(MainDataModule.BrowserQry.FetchCount) + ' record exported');
         end;

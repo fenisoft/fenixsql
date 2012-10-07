@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 209
+  Left = 254
   Height = 526
-  Top = 182
+  Top = 274
   Width = 781
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
