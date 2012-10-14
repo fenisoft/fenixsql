@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 254
+  Left = 410
   Height = 526
-  Top = 274
+  Top = 219
   Width = 781
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -13,7 +13,7 @@ object BrowserForm: TBrowserForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.2.0'
   object pListView: TPanel
     Left = 0
     Height = 480
@@ -30,7 +30,7 @@ object BrowserForm: TBrowserForm
       Top = 1
       Width = 174
       Align = alClient
-      DefaultItemHeight = 18
+      DefaultItemHeight = 16
       Images = ImageListTreeView
       ParentShowHint = False
       ReadOnly = True
@@ -84,7 +84,7 @@ object BrowserForm: TBrowserForm
       OnChange = MainPageControlChange
       object DdlTabSheet: TTabSheet
         Caption = 'DDL'
-        ClientHeight = 450
+        ClientHeight = 452
         ClientWidth = 590
         object pTitle: TPanel
           Left = 0
@@ -621,21 +621,21 @@ object BrowserForm: TBrowserForm
       end
       object SqlTabSheet: TTabSheet
         Caption = 'SQL'
-        ClientHeight = 450
+        ClientHeight = 452
         ClientWidth = 590
         object SqlDownPanel: TPanel
           Left = 0
-          Height = 281
+          Height = 283
           Top = 169
           Width = 590
           Align = alClient
           BevelOuter = bvNone
-          ClientHeight = 281
+          ClientHeight = 283
           ClientWidth = 590
           TabOrder = 0
           object sqlPageControl: TPageControl
             Left = 0
-            Height = 281
+            Height = 283
             Top = 0
             Width = 590
             ActivePage = messagesTabSheet
@@ -644,11 +644,11 @@ object BrowserForm: TBrowserForm
             TabOrder = 0
             object messagesTabSheet: TTabSheet
               Caption = 'Messages'
-              ClientHeight = 253
+              ClientHeight = 257
               ClientWidth = 582
               object MessagesListBox: TListBox
                 Left = 0
-                Height = 253
+                Height = 257
                 Top = 0
                 Width = 582
                 Align = alClient
@@ -660,11 +660,11 @@ object BrowserForm: TBrowserForm
             end
             object planTabSheet: TTabSheet
               Caption = 'Plan'
-              ClientHeight = 253
+              ClientHeight = 257
               ClientWidth = 582
               object PlanMemo: TMemo
                 Left = 0
-                Height = 253
+                Height = 257
                 Top = 0
                 Width = 582
                 Align = alClient
@@ -673,11 +673,11 @@ object BrowserForm: TBrowserForm
             end
             object paramsTabSheet: TTabSheet
               Caption = 'Params'
-              ClientHeight = 253
+              ClientHeight = 257
               ClientWidth = 582
               object ParamsStringGrid: TStringGrid
                 Left = 0
-                Height = 253
+                Height = 257
                 Top = 0
                 Width = 582
                 Align = alClient
@@ -687,12 +687,12 @@ object BrowserForm: TBrowserForm
             end
             object ResultSetTabSheet: TTabSheet
               Caption = 'Result Set'
-              ClientHeight = 253
+              ClientHeight = 257
               ClientWidth = 582
               object ResultSetStringGrid: TStringGrid
-                Left = 30
+                Left = 18
                 Height = 144
-                Top = 15
+                Top = 64
                 Width = 216
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
                 TabOrder = 0
@@ -701,7 +701,7 @@ object BrowserForm: TBrowserForm
                 Cursor = crIBeam
                 Left = 274
                 Height = 200
-                Top = 12
+                Top = 40
                 Width = 280
                 Color = 12255231
                 Font.Height = -13
@@ -2065,6 +2065,10 @@ object BrowserForm: TBrowserForm
       Caption = 'To Csv'
       OnExecute = ExportToCsvActionExecute
     end
+    object ExportToJsonAction: TAction
+      Caption = 'To Json'
+      OnExecute = ExportToJsonActionExecute
+    end
   end
   object MainMenu: TMainMenu
     Images = BrowserImageList
@@ -2733,6 +2737,7 @@ object BrowserForm: TBrowserForm
   end
   object SaveDialog: TSaveDialog
     FilterIndex = 0
+    Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
     left = 96
     top = 408
   end
@@ -2754,6 +2759,9 @@ object BrowserForm: TBrowserForm
       end
       object MenuItem16: TMenuItem
         Action = ExportToCsvAction
+      end
+      object MenuItem24: TMenuItem
+        Action = ExportToJsonAction
       end
     end
     object MenuItem17: TMenuItem

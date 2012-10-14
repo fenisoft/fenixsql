@@ -57,6 +57,7 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    ExportToJsonAction: TAction;
     ExportToCsvAction: TAction;
     CommitAction: TAction;
     ClearHistoryAction: TAction;
@@ -65,6 +66,7 @@ type
     ClearMessagesAction: TAction;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
+    MenuItem24: TMenuItem;
     MenuItem49: TMenuItem;
     MenuItem9: TMenuItem;
     SelectAllSynMemoAction: TAction;
@@ -197,6 +199,7 @@ type
     procedure CreateDbActionExecute(Sender: TObject);
     procedure DbConnectionsActionExecute(Sender: TObject);
     procedure ExportToCsvActionExecute(Sender: TObject);
+    procedure ExportToJsonActionExecute(Sender: TObject);
     procedure ExportToSqlActionExecute(Sender: TObject);
     procedure ServiceMgrActionExecute(Sender: TObject);
     procedure ShowAboutActionExecute(Sender: TObject);
@@ -3127,6 +3130,35 @@ begin
     end;
 end;
 
+procedure TBrowserForm.ExportToJsonActionExecute(Sender: TObject);
+begin
+  if not MainDataModule.BrowserTr.InTransaction then
+      MainDataModule.BrowserTr.StartTransaction;
+
+   if Assigned(DbTreeView.Selected.Data) then
+    if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
+      (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
+    begin
+      try
+
+        MainDataModule.BrowserQry.SQL.Text := 'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName ;
+        MainDataModule.BrowserQry.ExecSQL;
+        SaveDialog.DefaultExt := 'js';
+        SaveDialog.Filter := 'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
+        SaveDialog.Title := 'Export table ::' +
+          TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To Json';
+        if SaveDialog.Execute then
+        begin
+           ExportToJson(MainDataModule.BrowserQry,SaveDialog.FileName);
+           ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
+             IntToStr(MainDataModule.BrowserQry.FetchCount) + ' record exported');
+        end;
+      finally
+         MainDataModule.BrowserQry.UnPrepare;
+      end;
+    end;
+end;
+
 //------------------------------------------------------------------------------
 
 procedure TBrowserForm.DisconnectActionExecute(Sender: TObject);
@@ -3509,6 +3541,7 @@ begin
       begin
         ExportToSqlAction.Enabled := False;
         ExportToCsvAction.Enabled := False;
+        ExportToJsonAction.Enabled := False;
         ViewDataAction.Enabled := False;
         GrantMgrAction.Enabled := False;
         case TNodeDesc(DbTreeView.Selected.Data).Nodetype of
@@ -3525,6 +3558,7 @@ begin
           begin
             ExportToSqlAction.Enabled := True;
             ExportToCsvAction.Enabled := True;
+            ExportToJsonAction.Enabled := True;
             ViewDataAction.Enabled := True;
             GrantMgrAction.Enabled := True;
             ShowOptionDescriptionAction.Enabled := True;
@@ -3581,6 +3615,7 @@ begin
             ViewDataAction.Enabled := True;
             ExportToSqlAction.Enabled := True;
             ExportToCsvAction.Enabled := True;
+            ExportToJsonAction.Enabled := True;;
             ItemPopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X + X,
               (Sender as TTreeView).ClientOrigin.Y + Y);
           end;

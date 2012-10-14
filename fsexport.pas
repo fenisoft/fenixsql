@@ -24,9 +24,8 @@ unit fsexport;
 interface
 
 uses
-  Classes, SysUtils, FBLDSql, ibase_h, FBLMixf;
+  Classes, SysUtils, FBLDSql, LazUTF8, ibase_h, FBLMixf;
 
-function FieldForCsv(const AString: string): string;
 procedure ExportToCsvFile(AQuery: TFBLDsql; const AFilename: string);
 procedure ExportToSQLScript(AQuery: TFBLDsql; const ATablename, AFilename: string);
 procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string);
@@ -175,18 +174,52 @@ begin
   end;
 end;
 
+
+function StringForJson(AString: string): string;
+var
+  p: PChar;
+  Unicode: cardinal;
+  CharLen: integer;
+begin
+  Result := '';
+  if Length(AString) > 0 then
+  begin
+    p := PChar(AString);
+    repeat
+      Unicode := UTF8CharacterToUnicode(p, CharLen);
+
+      if CharLen > 1  then
+        Result := Result + '\u' + LowerCase(IntToHex(unicode, 4))
+      else
+      begin
+        case unicode of
+          8: Result := Result + '\b';
+          9: Result := Result + '\t';
+          10: Result := Result + '\n';
+          13: Result := Result + '\r';
+          11: Result := Result + '\v';
+          12: Result := Result + '\f';
+          34: Result := Result + '\"';
+          39: Result := Result + '\''';
+          92: Result := Result + '\\';
+          else
+            if unicode > 0   then
+               Result := Result + char(Unicode);
+        end;
+      end;
+      inc(p,CharLen);
+    until (CharLen = 0) or (unicode = 0);
+  end;
+  Result := '"' + Result + '"';
+end;
+
+
 procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string);
 var
   Line: string;
   f: TextFile;
   TempDecimalSeparator: char;
   i: integer;
-
-  function StringForJson(AString: string): string;    // to do
-  begin
-    Result := '"' + AnsiToUTF8(AString) + '"';
-  end;
-
 begin
   AssignFile(f, AFilename);
   try
@@ -194,33 +227,40 @@ begin
     while not AQuery.EOF do
     begin
       if Aquery.FetchCount = 1 then
-       Line := '[{'
+        Line := '[{'
       else
         Line := '{';
       for i := 0 to AQuery.FieldCount - 1 do
       begin
-        if not (AQuery.FieldIsNull(i) or
-          ((AQuery.FieldType(i) = SQL_BLOB) and
-          (AQuery.FieldSubType(i) <> isc_blob_text))) then
+        if AQuery.FieldIsNull(i) then
+          Line := Line + '"' + AQuery.FieldName(i) + '":' + 'null,'
+        else
         begin
+
           case AQuery.FieldType(i) of
             SQL_BLOB:
             begin
               if AQuery.FieldSubType(i) = isc_blob_text then
                 Line :=
-                  Line + AQuery.FieldName(i) + ':' +
-                  StringForJson(AQuery.BlobFieldAsString(i)) + ',';
+                  Line + '"' +AQuery.FieldName(i) + '":' +
+                  StringForJson(AQuery.BlobFieldAsString(i)) + ','
+              else
+                Line := Line + '"' + AQuery.FieldName(i) + '":"",';
             end;
-            SQL_VARYING, SQL_TEXT, SQL_TYPE_DATE, SQL_TYPE_TIME, SQL_TIMESTAMP:
-              Line := Line + AQuery.FieldName(i) + ':' +
+            SQL_VARYING, SQL_TEXT:
+              Line := Line + '"' + AQuery.FieldName(i) + '":' +
                 StringForJson(AQuery.FieldAsString(i)) + ',';
+
+            SQL_TYPE_DATE, SQL_TYPE_TIME, SQL_TIMESTAMP:
+              Line := Line + '"' + AQuery.FieldName(i) + '":"' +
+                AQuery.FieldAsString(i) + '",';
             else
             begin
               TempDecimalSeparator := DefaultFormatSettings.DecimalSeparator;
               try
                 DefaultFormatSettings.DecimalSeparator := '.';
                 Line :=
-                  Line + AQuery.FieldName(i) + ':' + AQuery.FieldAsString(i) + ',';
+                  Line + '"'+ AQuery.FieldName(i) + '":' + AQuery.FieldAsString(i) + ',';
               finally
                 DefaultFormatSettings.DecimalSeparator := TempDecimalSeparator
               end;
@@ -232,9 +272,10 @@ begin
       AQuery.Next;
       Line := LeftStr(Line, Length(Line) - 1) + '}';
       if Aquery.EOF then
-         Line := Line + ']'
+        Line := Line + ']'
       else
-         Line := Line + ',';
+        Line := Line + ',';
+
       Writeln(f, Line);
     end;
   finally
