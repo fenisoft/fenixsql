@@ -29,7 +29,7 @@ uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   SynMemo, ComCtrls, ActnList, Menus, StdCtrls, Grids, StdActns,
   SynEdit, FBLDatabase, FBLDsql, FBLExcept,
-  FBLTextGridExport, ibase_h, FBLmixf, Math, FBLScript, FBLTableToSqlScriptExport;
+  FBLTextGridExport, ibase_h, FBLmixf, Math, FBLScript;
 
 type
 
@@ -57,6 +57,8 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    ResultSetToJson: TAction;
+    ResultSetToCsv: TAction;
     ExportToJsonAction: TAction;
     ExportToCsvAction: TAction;
     CommitAction: TAction;
@@ -72,6 +74,9 @@ type
     SelectAllSynMemoAction: TAction;
     DbConnectionsAction: TAction;
     ShowAboutAction: TAction;
+    ToolBar2: TToolBar;
+    ToolButton19: TToolButton;
+    ToolButton20: TToolButton;
     UsersAction: TAction;
     ServiceMgrAction: TAction;
     ShowTextOptionsAction: TAction;
@@ -201,6 +206,8 @@ type
     procedure ExportToCsvActionExecute(Sender: TObject);
     procedure ExportToJsonActionExecute(Sender: TObject);
     procedure ExportToSqlActionExecute(Sender: TObject);
+    procedure ResultSetToCsvExecute(Sender: TObject);
+    procedure ResultSetToJsonExecute(Sender: TObject);
     procedure ServiceMgrActionExecute(Sender: TObject);
     procedure ShowAboutActionExecute(Sender: TObject);
     procedure ShowOptionDescriptionActionExecute(Sender: TObject);
@@ -2692,12 +2699,7 @@ begin
     FsConfig.LoadFormPos(Self);
   except
     on E: Exception do
-    begin
-      //ShowMessage(E.Message);
-      //self.OnCloseQuery:=nil;
-      //self.OnClose:=nil;
       FErrorDllNotFound := True;
-    end;
   end;
 end;
 
@@ -2773,6 +2775,36 @@ begin
          MainDataModule.BrowserQry.UnPrepare;
       end;
     end;
+end;
+
+procedure TBrowserForm.ResultSetToCsvExecute(Sender: TObject);
+begin
+  MainDataModule.MainQry.Close;
+  MainDataModule.MainQry.ExecSQL;
+  SaveDialog.DefaultExt := 'csv';
+  SaveDialog.Filter := 'comma separated values (*.csv)|*.csv|Text (*.txt)|*.txt|Any(*.*)|*.*';
+  SaveDialog.Title := 'Export resultset  to csv';
+  if SaveDialog.Execute then
+  begin
+    ExportToCsvFile(MainDataModule.MainQry,SaveDialog.FileName);
+    ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
+    IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
+  end;
+end;
+
+procedure TBrowserForm.ResultSetToJsonExecute(Sender: TObject);
+begin
+  MainDataModule.MainQry.Close;
+  MainDataModule.MainQry.ExecSQL;
+  SaveDialog.DefaultExt := 'js';
+  SaveDialog.Filter := 'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
+  SaveDialog.Title := 'Export resultset  to Json';
+  if SaveDialog.Execute then
+  begin
+    ExportToJson(MainDataModule.MainQry,SaveDialog.FileName);
+    ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
+    IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
+  end;
 end;
 
 
