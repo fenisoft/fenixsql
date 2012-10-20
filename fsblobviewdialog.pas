@@ -23,7 +23,7 @@ unit fsblobviewdialog;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  SysUtils, Forms, ExtCtrls,
   StdCtrls, Buttons;
 
 type
@@ -40,7 +40,6 @@ type
     Panel1: TPanel;
     Panel5: TPanel;
     TypeRadioGroup: TRadioGroup;
-    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
     function GetBlobType: integer;
@@ -53,17 +52,10 @@ type
     property FieldName: string read GetFieldName write SetFieldName;
   end;
 
-{var
-  BlobViewDialogForm: TBlobViewDialogForm;}
 
 implementation
 
-procedure TBlobViewDialogForm.FormCreate(Sender: TObject);
-begin
-  {$I fsunixborder.inc}
-end;
-
-//------------------------------------------------------------------------------
+{$R *.lfm}
 
 function TBlobViewDialogForm.GetBlobType: integer;
 begin
@@ -95,16 +87,9 @@ end;
 
 //------------------------------------------------------------------------------
 
-
 procedure TBlobViewDialogForm.SetFieldName(Value: string);
 begin
   FieldNameLabel.Caption := Value;
 end;
-
-//------------------------------------------------------------------------------
-
-
-initialization
-  {$I fsblobviewdialog.lrs}
 
 end.

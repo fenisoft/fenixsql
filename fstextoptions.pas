@@ -24,14 +24,12 @@ unit fstextoptions;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, SynMemo, SynHighlighterSQL, ColorBox, ComCtrls;
+  Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls, Buttons, SynMemo, SynHighlighterSQL, ComCtrls;
 
 type
 
   { TextOptionsForm }
-
-  { TTextOptionsForm }
 
   TTextOptionsForm = class(TForm)
     ColorSqlButton: TBitBtn;
@@ -114,14 +112,15 @@ type
 
   end;
 
-//var
-//TextOptionsForm: TTextOptionsForm;
+
 const
   BOLD = 0;
   ITALIC = 1;
   UNDERLINE = 2;
 
 implementation
+
+{$R *.lfm}
 
 uses
   fsconfig, fsdm;
@@ -257,7 +256,8 @@ begin
 
         StyleCheckGroup.Checked[BOLD] := fsBold in TempSynSql.CommentAttri.Style;
         StyleCheckGroup.Checked[ITALIC] := fsItalic in TempSynSql.CommentAttri.Style;
-        StyleCheckGroup.Checked[UNDERLINE] := fsUnderline in TempSynSql.CommentAttri.Style;
+        StyleCheckGroup.Checked[UNDERLINE] :=
+          fsUnderline in TempSynSql.CommentAttri.Style;
       end
       else if item = 'Reserved word' then
       begin
@@ -273,7 +273,8 @@ begin
         BackColorButton.ButtonColor := TempSynSql.NumberAttri.Background;
         StyleCheckGroup.Checked[BOLD] := fsBold in TempSynSql.NumberAttri.Style;
         StyleCheckGroup.Checked[ITALIC] := fsItalic in TempSynSql.NumberAttri.Style;
-        StyleCheckGroup.Checked[UNDERLINE] := fsUnderline in TempSynSql.NumberAttri.Style;
+        StyleCheckGroup.Checked[UNDERLINE] :=
+          fsUnderline in TempSynSql.NumberAttri.Style;
       end
       else if item = 'String' then
       begin
@@ -281,7 +282,8 @@ begin
         BackColorButton.ButtonColor := TempSynSql.StringAttri.Background;
         StyleCheckGroup.Checked[BOLD] := fsBold in TempSynSql.StringAttri.Style;
         StyleCheckGroup.Checked[ITALIC] := fsItalic in TempSynSql.StringAttri.Style;
-        StyleCheckGroup.Checked[UNDERLINE] := fsUnderline in TempSynSql.StringAttri.Style;
+        StyleCheckGroup.Checked[UNDERLINE] :=
+          fsUnderline in TempSynSql.StringAttri.Style;
       end
       else if item = 'Tablenames' then
       begin
@@ -289,7 +291,8 @@ begin
         BackColorButton.ButtonColor := TempSynSql.TableNameAttri.Background;
         StyleCheckGroup.Checked[BOLD] := fsBold in TempSynSql.TableNameAttri.Style;
         StyleCheckGroup.Checked[ITALIC] := fsItalic in TempSynSql.TableNameAttri.Style;
-        StyleCheckGroup.Checked[UNDERLINE] := fsUnderline in TempSynSql.TableNameAttri.Style;
+        StyleCheckGroup.Checked[UNDERLINE] :=
+          fsUnderline in TempSynSql.TableNameAttri.Style;
       end
       else if item = 'Datatype' then
       begin
@@ -297,7 +300,8 @@ begin
         BackColorButton.ButtonColor := TempSynSql.DataTypeAttri.Background;
         StyleCheckGroup.Checked[BOLD] := fsBold in TempSynSql.DataTypeAttri.Style;
         StyleCheckGroup.Checked[ITALIC] := fsItalic in TempSynSql.DataTypeAttri.Style;
-        StyleCheckGroup.Checked[UNDERLINE] := fsUnderline in TempSynSql.DataTypeAttri.Style;
+        StyleCheckGroup.Checked[UNDERLINE] :=
+          fsUnderline in TempSynSql.DataTypeAttri.Style;
       end
       else if item = 'Identifier' then
       begin
@@ -305,7 +309,8 @@ begin
         BackColorButton.ButtonColor := TempSynSql.IdentifierAttri.Background;
         StyleCheckGroup.Checked[BOLD] := fsBold in TempSynSql.IdentifierAttri.Style;
         StyleCheckGroup.Checked[ITALIC] := fsItalic in TempSynSql.IdentifierAttri.Style;
-        StyleCheckGroup.Checked[UNDERLINE] := fsUnderline in TempSynSql.IdentifierAttri.Style;
+        StyleCheckGroup.Checked[UNDERLINE] :=
+          fsUnderline in TempSynSql.IdentifierAttri.Style;
       end;
       ForeColorButton.Hint := ColorToString(ForeColorButton.ButtonColor);
       BackColorButton.Hint := ColorToString(BackColorButton.ButtonColor);
@@ -344,8 +349,8 @@ end;
 
 procedure TTextOptionsForm.BackColorButtonColorChanged(Sender: TObject);
 begin
-   SetAttrib;
-   BackColorButton.Hint := ColorToString(BackColorButton.ButtonColor);
+  SetAttrib;
+  BackColorButton.Hint := ColorToString(BackColorButton.ButtonColor);
 end;
 
 
@@ -578,8 +583,5 @@ begin
   end;
 end;
 
-
-initialization
-  {$I fstextoptions.lrs}
 
 end.

@@ -1,7 +1,7 @@
 object BlobViewDialogForm: TBlobViewDialogForm
-  Left = 573
+  Left = 439
   Height = 171
-  Top = 365
+  Top = 325
   Width = 464
   HorzScrollBar.Page = 302
   VertScrollBar.Page = 173
@@ -12,9 +12,8 @@ object BlobViewDialogForm: TBlobViewDialogForm
   ChildSizing.LeftRightSpacing = 4
   ClientHeight = 171
   ClientWidth = 464
-  OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.2.0'
   object Panel5: TPanel
     Left = 4
     Height = 34
@@ -97,7 +96,7 @@ object BlobViewDialogForm: TBlobViewDialogForm
       Left = 5
       Height = 29
       Top = 0
-      Width = 71
+      Width = 72
       Caption = ' FieldName : '
       Font.Style = [fsBold]
       Layout = tlCenter
@@ -105,10 +104,10 @@ object BlobViewDialogForm: TBlobViewDialogForm
       ParentFont = False
     end
     object FieldNameLabel: TLabel
-      Left = 76
+      Left = 77
       Height = 29
       Top = 0
-      Width = 75
+      Width = 86
       AutoSize = False
       Caption = 'FieldNameLabel'
       Layout = tlCenter
@@ -119,7 +118,7 @@ object BlobViewDialogForm: TBlobViewDialogForm
       Left = 5
       Height = 29
       Top = 29
-      Width = 71
+      Width = 72
       Caption = ' BlobType :  '
       Font.Style = [fsBold]
       Layout = tlCenter
@@ -127,10 +126,10 @@ object BlobViewDialogForm: TBlobViewDialogForm
       ParentFont = False
     end
     object SubTypeLabel: TLabel
-      Left = 76
+      Left = 77
       Height = 29
       Top = 29
-      Width = 75
+      Width = 86
       Caption = 'SubTypeLabel'
       Layout = tlCenter
       ParentColor = False

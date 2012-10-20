@@ -25,7 +25,7 @@ unit fsbackup;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  SysUtils, Forms, Dialogs, ExtCtrls,
   Buttons, StdCtrls, EditBtn, ComCtrls, FBLService, FBLDatabase, FBLExcept;
 
 type
@@ -63,12 +63,11 @@ type
 
 procedure DatabaseBackup(aDb: TFBLDatabase);
 
-//var
-//BackupForm: TBackupForm;
+
 
 implementation
 
-{ TBackupForm }
+{$R *.lfm}
 
 procedure TBackupForm.FBLService1WriteOutput(Sender: TObject;
   TextLine: string; IscAction: integer);
@@ -119,7 +118,6 @@ begin
   except
     on E: EFBLError do
     begin
-      //PageControl1.ActivePage := tsOut;
       PageControl1.PageIndex := 1;
       OutMemo.Lines.Clear;
       OutMemo.Lines.Add('ERROR');
@@ -183,7 +181,5 @@ begin
   Result := True;
 end;
 
-initialization
-  {$I fsbackup.lrs}
 
 end.

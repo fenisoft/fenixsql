@@ -24,8 +24,7 @@ unit fsdescription;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons;
+  Forms, ExtCtrls, StdCtrls, Buttons;
 
 type
 
@@ -46,12 +45,11 @@ type
   end;
 
 
-//var
-//DescriptionForm: TDescriptionForm;
+
 
 implementation
 
-
+{$R *.lfm}
 
 function TDescriptionForm.GetText: string;
 begin
@@ -63,7 +61,6 @@ begin
   Memo1.Lines.Text := Value;
 end;
 
-initialization
-  {$I fsdescription.lrs}
+
 
 end.

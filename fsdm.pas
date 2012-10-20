@@ -32,24 +32,24 @@ type
   { TMainDataModule }
 
   TMainDataModule = class(TDataModule)
-    SynSQLSyn1:  TSynSQLSyn;
+    SynSQLSyn1: TSynSQLSyn;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
     { private declarations }
   public
     { public declarations }
-    MainDb:      TFBLDatabase;
-    BlobViewTr:  TFBLTransaction;
+    MainDb: TFBLDatabase;
+    BlobViewTr: TFBLTransaction;
     BlobViewQry: TFBLDsql;
     TableFilterQry: TFBLDsql;
     TableViewTr: TFBLTransaction;
     TableViewQry: TFBLDsql;
-    BrowserTr:   TFBLTransaction;
-    BrowserQry:  TFBLDsql;
-    MainQry:     TFBLDsql;
-    MainTr:      TFBLTransaction;
-    SqlMetaData:      TFBLMetadata;
+    BrowserTr: TFBLTransaction;
+    BrowserQry: TFBLDsql;
+    MainQry: TFBLDsql;
+    MainTr: TFBLTransaction;
+    SqlMetaData: TFBLMetadata;
   end;
 
 var
@@ -57,38 +57,40 @@ var
 
 implementation
 
+{$R *.lfm}
+
 { TMainDataModule }
 
 procedure TMainDataModule.DataModuleCreate(Sender: TObject);
 begin
-    MainDb := TFBLDatabase.Create(self);
+  MainDb := TFBLDatabase.Create(self);
 
-    BlobViewTr :=  TFBLTransaction.Create(self);
-    BlobViewQry := TFBLDsql.Create(self);
-    BlobViewTr.Database := MainDb;
-    BlobViewQry.Transaction := BlobViewTr;
-
-
-    TableViewTr := TFBLTransaction.Create(self);
-    TableFilterQry := TFBLDsql.Create(self);
-    TableViewQry := TFBLDsql.Create(self);
-    TableViewTr.Database := MainDb;
-    TableViewQry.Transaction := TableViewTr ;
-    TableFilterQry.Transaction := TableViewTr;
+  BlobViewTr := TFBLTransaction.Create(self);
+  BlobViewQry := TFBLDsql.Create(self);
+  BlobViewTr.Database := MainDb;
+  BlobViewQry.Transaction := BlobViewTr;
 
 
-    BrowserTr :=  TFBLTransaction.Create(self);
-    BrowserQry :=  TFBLDsql.Create(self);
-    BrowserTr.Database := MainDb;
-    BrowserQry.Transaction := BrowserTr;
+  TableViewTr := TFBLTransaction.Create(self);
+  TableFilterQry := TFBLDsql.Create(self);
+  TableViewQry := TFBLDsql.Create(self);
+  TableViewTr.Database := MainDb;
+  TableViewQry.Transaction := TableViewTr;
+  TableFilterQry.Transaction := TableViewTr;
 
-    MainTr := TFBLTransaction.Create(self);
-    MainQry := TFBLDsql.Create(self);
-    MainTr.Database := MainDb;
-    MainQry.Transaction := MainTr;
 
-    SqlMetaData :=  TFBLMetadata.Create(self);
-    SqlMetaData.Database := MainDb;
+  BrowserTr := TFBLTransaction.Create(self);
+  BrowserQry := TFBLDsql.Create(self);
+  BrowserTr.Database := MainDb;
+  BrowserQry.Transaction := BrowserTr;
+
+  MainTr := TFBLTransaction.Create(self);
+  MainQry := TFBLDsql.Create(self);
+  MainTr.Database := MainDb;
+  MainQry.Transaction := MainTr;
+
+  SqlMetaData := TFBLMetadata.Create(self);
+  SqlMetaData.Database := MainDb;
 
 end;
 
@@ -97,8 +99,6 @@ begin
 
 end;
 
-initialization
-  {$I fsdm.lrs}
 
 end.
 

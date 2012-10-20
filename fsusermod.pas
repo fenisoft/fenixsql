@@ -49,7 +49,6 @@ type
     procedure MiddleNameEditChange(Sender: TObject);
     procedure PasswordEditChange(Sender: TObject);
     procedure UserNameEditChange(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
@@ -73,10 +72,11 @@ type
     property UserModeType: TUserModType read FUserModType write FUserModType;
   end;
 
-//var
-//UserModForm: TUserModForm;
+
 
 implementation
+
+{$R *.lfm}
 
 procedure TUserModForm.FormShow(Sender: TObject);
 begin
@@ -101,10 +101,7 @@ begin
       (ConfirmPasswordEdit.Text <> '');
 end;
 
-procedure TUserModForm.FormCreate(Sender: TObject);
-begin
-  //{$I fsunixborder.inc}
-end;
+
 
 //------------------------------------------------------------------------------
 
@@ -207,10 +204,5 @@ procedure TUserModForm.SetLastName(const Value: string);
 begin
   LastNameEdit.Text := Value;
 end;
-
-
-
-initialization
-  {$I fsusermod.lrs}
 
 end.

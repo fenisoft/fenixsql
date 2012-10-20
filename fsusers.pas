@@ -23,7 +23,7 @@ unit fsusers;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Classes, SysUtils, Forms, Controls, Dialogs, ExtCtrls,
   StdCtrls, Buttons, FBLExcept, FBLService;
 
 type
@@ -61,12 +61,13 @@ type
     function TryFetchList: boolean;
   end;
 
-//var
-//UsersForm: TUsersForm;
 
 implementation
 
-uses fsconfig, fsusermod;
+{$R *.lfm}
+
+uses
+  fsusermod;
 
 //------------------------------------------------------------------------------
 
@@ -162,7 +163,6 @@ end;
 
 procedure TUsersForm.FormCreate(Sender: TObject);
 begin
-  //{$I fsunixborder.inc}
   FBLService1 := TFBLService.Create(nil);
 end;
 
@@ -204,15 +204,10 @@ begin
   except
     on E: EFBLError do
       MessageDlg(Format('Error number: %d ' + LineEnding + 'Sql Error: %d' +
-       LineEnding + LineEnding + E.Message, [E.ISC_errorCode, E.SqlCode]),
+        LineEnding + LineEnding + E.Message, [E.ISC_errorCode, E.SqlCode]),
         mtError, [mbOK], 0);
   end;
 end;
 
-//------------------------------------------------------------------------------
-
-
-initialization
-  {$I fsusers.lrs}
 
 end.

@@ -26,8 +26,8 @@ unit fsparaminput;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, StdCtrls, Calendar, ExtDlgs;
+  SysUtils, LResources, Forms, Controls, Dialogs, ExtCtrls,
+  Buttons, StdCtrls;
 
 type
   TInputValueType = (ivInteger, ivDouble, ivString, ivTimeStamp, ivTime, ivDate);
@@ -62,31 +62,31 @@ type
   public
     { public declarations }
     function GetNullValue: boolean;
-  end; 
+  end;
 
-//var
-  //ParamForm: TParamForm;
 
 {exported functions}
 
-function InputParamInt(const AParamNum, AParamType: string; var AisNullable: boolean;
-  var AValue: Integer): Boolean;
-function InputParamDouble(const AParamNum, AParamType: string; var AisNullable: boolean;
-  var AValue: Double): Boolean;
-function InputParamFloat(const AParamNum, AParamType: string; var AisNullable: boolean;
-  var AValue: single): Boolean;
-function InputParamString(const AParamNum, AParamType: string; var AisNullable: boolean;
-  var AValue: string): Boolean;
-function InputParamDateTime(const AParamNum, AParamType: string; var AisNullable: boolean;
-  var AValue: TDateTime): Boolean;
-  
+function InputParamInt(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: integer): boolean;
+function InputParamDouble(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: double): boolean;
+function InputParamFloat(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: single): boolean;
+function InputParamString(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: string): boolean;
+function InputParamDateTime(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: TDateTime): boolean;
+
 
 implementation
 
+{$R *.lfm}
+
 {exported functions implementation}
 
-function InputParamInt(const AParamNum, AParamType: string; var AisNullable: Boolean;
-  var AValue: Integer): Boolean;
+function InputParamInt(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: integer): boolean;
 var
   ParamForm: TParamForm;
 begin
@@ -111,9 +111,9 @@ begin
     begin
       AisNullable := ParamForm.GetNullValue();
       if AisNullable then
-         AValue := 0
+        AValue := 0
       else
-         AValue := StrToInt(ParamForm.ValueEdit.Text);
+        AValue := StrToInt(ParamForm.ValueEdit.Text);
       Result := True;
     end;
   finally
@@ -123,8 +123,8 @@ end;
 
 //------------------------------------------------------------------------------
 
-function InputParamDouble(const AParamNum, AParamType: string; var AisNullable: Boolean;
-  var AValue: Double): Boolean;
+function InputParamDouble(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: double): boolean;
 var
   ParamForm: TParamForm;
 begin
@@ -161,8 +161,8 @@ end;
 
 //------------------------------------------------------------------------------
 
-function InputParamFloat(const AParamNum, AParamType: string; var AisNullable: boolean;
-  var AValue: Single): Boolean;
+function InputParamFloat(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: single): boolean;
 var
   ParamForm: TParamForm;
 begin
@@ -186,7 +186,7 @@ begin
     if ParamForm.ShowModal = mrOk then
     begin
       AisNullable := ParamForm.GetNullValue();
-      if  AisNullable then
+      if AisNullable then
         AValue := 0
       else
         AValue := StrToFloat(ParamForm.ValueEdit.Text);
@@ -199,8 +199,8 @@ end;
 
 //------------------------------------------------------------------------------
 
-function InputParamString(const AParamNum, AParamType: string; var AisNullable: Boolean;
-  var AValue: string): Boolean;
+function InputParamString(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: string): boolean;
 var
   ParamForm: TParamForm;
 begin
@@ -235,8 +235,8 @@ end;
 
 //------------------------------------------------------------------------------
 
-function InputParamDateTime(const AParamNum, AParamType: string; var AisNullable: Boolean;
-  var AValue: TDateTime): Boolean;
+function InputParamDateTime(const AParamNum, AParamType: string;
+  var AisNullable: boolean; var AValue: TDateTime): boolean;
 var
   ParamForm: TParamForm;
 begin
@@ -356,7 +356,8 @@ end;
 
 procedure TParamForm.NullCheckBoxClick(Sender: TObject);
 begin
-  if NullCheckBox.Checked then ValueEdit.Text := '';
+  if NullCheckBox.Checked then
+    ValueEdit.Text := '';
 end;
 
 //------------------------------------------------------------------------------
@@ -379,7 +380,8 @@ procedure TParamForm.OkButtonClick(Sender: TObject);
 begin
   if not NullCheckBox.Checked then
   begin
-    if CheckInput then ModalResult := mrOk;
+    if CheckInput then
+      ModalResult := mrOk;
   end
   else
   begin
@@ -393,15 +395,20 @@ procedure TParamForm.ValueEditKeyPress(Sender: TObject; var Key: char);
 begin
   case inputValueType of
     ivInteger:
-      if not (key in ['0'..'9', #8]) then key := #0;
+      if not (key in ['0'..'9', #8]) then
+        key := #0;
     ivDouble:
-      if not (key in ['0'..'9', #8, DecimalSeparator]) then key := #0;
+      if not (key in ['0'..'9', #8, DecimalSeparator]) then
+        key := #0;
     ivTimeStamp:
-      if not (key in ['0'..'9', #8, DateSeparator, TimeSeparator]) then key := #0;
+      if not (key in ['0'..'9', #8, DateSeparator, TimeSeparator]) then
+        key := #0;
     ivDate:
-      if not (key in ['0'..'9', #8, DateSeparator]) then key := #0;
+      if not (key in ['0'..'9', #8, DateSeparator]) then
+        key := #0;
     ivTime:
-      if not (key in ['0'..'9', #8, TimeSeparator]) then key := #0;
+      if not (key in ['0'..'9', #8, TimeSeparator]) then
+        key := #0;
   end;
 end;
 
@@ -409,7 +416,7 @@ end;
 
 function TParamForm.GetNullValue: boolean;
 begin
-  result := NullCheckBox.Checked;
+  Result := NullCheckBox.Checked;
 end;
 
 
@@ -417,11 +424,8 @@ end;
 
 procedure TParamForm.FormCreate(Sender: TObject);
 begin
- // {$I fsunixborder.inc}
+  // {$I fsunixborder.inc}
 end;
 
-initialization
-  {$I fsparaminput.lrs}
 
 end.
-

@@ -26,7 +26,7 @@ unit fsdialogtran;
 interface
 
 uses
-  LResources, Forms, StdCtrls,
+  Forms, StdCtrls,
   Buttons;
 
 type
@@ -46,10 +46,11 @@ type
     { public declarations }
   end;
 
-//var
-//DialogTransForm: TDialogTransForm;
+
 
 implementation
+
+{$R *.lfm}
 
 { TDialogTransForm }
 
@@ -58,7 +59,5 @@ begin
   {$I fsunixborder.inc}
 end;
 
-initialization
-  {$I fsdialogtran.lrs}
 
 end.

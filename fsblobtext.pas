@@ -23,7 +23,7 @@ unit fsblobtext;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
+  Forms, Controls, Dialogs, ComCtrls,
   ExtCtrls, StdCtrls, Buttons, ActnList;
 
 type
@@ -61,16 +61,16 @@ type
     { public declarations }
   end;
 
-//var
-//BlobTextForm: TBlobTextForm;
 
 procedure ViewBlobText(const AValue: string);
 
 function InputParamMemo(const AParamNum, AParamType: string;
   var AisNullable: boolean; var AValue: string): boolean;
 
+
 implementation
 
+{$R *.lfm}
 
 procedure ViewBlobText(const AValue: string);
 var
@@ -140,7 +140,5 @@ begin
       NullCheckBox.Checked := False;
 end;
 
-initialization
-  {$I fsblobtext.lrs}
 
 end.

@@ -26,9 +26,9 @@ unit fsservice;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Classes, SysUtils, LResources, Forms, Controls, Dialogs, ExtCtrls,
   ComCtrls, Menus, StdCtrls, FBLService, ActnList, FBLExcept, SynMemo, EditBtn,
-  Buttons, IniFiles, types;
+  Buttons, IniFiles;
 
 type
 
@@ -161,10 +161,6 @@ type
 const
   DEFAULT_HEIGHT = 540;
   DEFAULT_WIDTH = 600;
-//var
-//ServiceForm: TServiceForm;
-
-const
 
   {BACKUP options}
   BK_VERBOSE = 0;
@@ -198,6 +194,8 @@ const
   GF_FORCEGARBAGE = 6;
 
 implementation
+
+{$R *.lfm}
 
 uses
   fsconfig;
@@ -233,12 +231,18 @@ begin
     BackupDBEdit.Text := inifile.ReadString('backup', 'file-db', '');
     BackupBKEdit.Text := inifile.ReadString('backup', 'file-bk', '');
     BackupCheckGroup.Checked[BK_VERBOSE] := inifile.ReadBool('backup', 'verbose', True);
-    BackupCheckGroup.Checked[BK_METADATAONLY] := inifile.ReadBool('backup', 'metadata-only', False);
-    BackupCheckGroup.Checked[BK_CHECKSUM] := inifile.ReadBool('backup', 'ignore-check', False);
-    BackupCheckGroup.Checked[BK_LIMBO] := inifile.ReadBool('backup', 'ignore-limbo', False);
-    BackupCheckGroup.Checked[BK_NOGARBAGE] := inifile.ReadBool('backup', 'no-garbage', False);
-    BackupCheckGroup.Checked[BK_OLDDESC] := inifile.ReadBool('backup', 'old-description', False);
-    BackupCheckGroup.Checked[BK_NOTRASP] := inifile.ReadBool('backup', 'non-trasportable', False);
+    BackupCheckGroup.Checked[BK_METADATAONLY] :=
+      inifile.ReadBool('backup', 'metadata-only', False);
+    BackupCheckGroup.Checked[BK_CHECKSUM] :=
+      inifile.ReadBool('backup', 'ignore-check', False);
+    BackupCheckGroup.Checked[BK_LIMBO] :=
+      inifile.ReadBool('backup', 'ignore-limbo', False);
+    BackupCheckGroup.Checked[BK_NOGARBAGE] :=
+      inifile.ReadBool('backup', 'no-garbage', False);
+    BackupCheckGroup.Checked[BK_OLDDESC] :=
+      inifile.ReadBool('backup', 'old-description', False);
+    BackupCheckGroup.Checked[BK_NOTRASP] :=
+      inifile.ReadBool('backup', 'non-trasportable', False);
     //restore setting
    {
    RS_VERBOSE = 0;
@@ -250,12 +254,16 @@ begin
    }
     RestoreBKEdit.Text := inifile.ReadString('restore', 'file-bk', '');
     RestoreDBEdit.Text := inifile.ReadString('restore', 'file-db', '');
-    RestoreCheckGroup.Checked[RS_VERBOSE] := inifile.ReadBool('restore', 'verbose', True);
+    RestoreCheckGroup.Checked[RS_VERBOSE] :=
+      inifile.ReadBool('restore', 'verbose', True);
     RestoreCheckGroup.Checked[RS_DEACT_IDX] :=
       inifile.ReadBool('restore', 'deactivate-index', False);
-    RestoreCheckGroup.Checked[RS_NOSHADOW] := inifile.ReadBool('restore', 'no-shadow', False);
-    RestoreCheckGroup.Checked[RS_NOVAL] := inifile.ReadBool('restore', 'no-validity', False);
-    RestoreCheckGroup.Checked[RS_ONEATTIME] := inifile.ReadBool('restore', 'one-at-time', False);
+    RestoreCheckGroup.Checked[RS_NOSHADOW] :=
+      inifile.ReadBool('restore', 'no-shadow', False);
+    RestoreCheckGroup.Checked[RS_NOVAL] :=
+      inifile.ReadBool('restore', 'no-validity', False);
+    RestoreCheckGroup.Checked[RS_ONEATTIME] :=
+      inifile.ReadBool('restore', 'one-at-time', False);
     RestoreCheckGroup.Checked[RS_USEALLSPACE] :=
       inifile.ReadBool('restore', 'use-all-space', False);
     RestoreActionRadioGroup.ItemIndex := inifile.ReadInteger('restore', 'action', 0);
@@ -273,10 +281,13 @@ begin
     GstatDBEdit.Text := inifile.ReadString('gstat', 'file-db', '');
     GstatCheckGroup.Checked[GS_DATA] := inifile.ReadBool('gstat', 'data-pages', False);
     GstatCheckGroup.Checked[GS_LOG] := inifile.ReadBool('gstat', 'log-pages', False);
-    GstatCheckGroup.Checked[GS_HEADER] := inifile.ReadBool('gstat', 'header-pages', False);
+    GstatCheckGroup.Checked[GS_HEADER] :=
+      inifile.ReadBool('gstat', 'header-pages', False);
     GstatCheckGroup.Checked[GS_INDEX] := inifile.ReadBool('gstat', 'index-pages', False);
-    GstatCheckGroup.Checked[GS_SYSTEM] := inifile.ReadBool('gstat', 'system-relations', False);
-    GstatCheckGroup.Checked[GS_AVERAGE] := inifile.ReadBool('gstat', 'record-versions', False);
+    GstatCheckGroup.Checked[GS_SYSTEM] :=
+      inifile.ReadBool('gstat', 'system-relations', False);
+    GstatCheckGroup.Checked[GS_AVERAGE] :=
+      inifile.ReadBool('gstat', 'record-versions', False);
    {
     GF_READONLY = 0;
     GF_IGNORECHECK = 1;
@@ -288,8 +299,10 @@ begin
    }
     GfixDBEdit.Text := inifile.ReadString('gfix', 'file-db', '');
     GfixCheckGroup.Checked[GF_READONLY] := inifile.ReadBool('gfix', 'read-only', False);
-    GfixCheckGroup.Checked[GF_IGNORECHECK] := inifile.ReadBool('gfix', 'ignore-check', False);
-    GfixCheckGroup.Checked[GF_KILLSHADOW] := inifile.ReadBool('gfix', 'kill-shadow', False);
+    GfixCheckGroup.Checked[GF_IGNORECHECK] :=
+      inifile.ReadBool('gfix', 'ignore-check', False);
+    GfixCheckGroup.Checked[GF_KILLSHADOW] :=
+      inifile.ReadBool('gfix', 'kill-shadow', False);
     GfixCheckGroup.Checked[GF_PREPARE] := inifile.ReadBool('gfix', 'mend', False);
     GfixCheckGroup.Checked[GF_VDATABASE] := inifile.ReadBool('gfix', 'validate', False);
     GfixCheckGroup.Checked[GF_VRECORD] := inifile.ReadBool('gfix', 'full', False);
@@ -323,12 +336,14 @@ begin
     inifile.WriteString('backup', 'file-db', BackupDBEdit.Text);
     inifile.WriteString('backup', 'file-bk', BackupBKEdit.Text);
     inifile.WriteBool('backup', 'verbose', BackupCheckGroup.Checked[BK_VERBOSE]);
-    inifile.WriteBool('backup', 'metadata-only', BackupCheckGroup.Checked[BK_METADATAONLY]);
+    inifile.WriteBool('backup', 'metadata-only',
+      BackupCheckGroup.Checked[BK_METADATAONLY]);
     inifile.WriteBool('backup', 'ignore-check', BackupCheckGroup.Checked[BK_CHECKSUM]);
     inifile.WriteBool('backup', 'ignore-limbo', BackupCheckGroup.Checked[BK_LIMBO]);
     inifile.WriteBool('backup', 'no-garbage', BackupCheckGroup.Checked[BK_NOGARBAGE]);
     inifile.WriteBool('backup', 'old-description', BackupCheckGroup.Checked[BK_OLDDESC]);
-    inifile.WriteBool('backup', 'non-trasportable', BackupCheckGroup.Checked[BK_NOTRASP]);
+    inifile.WriteBool('backup', 'non-trasportable',
+      BackupCheckGroup.Checked[BK_NOTRASP]);
    {
    RS_VERBOSE = 0;
    RS_DEACT_IDX = 1;
@@ -340,11 +355,13 @@ begin
     inifile.WriteString('restore', 'file-bk', RestoreBKEdit.Text);
     inifile.WriteString('restore', 'file-db', RestoreDBEdit.Text);
     inifile.WriteBool('restore', 'verbose', RestoreCheckGroup.Checked[RS_VERBOSE]);
-    inifile.WriteBool('restore', 'deactivate-index', RestoreCheckGroup.Checked[RS_DEACT_IDX]);
+    inifile.WriteBool('restore', 'deactivate-index',
+      RestoreCheckGroup.Checked[RS_DEACT_IDX]);
     inifile.WriteBool('restore', 'no-shadow', RestoreCheckGroup.Checked[RS_NOSHADOW]);
     inifile.WriteBool('restore', 'no-validity', RestoreCheckGroup.Checked[RS_NOVAL]);
     inifile.WriteBool('restore', 'one-at-time', RestoreCheckGroup.Checked[RS_ONEATTIME]);
-    inifile.WriteBool('restore', 'use-all-space', RestoreCheckGroup.Checked[RS_USEALLSPACE]);
+    inifile.WriteBool('restore', 'use-all-space',
+      RestoreCheckGroup.Checked[RS_USEALLSPACE]);
     inifile.WriteInteger('restore', 'action', RestoreActionRadioGroup.ItemIndex);
     inifile.WriteInteger('restore', 'access-mode', AccessModeRadioGroup.ItemIndex);
     inifile.WriteBool('restore', 'page-size-enable', PageSizeCheckBox.Checked);
@@ -423,8 +440,7 @@ begin
     FblService1.Disconnect;
 end;
 
-procedure TServiceForm.FormClose(Sender: TObject; var CloseAction: TCloseAction
-  );
+procedure TServiceForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   if FBLService1.Connected then
     FBLService1.Disconnect;
@@ -810,13 +826,15 @@ begin
   try
     InfoSynMemo.Lines.Clear;
     InfoSynMemo.Lines.Add(Format('%-20s: %s', ['Version', FBLService1.ServerVersion]));
-    InfoSynMemo.Lines.Add(Format('%-20s: %d', ['Service Mgr Version', FBLService1.Version]));
+    InfoSynMemo.Lines.Add(Format('%-20s: %d', ['Service Mgr Version',
+      FBLService1.Version]));
     InfoSynMemo.Lines.Add(Format('%-20s: %s', ['Implementation',
       FBLService1.ServerImplementation]));
     InfoSynMemo.Lines.Add(Format('%-20s: %s', ['Server Path', FBLService1.ServerPath]));
     InfoSynMemo.Lines.Add(Format('%-20s: %s', ['Server Lock Path',
       FBLService1.ServerLockPath]));
-    InfoSynMemo.Lines.Add(Format('%-20s: %s', ['Server Msg Path', FBLService1.ServerMsgPath]));
+    InfoSynMemo.Lines.Add(Format('%-20s: %s', ['Server Msg Path',
+      FBLService1.ServerMsgPath]));
     InfoSynMemo.Lines.Add(Format('%-20s: %s', ['User Db Path', FBLService1.UserDbPath]));
     {$IFNDEF UNIX}
     try
@@ -844,10 +862,6 @@ begin
   end;
 end;
 
-
-
-initialization
-  {$I fsservice.lrs}
 
 
 end.

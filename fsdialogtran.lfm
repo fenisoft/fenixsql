@@ -12,7 +12,7 @@ object DialogTransForm: TDialogTransForm
   ClientWidth = 389
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.2.0'
   object Label1: TLabel
     Left = 0
     Height = 32

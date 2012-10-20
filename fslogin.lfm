@@ -12,7 +12,7 @@ object LoginForm: TLoginForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 28
@@ -27,10 +27,10 @@ object LoginForm: TLoginForm
     FullRepaint = False
     TabOrder = 0
     object AliasLabel: TLabel
-      Left = 41
+      Left = 39
       Height = 28
       Top = 0
-      Width = 178
+      Width = 180
       Align = alClient
       Caption = 'alias'
       Layout = tlCenter
@@ -41,7 +41,7 @@ object LoginForm: TLoginForm
       Left = 4
       Height = 28
       Top = 0
-      Width = 37
+      Width = 35
       Align = alLeft
       Caption = ' Alias: '
       Font.Style = [fsBold]
@@ -96,7 +96,7 @@ object LoginForm: TLoginForm
     TabOrder = 2
     object UserEdit: TLabeledEdit
       Left = 10
-      Height = 21
+      Height = 23
       Top = 20
       Width = 200
       EditLabel.AnchorSideLeft.Control = UserEdit
@@ -104,8 +104,8 @@ object LoginForm: TLoginForm
       EditLabel.AnchorSideRight.Side = asrBottom
       EditLabel.AnchorSideBottom.Control = UserEdit
       EditLabel.Left = 10
-      EditLabel.Height = 14
-      EditLabel.Top = 3
+      EditLabel.Height = 16
+      EditLabel.Top = 1
       EditLabel.Width = 200
       EditLabel.Caption = '&User'
       EditLabel.ParentColor = False
@@ -114,7 +114,7 @@ object LoginForm: TLoginForm
     end
     object PasswordEdit: TLabeledEdit
       Left = 10
-      Height = 21
+      Height = 23
       Top = 68
       Width = 200
       EchoMode = emPassword
@@ -123,8 +123,8 @@ object LoginForm: TLoginForm
       EditLabel.AnchorSideRight.Side = asrBottom
       EditLabel.AnchorSideBottom.Control = PasswordEdit
       EditLabel.Left = 10
-      EditLabel.Height = 14
-      EditLabel.Top = 51
+      EditLabel.Height = 16
+      EditLabel.Top = 49
       EditLabel.Width = 200
       EditLabel.Caption = '&Password'
       EditLabel.ParentColor = False
