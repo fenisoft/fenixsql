@@ -26,8 +26,8 @@ unit fsabout;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, ComCtrls,LCLIntf;
+  Forms, Controls, ExtCtrls,
+  StdCtrls, Buttons, ComCtrls, LCLIntf;
 
 type
 
@@ -60,14 +60,12 @@ type
   end;
 
 procedure ShowAbout(AAppVersion, AAuthor, AUrl: string);
-//var
-//AboutForm: TAboutForm;
 
 implementation
 
-{ TAboutForm }
+{$R *.lfm}
 
-procedure ShowAbout(AAppVersion, AAuthor,AUrl: string);
+procedure ShowAbout(AAppVersion, AAuthor, AUrl: string);
 var
   AboutForm: TAboutForm;
 begin
@@ -75,7 +73,7 @@ begin
   try
     AboutForm.VersionLabel.Caption := AAppVersion;
     AboutForm.AuthorLabel.Caption := AAuthor;
-    AboutForm.UrlLabel.Caption:= AUrl;
+    AboutForm.UrlLabel.Caption := AUrl;
     AboutForm.ShowModal;
   finally
     AboutForm.Free;
@@ -89,7 +87,6 @@ begin
   licTabSheet.Caption := 'License Agreement';
   infoTabSheet.Caption := 'Info';
   UrlLabel.Cursor := crHandPoint;
-  //{$I fsunixborder.inc}
   {$ifdef unix}
   with Title1Label do
   begin
@@ -117,8 +114,5 @@ begin
 end;
 
 
-
-initialization
-  {$I fsabout.lrs}
 
 end.

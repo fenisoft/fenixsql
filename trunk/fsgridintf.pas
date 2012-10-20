@@ -5,7 +5,7 @@ unit fsgridintf;
 interface
 
 uses
-  Classes, SysUtils;
+  SysUtils;
 
 function FormatNumericValue(AValue: double; AScale: integer): string;
 

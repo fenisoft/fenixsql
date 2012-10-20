@@ -24,7 +24,7 @@ unit fslogin;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Forms, Controls, ExtCtrls,
   Buttons, StdCtrls;
 
 type
@@ -57,12 +57,12 @@ type
     property Password: string read GetPassword write SetPassword;
   end;
 
-//var
-//LoginForm: TLoginForm;
 
 function FbDbLogin(AAlias: string; var AUser, APassword: string): boolean;
 
 implementation
+
+{$R *.lfm}
 
 function FbDbLogin(AAlias: string; var AUser, APassword: string): boolean;
 var
@@ -74,12 +74,10 @@ begin
     LoginForm.Alias := AALias;
     LoginForm.User := AUser;
     LoginForm.Password := APassword;
-    //LoginForm.Role := ARole;
     if LoginForm.ShowModal = mrOk then
     begin
       AUser := LoginForm.User;
       APassword := LoginForm.Password;
-      //ARole := LoginForm.Role;
       Result := True;
     end;
   finally
@@ -99,7 +97,7 @@ end;
 
 procedure TLoginForm.FormCreate(Sender: TObject);
 begin
-  {$I fsunixborder.inc}
+  //{$I fsunixborder.inc}
 end;
 
 //------------------------------------------------------------------------------
@@ -109,51 +107,26 @@ begin
   Result := UserEdit.Text;
 end;
 
-//------------------------------------------------------------------------------
-
 function TLoginForm.GetPassword: string;
 begin
   Result := PasswordEdit.Text;
 end;
-
-//------------------------------------------------------------------------------
-{
-function TLoginForm.GetRole: string;
-begin
-  Result := edRole.Text;
-end;
-}
-//------------------------------------------------------------------------------
 
 procedure TLoginForm.SetAlias(const Value: string);
 begin
   AliasLabel.Caption := Value;
 end;
 
-//------------------------------------------------------------------------------
 
 procedure TLoginForm.SetUser(const Value: string);
 begin
   UserEdit.Text := Value;
 end;
 
-//------------------------------------------------------------------------------
-{
-procedure TLoginForm.SetRole(const Value: string);
-begin
-  edRole.Text := Value;
-end;
-}
-//------------------------------------------------------------------------------
 
 procedure TLoginForm.SetPassword(const Value: string);
 begin
   PasswordEdit.Text := Value;
 end;
-
-//------------------------------------------------------------------------------
-
-initialization
-  {$I fslogin.lrs}
 
 end.

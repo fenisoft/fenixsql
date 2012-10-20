@@ -18,7 +18,6 @@
 
 *)
 
-{$I fenixsql.inc}
 
 unit fsdbconnections;
 
@@ -27,7 +26,7 @@ unit fsdbconnections;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  SysUtils, Forms, Controls, Dialogs,
   StdCtrls, Buttons, EditBtn, Spin, IniFiles, FBLDatabase, FBLExcept;
 
 type
@@ -101,13 +100,11 @@ const
   PROTOCOL_TCP_IP = 1;
   PROTOCOL_NETBEUI = 2;
 
-
 function DbConnection(AParams: PFsConnectionsParams): boolean;
 
-//var
-//DbConnectionsForm: TDbConnectionsForm;
-
 implementation
+
+{$R *.lfm}
 
 uses
   fsconfig;
@@ -241,10 +238,7 @@ end;
 
 procedure TDbConnectionsForm.FormCreate(Sender: TObject);
 begin
-  //{$I fsunixborder.inc}
-  {$IFDEF fenixsql_test}
-  //PasswordEdit.Text := 'masterkey';
-  {$ENDIF}
+
 end;
 
 //------------------------------------------------------------------------------
@@ -444,9 +438,5 @@ begin
   LoadAliasName(AliasCombo.Text);
 end;
 
-//------------------------------------------------------------------------------
-
-initialization
-  {$I fsdbconnections.lrs}
 
 end.

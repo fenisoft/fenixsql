@@ -24,7 +24,7 @@ unit fscreatedb;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  SysUtils, Forms, Dialogs, StdCtrls,
   EditBtn, ExtCtrls, Buttons, FBLExcept;
 
 type
@@ -58,23 +58,22 @@ type
     function CheckFileName(const AFileName: string): boolean;
   public
     { public declarations }
-  end; 
-
-//var
-  //CreateDbForm: TCreateDbForm;
+  end;
 
 
 implementation
 
+{$R *.lfm}
+
 uses
-   fsdm, {fsconst,} fsconfig;
+  fsdm, fsconfig;
 
 
 { TCreateDbForm }
 
 function TCreateDbForm.CheckFileName(const AFileName: string): boolean;
 var
-  Test: string ;
+  Test: string;
 begin
   Result := False;
   if AFileName = '' then
@@ -87,7 +86,7 @@ begin
     ShowMessage('File Name not valid');
     Exit;
   end;
-  Test :=  UpperCase(ExtractFileExt(AFileName));
+  Test := UpperCase(ExtractFileExt(AFileName));
   if (Test <> '.GDB') and (Test <> '.FDB') then
   begin
     ShowMessage('File Name not valid');
@@ -106,7 +105,6 @@ end;
 
 procedure TCreateDbForm.FormCreate(Sender: TObject);
 begin
-  //  {$I fsunixborder.inc}
   DialectCombo.ItemIndex := 0;    // dialect 3
   PageSizeCombo.ItemIndex := 2;   // page size 4096
   CharsetCombo.ItemIndex := 0;
@@ -118,7 +116,7 @@ procedure TCreateDbForm.CreateDbButtonClick(Sender: TObject);
 var
   FileName: string;
 begin
-   FileName := Trim(FileNameEdit.Text);
+  FileName := Trim(FileNameEdit.Text);
   try
     if CheckFileName(FileName) then
     begin
@@ -132,9 +130,9 @@ begin
     end;
   except
     on E: EFBLError do
-      ShowMessage(Format('Error Code : %d' ,[E.ISC_ErrorCode]) + LineEnding  +
-        Format('SQL Code : %d',[E.SqlCode]) +
-        LineEnding  + E.Message);
+      ShowMessage(Format('Error Code : %d', [E.ISC_ErrorCode]) +
+        LineEnding + Format('SQL Code : %d', [E.SqlCode]) +
+        LineEnding + E.Message);
   end;
 end;
 
@@ -146,15 +144,11 @@ begin
   begin
     Title := 'Create database file';
     DefaultExt := FileExtentionForDialog;
-    Filter :=  FileFilterForDialog;
+    Filter := FileFilterForDialog;
     if Execute then
       FileNameEdit.Text := FileName;
   end;
 end;
-
-initialization
-  {$I fscreatedb.lrs}
-  
 
 
 end.

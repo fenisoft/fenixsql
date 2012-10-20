@@ -25,8 +25,8 @@ unit fstablefilter;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, Grids, ComCtrls;
+  Classes, SysUtils, Forms, Controls, Dialogs, ExtCtrls,
+  StdCtrls, Buttons, ComCtrls;
 
 type
 
@@ -64,10 +64,10 @@ type
     property IsOrder: boolean read FIsOrder;
   end;
 
-//var
-//TableFilterForm: TTableFilterForm;
 
 implementation
+
+{$R *.lfm}
 
 uses
   fsdm, FBLExcept;
@@ -123,8 +123,8 @@ begin
     ModalResult := mrOk;
   except
     on E: EFBLError do
-      ShowMessage('Error in Filter' + LineEnding + Format('ISC_ERROR:%d', [E.ISC_ErrorCode]) +
-        LineEnding + E.Message);
+      ShowMessage('Error in Filter' + LineEnding +
+        Format('ISC_ERROR:%d', [E.ISC_ErrorCode]) + LineEnding + E.Message);
   end;
 end;
 
@@ -181,10 +181,5 @@ begin
   FilterMemo.Lines.Text := TextMemo;
   FilterMemo.SelStart := Length(TextMemo);
 end;
-
-//------------------------------------------------------------------------------
-
-initialization
-  {$I fstablefilter.lrs}
 
 end.

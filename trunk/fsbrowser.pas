@@ -26,7 +26,7 @@ unit fsbrowser;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   SynMemo, ComCtrls, ActnList, Menus, StdCtrls, Grids, StdActns,
   SynEdit, FBLDatabase, FBLDsql, FBLExcept,
   FBLTextGridExport, ibase_h, FBLmixf, Math, FBLScript;
@@ -350,23 +350,6 @@ const
   CNT_SYSTRIGGER = 24;
   CNT_TRIGGERSINTABLE = 25;
 
-  (*
-  BMP_NONE = -1;
-  BMP_DOMAIN = 0;
-  BMP_TABLE = 1;
-  BMP_VIEW = 2;
-  BMP_PROCEDURE = 3;
-  BMP_TRIGGER = 4;
-  BMP_GENERATOR = 5;
-  BMP_UDF = 6;
-  BMP_SYSTEMTABLE = 8;
-  BMP_DEP = 10;
-  BMP_EXCEPTION = 13;
-  BMP_ROLE = 14;
-  BMP_SYSTEMTRIGGER = 15;
-  BMP_DATABASE = 16;
-  BMP_PRIV = 17;  *)
-
   (* Tree Views Bitmaps *)
   BMP_NONE = -1;
   BMP_DOMAIN = 0;
@@ -396,6 +379,8 @@ var
   BrowserForm: TBrowserForm;
 
 implementation
+
+{$R *.lfm}
 
 uses
   fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext,
@@ -975,8 +960,8 @@ begin
           raise Exception.Create(Format('Param #%d not assigned', [i]));
       SQL_FLOAT,
       SQL_D_FLOAT:
-        if inputParamFloat(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if inputParamFloat(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), isNull, ParaFloat) then
         begin
           if isnull then
@@ -1049,8 +1034,8 @@ begin
       SQL_BLOB:
         if MainDataModule.MainQry.ParamSubType(i) = 1 then
         begin
-          if InputParamMemo(Format('%d of %d', [i + 1,
-            MainDataModule.MainQry.ParamCount]),
+          if InputParamMemo(Format('%d of %d',
+            [i + 1, MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaText) then
           begin
             if IsNull then
@@ -1069,8 +1054,8 @@ begin
         end
         else
         begin
-          if InputParamBlob(Format('%d of %d', [i + 1,
-            MainDataModule.MainQry.ParamCount]),
+          if InputParamBlob(Format('%d of %d',
+            [i + 1, MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, Paratext) then
           begin
             if IsNull then
@@ -1091,8 +1076,8 @@ begin
       SQL_QUAD: ;
       SQL_TYPE_TIME:
       begin
-        if InputParamDateTime(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1108,8 +1093,8 @@ begin
       end;
       SQL_TYPE_DATE:
       begin
-        if InputParamDateTime(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1125,8 +1110,8 @@ begin
       end;
       SQL_DATE:  //timestamp
       begin
-        if InputParamDateTime(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -2750,14 +2735,15 @@ end;
 
 procedure TBrowserForm.ExportToSqlActionExecute(Sender: TObject);
 begin
- if not MainDataModule.BrowserTr.InTransaction then
-      MainDataModule.BrowserTr.StartTransaction;
-   if Assigned(DbTreeView.Selected.Data) then
+  if not MainDataModule.BrowserTr.InTransaction then
+    MainDataModule.BrowserTr.StartTransaction;
+  if Assigned(DbTreeView.Selected.Data) then
     if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
       (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
     begin
       try
-        MainDataModule.BrowserQry.SQL.Text := 'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName ;
+        MainDataModule.BrowserQry.SQL.Text :=
+          'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName;
         MainDataModule.BrowserQry.ExecSQL;
         SaveDialog.DefaultExt := 'sql';
         SaveDialog.Filter := 'sql script (*.sql)|*.sql|Text (*.txt)|*.txt|Any(*.*)|*.*';
@@ -2765,14 +2751,15 @@ begin
           TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To sql script';
         if SaveDialog.Execute then
         begin
-           ExportToSQLScript(MainDataModule.BrowserQry,
-             TNodeDesc(DbTreeView.Selected.Data).ObjName,
-             SaveDialog.FileName);
-           ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
-             IntToStr(MainDataModule.BrowserQry.FetchCount) + ' record exported');
+          ExportToSQLScript(MainDataModule.BrowserQry,
+            TNodeDesc(DbTreeView.Selected.Data).ObjName,
+            SaveDialog.FileName);
+          ShowMessage('File: [' + SaveDialog.FileName + '] created' +
+            LineEnding + IntToStr(MainDataModule.BrowserQry.FetchCount) +
+            ' record exported');
         end;
       finally
-         MainDataModule.BrowserQry.UnPrepare;
+        MainDataModule.BrowserQry.UnPrepare;
       end;
     end;
 end;
@@ -2782,13 +2769,14 @@ begin
   MainDataModule.MainQry.Close;
   MainDataModule.MainQry.ExecSQL;
   SaveDialog.DefaultExt := 'csv';
-  SaveDialog.Filter := 'comma separated values (*.csv)|*.csv|Text (*.txt)|*.txt|Any(*.*)|*.*';
+  SaveDialog.Filter :=
+    'comma separated values (*.csv)|*.csv|Text (*.txt)|*.txt|Any(*.*)|*.*';
   SaveDialog.Title := 'Export resultset  to csv';
   if SaveDialog.Execute then
   begin
-    ExportToCsvFile(MainDataModule.MainQry,SaveDialog.FileName);
-    ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
-    IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
+    ExportToCsvFile(MainDataModule.MainQry, SaveDialog.FileName);
+    ShowMessage('File: [' + SaveDialog.FileName + '] created' +
+      LineEnding + IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
   end;
 end;
 
@@ -2797,13 +2785,14 @@ begin
   MainDataModule.MainQry.Close;
   MainDataModule.MainQry.ExecSQL;
   SaveDialog.DefaultExt := 'js';
-  SaveDialog.Filter := 'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
+  SaveDialog.Filter :=
+    'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
   SaveDialog.Title := 'Export resultset  to Json';
   if SaveDialog.Execute then
   begin
-    ExportToJson(MainDataModule.MainQry,SaveDialog.FileName);
-    ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
-    IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
+    ExportToJson(MainDataModule.MainQry, SaveDialog.FileName);
+    ShowMessage('File: [' + SaveDialog.FileName + '] created' +
+      LineEnding + IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
   end;
 end;
 
@@ -3135,29 +3124,32 @@ end;
 
 procedure TBrowserForm.ExportToCsvActionExecute(Sender: TObject);
 begin
-   if not MainDataModule.BrowserTr.InTransaction then
-      MainDataModule.BrowserTr.StartTransaction;
+  if not MainDataModule.BrowserTr.InTransaction then
+    MainDataModule.BrowserTr.StartTransaction;
 
-   if Assigned(DbTreeView.Selected.Data) then
+  if Assigned(DbTreeView.Selected.Data) then
     if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
       (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
     begin
       try
 
-        MainDataModule.BrowserQry.SQL.Text := 'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName ;
+        MainDataModule.BrowserQry.SQL.Text :=
+          'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName;
         MainDataModule.BrowserQry.ExecSQL;
         SaveDialog.DefaultExt := 'csv';
-        SaveDialog.Filter := 'comma separated values (*.csv)|*.csv|Text (*.txt)|*.txt|Any(*.*)|*.*';
+        SaveDialog.Filter :=
+          'comma separated values (*.csv)|*.csv|Text (*.txt)|*.txt|Any(*.*)|*.*';
         SaveDialog.Title := 'Export table ::' +
           TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To csv';
         if SaveDialog.Execute then
         begin
-           ExportToCsvFile(MainDataModule.BrowserQry,SaveDialog.FileName);
-           ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
-             IntToStr(MainDataModule.BrowserQry.FetchCount) + ' record exported');
+          ExportToCsvFile(MainDataModule.BrowserQry, SaveDialog.FileName);
+          ShowMessage('File: [' + SaveDialog.FileName + '] created' +
+            LineEnding + IntToStr(MainDataModule.BrowserQry.FetchCount) +
+            ' record exported');
         end;
       finally
-         MainDataModule.BrowserQry.UnPrepare;
+        MainDataModule.BrowserQry.UnPrepare;
       end;
     end;
 end;
@@ -3165,28 +3157,31 @@ end;
 procedure TBrowserForm.ExportToJsonActionExecute(Sender: TObject);
 begin
   if not MainDataModule.BrowserTr.InTransaction then
-      MainDataModule.BrowserTr.StartTransaction;
+    MainDataModule.BrowserTr.StartTransaction;
 
-   if Assigned(DbTreeView.Selected.Data) then
+  if Assigned(DbTreeView.Selected.Data) then
     if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
       (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
     begin
       try
 
-        MainDataModule.BrowserQry.SQL.Text := 'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName ;
+        MainDataModule.BrowserQry.SQL.Text :=
+          'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName;
         MainDataModule.BrowserQry.ExecSQL;
         SaveDialog.DefaultExt := 'js';
-        SaveDialog.Filter := 'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
+        SaveDialog.Filter :=
+          'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
         SaveDialog.Title := 'Export table ::' +
           TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To Json';
         if SaveDialog.Execute then
         begin
-           ExportToJson(MainDataModule.BrowserQry,SaveDialog.FileName);
-           ShowMessage('File: [' + SaveDialog.FileName + '] created' + LineEnding  +
-             IntToStr(MainDataModule.BrowserQry.FetchCount) + ' record exported');
+          ExportToJson(MainDataModule.BrowserQry, SaveDialog.FileName);
+          ShowMessage('File: [' + SaveDialog.FileName + '] created' +
+            LineEnding + IntToStr(MainDataModule.BrowserQry.FetchCount) +
+            ' record exported');
         end;
       finally
-         MainDataModule.BrowserQry.UnPrepare;
+        MainDataModule.BrowserQry.UnPrepare;
       end;
     end;
 end;
@@ -3479,8 +3474,8 @@ end;
 
 procedure TBrowserForm.SelectAllSynMemoActionExecute(Sender: TObject);
 begin
-  if  ActiveControl is TCustomSynEdit  then
-      TCustomSynEdit(ActiveControl).SelectAll;
+  if ActiveControl is TCustomSynEdit then
+    TCustomSynEdit(ActiveControl).SelectAll;
 end;
 
 
@@ -3647,7 +3642,7 @@ begin
             ViewDataAction.Enabled := True;
             ExportToSqlAction.Enabled := True;
             ExportToCsvAction.Enabled := True;
-            ExportToJsonAction.Enabled := True;;
+            ExportToJsonAction.Enabled := True;
             ItemPopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X + X,
               (Sender as TTreeView).ClientOrigin.Y + Y);
           end;
@@ -3662,11 +3657,5 @@ begin
     end;
   end;
 end;
-
-
-//------------------------------------------------------------------------------
-
-initialization
-  {$I fsbrowser.lrs}
 
 end.

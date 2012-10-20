@@ -17,6 +17,7 @@
   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   * GNU General Public License for more details.
 *)
+
 unit fsexport;
 
 {$mode objfpc}{$H+}
@@ -24,7 +25,7 @@ unit fsexport;
 interface
 
 uses
-  Classes, SysUtils, FBLDSql, LazUTF8, ibase_h, FBLMixf;
+  SysUtils, FBLDSql, LazUTF8, ibase_h, FBLMixf;
 
 procedure ExportToCsvFile(AQuery: TFBLDsql; const AFilename: string);
 procedure ExportToSQLScript(AQuery: TFBLDsql; const ATablename, AFilename: string);

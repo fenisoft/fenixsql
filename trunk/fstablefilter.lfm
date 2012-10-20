@@ -1,8 +1,8 @@
 object TableFilterForm: TTableFilterForm
-  Left = 359
-  Height = 346
-  Top = 267
-  Width = 556
+  Left = 300
+  Height = 352
+  Top = 234
+  Width = 526
   HorzScrollBar.Page = 634
   VertScrollBar.Page = 414
   ActiveControl = CancelButton
@@ -10,23 +10,23 @@ object TableFilterForm: TTableFilterForm
   BorderStyle = bsDialog
   Caption = 'TableFilter'
   ChildSizing.LeftRightSpacing = 2
-  ClientHeight = 346
-  ClientWidth = 556
+  ClientHeight = 352
+  ClientWidth = 526
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.2.0'
   object Panel1: TPanel
     Left = 2
     Height = 36
-    Top = 310
-    Width = 552
+    Top = 316
+    Width = 522
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 36
-    ClientWidth = 552
+    ClientWidth = 522
     TabOrder = 0
     object OkButton: TBitBtn
-      Left = 454
+      Left = 424
       Height = 25
       Top = 8
       Width = 88
@@ -89,7 +89,7 @@ object TableFilterForm: TTableFilterForm
       TabOrder = 0
     end
     object CancelButton: TBitBtn
-      Left = 364
+      Left = 334
       Height = 25
       Top = 8
       Width = 83
@@ -104,12 +104,12 @@ object TableFilterForm: TTableFilterForm
   end
   object Panel2: TPanel
     Left = 2
-    Height = 310
+    Height = 316
     Top = 0
     Width = 227
     Align = alLeft
     BevelOuter = bvNone
-    ClientHeight = 310
+    ClientHeight = 316
     ClientWidth = 227
     TabOrder = 1
     object Panel5: TPanel
@@ -124,7 +124,7 @@ object TableFilterForm: TTableFilterForm
     end
     object FieldsListView: TListView
       Left = 0
-      Height = 286
+      Height = 292
       Top = 24
       Width = 227
       Align = alClient
@@ -145,25 +145,25 @@ object TableFilterForm: TTableFilterForm
   end
   object Splitter1: TSplitter
     Left = 229
-    Height = 310
+    Height = 316
     Top = 0
     Width = 5
   end
   object Panel4: TPanel
     Left = 234
-    Height = 310
+    Height = 316
     Top = 0
-    Width = 320
+    Width = 290
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 310
-    ClientWidth = 320
+    ClientHeight = 316
+    ClientWidth = 290
     TabOrder = 2
     object Panel7: TPanel
       Left = 0
       Height = 24
       Top = 0
-      Width = 320
+      Width = 290
       Align = alTop
       BevelOuter = bvNone
       Caption = 'Filter Text'
@@ -171,9 +171,9 @@ object TableFilterForm: TTableFilterForm
     end
     object FilterMemo: TMemo
       Left = 0
-      Height = 286
+      Height = 292
       Top = 24
-      Width = 320
+      Width = 290
       Align = alClient
       OnChange = FilterMemoChange
       ScrollBars = ssAutoBoth

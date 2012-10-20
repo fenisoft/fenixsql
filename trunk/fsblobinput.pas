@@ -26,7 +26,7 @@ unit fsblobinput;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  SysUtils, Forms, Controls, Dialogs, ExtCtrls,
   EditBtn, Buttons, StdCtrls;
 
 type
@@ -54,15 +54,13 @@ type
     { public declarations }
   end;
 
-//var
-//  BlobInputForm: TBlobInputForm;
 
 function InputParamBlob(const AParamNum, AParamType: string;
   var AisNullable: boolean; var AFileName: string): boolean;
 
 implementation
 
-
+{$R *.lfm}
 
 function InputParamBlob(const AParamNum, AParamType: string;
   var AisNullable: boolean; var AFileName: string): boolean;
@@ -108,7 +106,5 @@ begin
     ShowMessage('Insert a valid filename');
 end;
 
-initialization
-  {$I fsblobinput.lrs}
 
 end.

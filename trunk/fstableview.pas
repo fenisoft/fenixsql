@@ -26,7 +26,7 @@ unit fstableview;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
+  Classes, SysUtils, Forms, Controls, Dialogs, ComCtrls,
   Grids, ActnList, Math, Menus;
 
 type
@@ -76,7 +76,8 @@ type
     procedure tableViewImageListChange(Sender: TObject);
     procedure MenuItem10Click(Sender: TObject);
     procedure DataStringGridDblClick(Sender: TObject);
-    procedure DataStringGridMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
+    procedure DataStringGridMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: integer);
     procedure DataStringGridSelectCell(Sender: TObject; Col, Row: integer;
       var CanSelect: boolean);
 
@@ -99,8 +100,7 @@ type
     property TableName: string read FTableName write FTableName;
   end;
 
-//var
-//TableViewForm: TTableViewForm;
+
 const
   MAX_ROWS = 500;
     {$IFDEF UNIX}
@@ -112,6 +112,8 @@ const
   DEFAULT_WIDTH = 580;
 
 implementation
+
+{$R *.lfm}
 
 uses
   ibase_h, fsdm, fstablefilter, fsblobviewdialog, fsblobtext, fsconfig, fsgridintf;
@@ -276,11 +278,14 @@ begin
               if MainDataModule.TableViewQry.FieldScale(i) <> 0 then
                 DataStringGrid.Cells[i, nRows + 1] :=
                   fsgridintf.FormatNumericValue(
-                  MainDataModule.TableViewQry.FieldAsDouble(i), MainDataModule.TableViewQry.FieldScale(i))
+                  MainDataModule.TableViewQry.FieldAsDouble(i),
+                  MainDataModule.TableViewQry.FieldScale(i))
               else
-                DataStringGrid.Cells[i, nRows + 1] := MainDataModule.TableViewQry.FieldAsString(i);
+                DataStringGrid.Cells[i, nRows + 1] :=
+                  MainDataModule.TableViewQry.FieldAsString(i);
             else
-              DataStringGrid.Cells[i, nRows + 1] := MainDataModule.TableViewQry.FieldAsString(i);
+              DataStringGrid.Cells[i, nRows + 1] :=
+                MainDataModule.TableViewQry.FieldAsString(i);
           end;
         end;
       end;
@@ -396,7 +401,8 @@ end;
 procedure TTableViewForm.ViewBlobActionExecute(Sender: TObject);
 begin
   if FBlobCellSelected then
-    BlobView(FdbKey.Strings[DataStringGrid.row - 1], DataStringGrid.Cells[DataStringGrid.Col, 0]);
+    BlobView(FdbKey.Strings[DataStringGrid.row - 1],
+      DataStringGrid.Cells[DataStringGrid.Col, 0]);
 end;
 
 //------------------------------------------------------------------------------
@@ -455,21 +461,23 @@ end;
 procedure TTableViewForm.DataStringGridDblClick(Sender: TObject);
 begin
   if FBlobCellSelected then
-    BlobView(FdbKey.Strings[DataStringGrid.row - 1], DataStringGrid.Cells[DataStringGrid.Col, 0]);
+    BlobView(FdbKey.Strings[DataStringGrid.row - 1],
+      DataStringGrid.Cells[DataStringGrid.Col, 0]);
 end;
 
 
 //------------------------------------------------------------------------------
 
-procedure TTableViewForm.DataStringGridMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: integer);
+procedure TTableViewForm.DataStringGridMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: integer);
 var
   c, r: integer;
 begin
   DataStringGrid.MouseToCell(X, Y, c, r);
   if (c > 0) and (r > 0) then
   begin
-    if (DataStringGrid.Cells[c, r] = '(Memo)') or (DataStringGrid.Cells[c, r] = '(Blob)') then
+    if (DataStringGrid.Cells[c, r] = '(Memo)') or
+      (DataStringGrid.Cells[c, r] = '(Blob)') then
     begin
       DataStringGrid.Cursor := crHandPoint;
     end
@@ -486,8 +494,8 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TTableViewForm.DataStringGridSelectCell(Sender: TObject; Col, Row: integer;
-  var CanSelect: boolean);
+procedure TTableViewForm.DataStringGridSelectCell(Sender: TObject;
+  Col, Row: integer; var CanSelect: boolean);
 begin
   FBlobCellSelected := (DataStringGrid.Cells[Col, Row] = '(Memo)') or
     (DataStringGrid.Cells[Col, Row] = '(Blob)');
@@ -531,8 +539,5 @@ begin
   end;
 end;
 
-
-initialization
-  {$I fstableview.lrs}
 
 end.
