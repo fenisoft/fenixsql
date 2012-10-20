@@ -101,7 +101,7 @@ type
     EditCutAction: TEditCut;
     EditPasteAction: TEditPaste;
     BrowserImageList: TImageList;
-    ImageListTreeView: TImageList;
+    TreeViewImageList: TImageList;
     lTitle: TLabel;
     ValuesListView: TListView;
     DdlSynMemo: TSynMemo;
@@ -559,11 +559,6 @@ begin
           [TimeT(Time - PrepareTimeStart)]));
         PlanMemo.Lines.Text := MainDataModule.MainQry.Plan;
       end;
-      //-------------------------------------------
-
-
-
-      //--
     end
 
     else
@@ -628,166 +623,171 @@ begin
     paramsTabSheet.TabVisible := False;
 
 
-
-
-  try      //execute statement
-    ExecTimeStart := Time;
-    case MainDataModule.MainQry.QueryType of
-      qtSelect:
-      begin
-        if AVerbose then
-          MessagesListBox.Items.Add('Executing...');
-        MainDataModule.MainQry.ExecSQL;
-        ExecTime := Time - ExecTimeStart;
-        FetchTimeStart := Time;
-        if AVerbose then
+  try
+    Screen.Cursor := crSQLWait;
+    try      //execute statement
+      ExecTimeStart := Time;
+      case MainDataModule.MainQry.QueryType of
+        qtSelect:
         begin
-          MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-          MessagesListBox.Items.Add('Fetching..');
-        end;
-        Application.ProcessMessages;
-        if FsConfig.OutputGridType = 0 then
-          FetchDataGrid
-        else if FsConfig.OutputGridType = 1 then
-          TextGrid(MainDataModule.MainQry, ResultSetSynMemo.Lines, True);
-        FetchTime := Time - FetchTimeStart;
-        MessagesListBox.Items.Add(Format('%d Row(s) Fetched. [Time :%s]',
-          [MainDataModule.MainQry.FetchCount, TimeT(FetchTime)]));
-        ResultSetTabSheet.Caption :=
-          Format('Result Set (%d)', [MainDataModule.MainQry.FetchCount]);
-      end;
-      qtInsert:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        FScriptStat.ins_rows :=
-          FScriptStat.ins_rows + MainDataModule.MainQry.RowsAffected;
-        if AVerbose then
-        begin
+          if AVerbose then
+            MessagesListBox.Items.Add('Executing...');
+          MainDataModule.MainQry.ExecSQL;
           ExecTime := Time - ExecTimeStart;
-          MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-          MessagesListBox.Items.Add(Format('%d Row(s) Inserted.',
-            [MainDataModule.MainQry.RowsAffected]));
-        end;
-      end;
-      qtUpdate:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        FScriptStat.upg_rows :=
-          FScriptStat.upg_rows + MainDataModule.MainQry.RowsAffected;
-        if AVerbose then
-        begin
-          ExecTime := Time - ExecTimeStart;
-          MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-          MessagesListBox.Items.Add(Format('%d Row(s) Updated.',
-            [MainDataModule.MainQry.RowsAffected]));
-        end;
-      end;
-      qtDelete:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        FScriptStat.del_rows :=
-          FScriptStat.del_rows + MainDataModule.MainQry.RowsAffected;
-        if AVerbose then
-        begin
-          ExecTime := Time - ExecTimeStart;
-          MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-          MessagesListBox.Items.Add(Format('%d Row(s) Deleted.',
-            [MainDataModule.MainQry.RowsAffected]));
-        end;
-      end;
-      qtDDL:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        Inc(FScriptStat.ddl_cmds);
-        FExecutedDDLStm := True;
-        if AVerbose then
-        begin
-          ExecTime := Time - ExecTimeStart;
-          MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-        end;
-        if AutoCommitDDL then
-        begin
-          MainDataModule.MainTr.CommitRetaining;
-          MessagesListBox.Items.Add('Transaction commited retaining.');
-        end;
-      end;
-      qtExecProcedure:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        if AVerbose then
-        begin
-          execTime := Time - ExecTimeStart;
-          MessagesListBox.Items.Add(Format('Stored procedure executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-          if MainDataModule.MainQry.FieldCount > 0 then
+          FetchTimeStart := Time;
+          if AVerbose then
           begin
-            MessagesListBox.Items.Add('Fetching...');
-            if FsConfig.OutputGridType = 0 then
-              FetchDataGrid
-            else if FsConfig.OutputGridType = 1 then
-              TextGrid(MainDataModule.MainQry, ResultSetSynMemo.Lines);
-            ResultSetTabSheet.Caption :=
-              Format('Result Set (%d)', [MainDataModule.MainQry.FetchCount]);
+            MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+            MessagesListBox.Items.Add('Fetching..');
           end;
-          if MainDataModule.MainQry.FieldCount > 0 then
-            MessagesListBox.Items.Add(Format('%d Row(s) Fetched.',
-              [MainDataModule.MainQry.FetchCount]));
+          Application.ProcessMessages;
+          if FsConfig.OutputGridType = 0 then
+            FetchDataGrid
+          else if FsConfig.OutputGridType = 1 then
+            TextGrid(MainDataModule.MainQry, ResultSetSynMemo.Lines, True);
+          FetchTime := Time - FetchTimeStart;
+          MessagesListBox.Items.Add(Format('%d Row(s) Fetched. [Time :%s]',
+            [MainDataModule.MainQry.FetchCount, TimeT(FetchTime)]));
+          ResultSetTabSheet.Caption :=
+            Format('Result Set (%d)', [MainDataModule.MainQry.FetchCount]);
+          ResultSetToCsv.Enabled := MainDataModule.MainQry.FetchCount > 0 ;
+          ResultSetToJson.Enabled := MainDataModule.MainQry.FetchCount > 0 ;
         end;
-      end;
-      qtCommit:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        MessagesListBox.Items.Add(Format('Transaction Commited. [%s]',
-          [TimeToStr(Now)]));
-        EndTr(True);
-      end;
-      qtRollback:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        MessagesListBox.Items.Add(Format('Transaction Rolled back. [%s]',
-          [TimeToStr(Now)]));
-        EndTr;
-      end;
-      qtSelectForUpdate:
-      begin
-        MainDataModule.MainQry.ExecSQL;
-        if AVerbose then
+        qtInsert:
         begin
-          execTime := Time - ExecTimeStart;
-          MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-          MessagesListBox.Items.Add('Select for update.');
+          MainDataModule.MainQry.ExecSQL;
+          FScriptStat.ins_rows :=
+            FScriptStat.ins_rows + MainDataModule.MainQry.RowsAffected;
+          if AVerbose then
+          begin
+            ExecTime := Time - ExecTimeStart;
+            MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+            MessagesListBox.Items.Add(Format('%d Row(s) Inserted.',
+              [MainDataModule.MainQry.RowsAffected]));
+          end;
+        end;
+        qtUpdate:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          FScriptStat.upg_rows :=
+            FScriptStat.upg_rows + MainDataModule.MainQry.RowsAffected;
+          if AVerbose then
+          begin
+            ExecTime := Time - ExecTimeStart;
+            MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+            MessagesListBox.Items.Add(Format('%d Row(s) Updated.',
+              [MainDataModule.MainQry.RowsAffected]));
+          end;
+        end;
+        qtDelete:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          FScriptStat.del_rows :=
+            FScriptStat.del_rows + MainDataModule.MainQry.RowsAffected;
+          if AVerbose then
+          begin
+            ExecTime := Time - ExecTimeStart;
+            MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+            MessagesListBox.Items.Add(Format('%d Row(s) Deleted.',
+              [MainDataModule.MainQry.RowsAffected]));
+          end;
+        end;
+        qtDDL:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          Inc(FScriptStat.ddl_cmds);
+          FExecutedDDLStm := True;
+          if AVerbose then
+          begin
+            ExecTime := Time - ExecTimeStart;
+            MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+          end;
+          if AutoCommitDDL then
+          begin
+            MainDataModule.MainTr.CommitRetaining;
+            MessagesListBox.Items.Add('Transaction commited retaining.');
+          end;
+        end;
+        qtExecProcedure:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          if AVerbose then
+          begin
+            execTime := Time - ExecTimeStart;
+            MessagesListBox.Items.Add(Format('Stored procedure executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+            if MainDataModule.MainQry.FieldCount > 0 then
+            begin
+              MessagesListBox.Items.Add('Fetching...');
+              if FsConfig.OutputGridType = 0 then
+                FetchDataGrid
+              else if FsConfig.OutputGridType = 1 then
+                TextGrid(MainDataModule.MainQry, ResultSetSynMemo.Lines);
+              ResultSetTabSheet.Caption :=
+                Format('Result Set (%d)', [MainDataModule.MainQry.FetchCount]);
+            end;
+            if MainDataModule.MainQry.FieldCount > 0 then
+              MessagesListBox.Items.Add(Format('%d Row(s) Fetched.',
+                [MainDataModule.MainQry.FetchCount]));
+          end;
+        end;
+        qtCommit:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          MessagesListBox.Items.Add(Format('Transaction Commited. [%s]',
+            [TimeToStr(Now)]));
+          EndTr(True);
+        end;
+        qtRollback:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          MessagesListBox.Items.Add(Format('Transaction Rolled back. [%s]',
+            [TimeToStr(Now)]));
+          EndTr;
+        end;
+        qtSelectForUpdate:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          if AVerbose then
+          begin
+            execTime := Time - ExecTimeStart;
+            MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+            MessagesListBox.Items.Add('Select for update.');
+          end;
+        end;
+        qtSetGenerator:
+        begin
+          MainDataModule.MainQry.ExecSQL;
+          Inc(FScriptStat.ddl_cmds);
+          if AVerbose then
+          begin
+            ExecTime := Time - ExecTimeStart;
+            MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
+              [TimeT(ExecTime)]));
+            MessagesListBox.Items.Add('Generator Set.');
+          end;
         end;
       end;
-      qtSetGenerator:
+    except
+      on E: EFBLError do
       begin
-        MainDataModule.MainQry.ExecSQL;
-        Inc(FScriptStat.ddl_cmds);
-        if AVerbose then
-        begin
-          ExecTime := Time - ExecTimeStart;
-          MessagesListBox.Items.Add(Format('Statement executed. [Time :%s]',
-            [TimeT(ExecTime)]));
-          MessagesListBox.Items.Add('Generator Set.');
-        end;
+        MessagesListBox.Items.Add('Error in execute. [isc_error : ' +
+          IntToStr(E.ISC_ErrorCode) + ']');
+        MessagesListBox.Items.Add(' ');
+        MessagesListBox.Items.Text := MessagesListBox.Items.Text + E.Message;
+        MainDataModule.MainQry.Close;
+        Result := True;
+        Exit;
       end;
     end;
-  except
-    on E: EFBLError do
-    begin
-      MessagesListBox.Items.Add('Error in execute. [isc_error : ' +
-        IntToStr(E.ISC_ErrorCode) + ']');
-      MessagesListBox.Items.Add(' ');
-      MessagesListBox.Items.Text := MessagesListBox.Items.Text + E.Message;
-      MainDataModule.MainQry.Close;
-      Result := True;
-      Exit;
-    end;
+  finally
+    Screen.Cursor := crDefault;
   end;
   if MessagesListBox.Items.Count > 0 then
     MessagesListBox.ItemIndex := MessagesListBox.Items.Count - 1;
@@ -960,8 +960,8 @@ begin
           raise Exception.Create(Format('Param #%d not assigned', [i]));
       SQL_FLOAT,
       SQL_D_FLOAT:
-        if inputParamFloat(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if inputParamFloat(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), isNull, ParaFloat) then
         begin
           if isnull then
@@ -1034,8 +1034,8 @@ begin
       SQL_BLOB:
         if MainDataModule.MainQry.ParamSubType(i) = 1 then
         begin
-          if InputParamMemo(Format('%d of %d',
-            [i + 1, MainDataModule.MainQry.ParamCount]),
+          if InputParamMemo(Format('%d of %d', [i + 1,
+            MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaText) then
           begin
             if IsNull then
@@ -1054,8 +1054,8 @@ begin
         end
         else
         begin
-          if InputParamBlob(Format('%d of %d',
-            [i + 1, MainDataModule.MainQry.ParamCount]),
+          if InputParamBlob(Format('%d of %d', [i + 1,
+            MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, Paratext) then
           begin
             if IsNull then
@@ -1076,8 +1076,8 @@ begin
       SQL_QUAD: ;
       SQL_TYPE_TIME:
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1093,8 +1093,8 @@ begin
       end;
       SQL_TYPE_DATE:
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1110,8 +1110,8 @@ begin
       end;
       SQL_DATE:  //timestamp
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try

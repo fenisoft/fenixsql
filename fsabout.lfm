@@ -11,7 +11,7 @@ object AboutForm: TAboutForm
   ClientWidth = 436
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 88
@@ -26,8 +26,8 @@ object AboutForm: TAboutForm
     TabOrder = 0
     object Title2Table: TLabel
       Left = 5
-      Height = 20
-      Top = 65
+      Height = 22
+      Top = 63
       Width = 426
       Align = alBottom
       Caption = ' simple admin tool for firebird  '
@@ -42,7 +42,7 @@ object AboutForm: TAboutForm
     end
     object Title1Label: TLabel
       Left = 5
-      Height = 62
+      Height = 60
       Top = 3
       Width = 426
       Align = alClient
@@ -105,46 +105,46 @@ object AboutForm: TAboutForm
       TabOrder = 0
       object InfoTabSheet: TTabSheet
         Caption = 'Info'
-        ClientHeight = 182
+        ClientHeight = 180
         ClientWidth = 420
         object VersionLabel: TLabel
           Left = 69
-          Height = 14
+          Height = 16
           Top = 22
-          Width = 61
+          Width = 68
           Caption = 'VersionLabel'
           ParentColor = False
         end
         object Label2: TLabel
           Left = 12
-          Height = 14
+          Height = 16
           Top = 22
-          Width = 43
+          Width = 46
           Caption = 'Version :'
           ParentColor = False
         end
         object Label4: TLabel
           Left = 12
-          Height = 14
+          Height = 16
           Top = 70
-          Width = 41
+          Width = 44
           Caption = 'Author :'
           ParentColor = False
         end
         object Label6: TLabel
           Left = 12
-          Height = 14
+          Height = 16
           Top = 46
-          Width = 21
+          Width = 22
           Caption = 'Url :'
           ParentColor = False
         end
         object UrlLabel: TLabel
           Cursor = crNo
           Left = 69
-          Height = 14
+          Height = 16
           Top = 46
-          Width = 122
+          Width = 131
           Caption = 'http://fblib.altervista.org'
           Font.Color = clBlue
           Font.Style = [fsUnderline]
@@ -155,9 +155,9 @@ object AboutForm: TAboutForm
         end
         object AuthorLabel: TLabel
           Left = 69
-          Height = 14
+          Height = 16
           Top = 70
-          Width = 59
+          Width = 66
           Caption = 'AuthorLabel'
           ParentColor = False
         end

@@ -87,32 +87,11 @@ begin
   licTabSheet.Caption := 'License Agreement';
   infoTabSheet.Caption := 'Info';
   UrlLabel.Cursor := crHandPoint;
-  {$ifdef unix}
-  with Title1Label do
-  begin
-    Color := clWhite;
-    Font.Color := clActiveCaption;
-    Font.Height := 18;
-    Font.Name := '-adobe-helvetica-*-*-*-*-*-180-*-*-*-*-iso8859-1';
-    Font.Pitch := fpVariable;
-    Font.Style := [fsBold];
-  end;
-  with Title2Table do
-  begin
-    Color := clWhite;
-    Font.Color := clRed;
-    Font.Height := 12;
-    Font.Name := '-adobe-helvetica-medium-r-normal-*-*-120-*-*-*-*-iso8859-1';
-    Font.Pitch := fpVariable;
-  end;
-  {$endif}
 end;
 
 procedure TAboutForm.UrlLabelClick(Sender: TObject);
 begin
   OpenUrl(UrlLabel.Caption);
 end;
-
-
 
 end.

@@ -14,7 +14,7 @@ object CreateDbForm: TCreateDbForm
   ClientWidth = 321
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.2.0'
   object GroupBox1: TGroupBox
     Left = 4
     Height = 64
