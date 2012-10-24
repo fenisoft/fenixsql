@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="25">
+    <Units Count="26">
       <Unit0>
         <Filename Value="fenixsql.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -227,6 +227,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="fsexport"/>
       </Unit24>
+      <Unit25>
+        <Filename Value="fsmessages.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fsmessages"/>
+      </Unit25>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
