@@ -386,6 +386,7 @@ const
   BMP_TVM_CLOCK = 27;
   BMP_TVM_STATE = 28;
   BMP_TVM_NOTE = 29;
+  BMP_TVM_UNKNOW = 30;
 
 var
   BrowserForm: TBrowserForm;
@@ -586,7 +587,7 @@ begin
     begin
       beep;
       LogErrorMessage(Format(rsErrorInPrepare, [E.ISC_ErrorCode]),
-        E.Message,BMP_TVM_ERROR,BMP_TVM_ERR_MSG);
+        E.Message,BMP_TVM_ERROR);
       MainDataModule.MainQry.UnPrepare;
       Result := True;
       Exit;
@@ -600,7 +601,7 @@ begin
     except
       on Er: Exception do
       begin
-        LogErrorMessage(rsErrorInParam, Er.Message,BMP_TVM_ERROR,BMP_TVM_ERR_MSG);
+        LogErrorMessage(rsErrorInParam, Er.Message,BMP_TVM_ERROR);
         Exit;
       end;
     end;
@@ -640,14 +641,14 @@ begin
         qtSelect:
         begin
           if AVerbose then
-            LogMessage(rsExecuting);
+            LogMessage(rsExecuting,BMP_TVM_STATE);
           MainDataModule.MainQry.ExecSQL;
           ExecTime := Time - ExecTimeStart;
           FetchTimeStart := Time;
           if AVerbose then
           begin
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]));
-            LogMessage(rsFetching);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(rsFetching,BMP_TVM_STATE);
           end;
           Application.ProcessMessages;
           if FsConfig.OutputGridType = 0 then
@@ -656,7 +657,7 @@ begin
             TextGrid(MainDataModule.MainQry, ResultSetSynMemo.Lines, True);
           FetchTime := Time - FetchTimeStart;
           LogMessage(Format(rsDRowSFetched,
-            [MainDataModule.MainQry.FetchCount, TimeT(FetchTime)]));
+            [MainDataModule.MainQry.FetchCount, TimeT(FetchTime)]),BMP_TVM_STATE);
           ResultSetTabSheet.Caption :=
             Format(rsResultSetD, [MainDataModule.MainQry.FetchCount]);
           ResultSetToCsv.Enabled := MainDataModule.MainQry.FetchCount > 0;
@@ -670,9 +671,9 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]));
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
             LogMessage(Format(rsDRowSInserte,
-              [MainDataModule.MainQry.RowsAffected]));
+              [MainDataModule.MainQry.RowsAffected]),BMP_TVM_STATE);
           end;
         end;
         qtUpdate:
@@ -683,9 +684,9 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]));
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
             LogMessage(Format(rsDRowSUpdated,
-              [MainDataModule.MainQry.RowsAffected]));
+              [MainDataModule.MainQry.RowsAffected]),BMP_TVM_STATE);
           end;
         end;
         qtDelete:
@@ -696,9 +697,9 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]));
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
             LogMessage(Format(rsDRowSDeleted,
-              [MainDataModule.MainQry.RowsAffected]));
+              [MainDataModule.MainQry.RowsAffected]),BMP_TVM_STATE);
           end;
         end;
         qtDDL:
@@ -709,12 +710,12 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]));
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
           end;
           if AutoCommitDDL then
           begin
             MainDataModule.MainTr.CommitRetaining;
-            LogMessage(rsTransactionCR);
+            LogMessage(rsTransactionCR,BMP_TVM_COMMIT);
           end;
         end;
         qtExecProcedure:
@@ -723,10 +724,10 @@ begin
           if AVerbose then
           begin
             execTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStoredProced, [TimeT(ExecTime)]));
+            LogMessage(Format(rsStoredProced, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
             if MainDataModule.MainQry.FieldCount > 0 then
             begin
-              LogMessage(rsFetching);
+              LogMessage(rsFetching,BMP_TVM_STATE);
               if FsConfig.OutputGridType = 0 then
                 FetchDataGrid
               else if FsConfig.OutputGridType = 1 then
@@ -736,19 +737,19 @@ begin
             end;
             if MainDataModule.MainQry.FieldCount > 0 then
               LogMessage(Format(rsDRowSFetched2,
-                [MainDataModule.MainQry.FetchCount]));
+                [MainDataModule.MainQry.FetchCount]),BMP_TVM_STATE);
           end;
         end;
         qtCommit:
         begin
           MainDataModule.MainQry.ExecSQL;
-          LogMessage(Format(rsTransactionC, [TimeToStr(Now)]));
+          LogMessage(Format(rsTransactionC, [TimeToStr(Now)]),BMP_TVM_CLOCK);
           EndTr(True);
         end;
         qtRollback:
         begin
           MainDataModule.MainQry.ExecSQL;
-          LogMessage(Format(rsTransactionR, [TimeToStr(Now)]));
+          LogMessage(Format(rsTransactionR, [TimeToStr(Now)]),BMP_TVM_ROLLBACK);
           EndTr;
         end;
         qtSelectForUpdate:
@@ -757,8 +758,8 @@ begin
           if AVerbose then
           begin
             execTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]));
-            LogMessage(rsSelectForUpd);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(rsSelectForUpd,BMP_TVM_STATE);
           end;
         end;
         qtSetGenerator:
@@ -768,17 +769,17 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format('Statement executed. [Time :%s]',
-              [TimeT(ExecTime)]));
-            LogMessage('Generator Set.');
+            LogMessage(Format(rsStatementExecuted,
+              [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(rsGeneratorSet, BMP_TVM_STATE);
           end;
         end;
       end;
     except
       on E: EFBLError do
       begin
-        LogErrorMessage(Format('Error in execute. [isc_error : %d]',
-          [E.ISC_ErrorCode]), E.Message);
+        LogErrorMessage(Format(rsErrorInExecute,
+          [E.ISC_ErrorCode]), E.Message,BMP_TVM_ERROR);
         MainDataModule.MainQry.Close;
         Result := True;
         Exit;
@@ -787,9 +788,6 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
-  {
-  if MessagesListBox.Items.Count > 0 then
-    MessagesListBox.ItemIndex := MessagesListBox.Items.Count - 1; }
 end;
 
 //------------------------------------------------------------------------------
@@ -3091,18 +3089,12 @@ begin
   try
     LogMessage(' ');
     MainDataModule.MainTr.Commit;
-    LogMessage(Format(rsTransactionC, [TimeToStr(Now)]));
+    LogMessage(Format(rsTransactionC, [TimeToStr(Now)]),BMP_TVM_COMMIT);
     EndTr(True);
-
-    //MessagesListBox.ItemIndex := MessagesListBox.Items.Count - 1;
-    //MessagesListBox.ItemIndex := -1;
   except
     on E: EFBLError do
     begin
-      LogErrorMessage(Format(rsErrorInTrans, [E.ISC_ErrorCode]), E.Message);
-      //MessagesListBox.Items.Text := MessagesListBox.Items.Text + E.Message;
-      //MessagesListBox.ItemIndex := MessagesListBox.Items.Count - 1;
-      //MessagesListBox.ItemIndex := -1;
+      LogErrorMessage(Format(rsErrorInTrans, [E.ISC_ErrorCode]), E.Message,BMP_TVM_ERROR);
     end;
   end;
 end;
@@ -3298,15 +3290,15 @@ begin
     Script.SQLScript := SqlSynEdit.Lines;
     Script.Reset;
     SQLScript.Clear;
-    LogMessage(Format(rsStartScriptS, [TimeToStr(Now)]));
+    LogMessage(Format(rsStartScriptS, [TimeToStr(Now)]),BMP_TVM_CLOCK);
     while not Script.EOF do
     begin
       stm := Script.Statement;
       if script.StatementType = stUnknow then
       begin
         FParseError := True;
-        LogErrorMessage(rsErrorStatementUnknow,stm);
-        LogMessage(rsScriptStopped);
+        LogErrorMessage(rsErrorStatementUnknow,stm,BMP_TVM_UNKNOW);
+        LogMessage(rsScriptStopped,BMP_TVM_NOTE);
       end;
       if (Script.StatementType <> stSetTerm) and (script.StatementType <> stSelect) then
         SQLScript.Add(stm);
@@ -3319,13 +3311,13 @@ begin
         SqlError := ExecuteSQL(SQLScript.Strings[i], FsConfig.VerboseSqlScript);
         if SqlError then
         begin
-          LogErrorMessage(rsErrorInStatement, SQLScript.Strings[i]);
-          LogMessage(rsScriptStopped);
+          LogErrorMessage(rsErrorInStatement, SQLScript.Strings[i],BMP_TVM_ERROR);
+          LogMessage(rsScriptStopped,BMP_TVM_NOTE);
           LogMessage(' ');
-          LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]));
-          LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]));
-          LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]));
-          LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]));
+          LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]),BMP_TVM_STATE);
+          LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]),BMP_TVM_STATE);
+          LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]),BMP_TVM_STATE);
+          LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]),BMP_TVM_STATE);
           break;
         end;
       end;
@@ -3333,12 +3325,12 @@ begin
     if not SqlError then
     begin
       FScriptStat.end_t := now;
-      LogMessage(Format(rsScriptExecuted, [TimeT(FScriptStat.end_t - FScriptStat.start_t)]));
+      LogMessage(Format(rsScriptExecuted, [TimeT(FScriptStat.end_t - FScriptStat.start_t)]),BMP_TVM_CLOCK);
       LogMessage(' ');
-      LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]));
-      LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]));
-      LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]));
-      LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]));
+      LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]),BMP_TVM_STATE);
+      LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]),BMP_TVM_STATE);
+      LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]),BMP_TVM_STATE);
+      LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]),BMP_TVM_STATE);
     end;
   finally
     Screen.Cursor := crDefault;
@@ -3444,12 +3436,12 @@ procedure TBrowserForm.RollBackActionExecute(Sender: TObject);
 begin
   try
     MainDataModule.MainTr.Rollback;
-    LogMessage(Format(rsTransactionR, [TimeToStr(Now)]));
+    LogMessage(Format(rsTransactionR, [TimeToStr(Now)]),BMP_TVM_ROLLBACK);
     EndTr;
   except
     on E: EFBLError do
     begin
-      LogErrorMessage(Format(rsErrorInTransR,[E.ISC_ErrorCode]),E.Message);
+      LogErrorMessage(Format(rsErrorInTransR,[E.ISC_ErrorCode]),E.Message,BMP_TVM_ERROR);
     end;
   end;
 end;
@@ -3562,9 +3554,6 @@ procedure TBrowserForm.DbTreeViewMouseUp(Sender: TObject; Button: TMouseButton;
 begin
   if Button = mbRight then
   begin
-    //if Assigned(DbTreeView.GetNodeAt(X,Y)) then
-    //DbTreeView.Selected := DbTreeView.GetNodeAt(X,Y);
-    //if Assigned(DbTreeView.Selected) then
     if Assigned(DbTreeView.GetNodeAt(X, Y)) then
     begin
       if Assigned(DbTreeView.Selected.Data) then
