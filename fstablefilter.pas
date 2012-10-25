@@ -76,8 +76,6 @@ uses
 
 
 constructor TTableFilterForm.Create(Aower: TComponent; ATableName: string);
-var
-  i: integer;
 begin
   inherited Create(AOwer);
   FTableName := ATableName;

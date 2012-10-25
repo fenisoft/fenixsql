@@ -378,6 +378,15 @@ const
   DEFAULT_HEIGHT = 500;
   DEFAULT_WIDTH = 640;
 
+  {Treeview messages bitmpas}
+  BMP_TVM_COMMIT = 4;
+  BMP_TVM_ROLLBACK = 5;
+  BMP_TVM_ERROR = 25;
+  BMP_TVM_ERR_MSG = 26;
+  BMP_TVM_CLOCK = 27;
+  BMP_TVM_STATE = 28;
+  BMP_TVM_NOTE = 29;
+
 var
   BrowserForm: TBrowserForm;
 
@@ -412,7 +421,6 @@ begin
   ResultSetTabSheet.TabVisible := False;
   FieldCountTabSheet.TabVisible := False;
   paramsTabSheet.TabVisible := False;
-
   NewScriptAction.Enabled := False;
   OpenScriptAction.Enabled := False;
   SaveScriptAction.Enabled := False;
@@ -535,11 +543,15 @@ var
   i: integer;
 begin
   Result := False;
+
+  if  MessagesTreeview.Items.Count > 0 then
+     LogMessage(' ');
+
   if not MainDataModule.MainTr.InTransaction then
   begin
     MainDataModule.MainTr.StartTransaction;
     StartTr;
-    LogMessage(Format(rsStartTransaction, [TimeToStr(Now)]));
+    LogMessage(Format(rsStartTransaction, [TimeToStr(Now)]),BMP_TVM_STATE);
   end;
 
   MainDataModule.MainQry.Close;
@@ -547,18 +559,17 @@ begin
   if Trim(MainDataModule.MainQry.SQL.Text) <> Trim(ASqlText) then
     MainDataModule.MainQry.SQL.Text := ASqlText;
 
-
   sqlPageControl.PageIndex := 0;
   try
     if not MainDataModule.MainQry.Prepared then
     begin
       if AVerbose then
-        LogMessage(rsPreparing);
+        LogMessage(rsPreparing,BMP_TVM_STATE);
       PrepareTimeStart := Time;
       MainDataModule.MainQry.Prepare;
       if AVerbose then
       begin
-        LogMessage(Format(rsStatementPre, [TimeT(Time - PrepareTimeStart)]));
+        LogMessage(Format(rsStatementPre, [TimeT(Time - PrepareTimeStart)]),BMP_TVM_CLOCK);
         PlanMemo.Lines.Text := MainDataModule.MainQry.Plan;
       end;
     end
@@ -567,14 +578,15 @@ begin
     begin
       if AVerbose then
       begin
-        LogMessage(rsStatementAlreadyPrepared);
+        LogMessage(rsStatementAlreadyPrepared,BMP_TVM_NOTE);
       end;
     end;
   except
     on E: EFBLError do
     begin
       beep;
-      LogErrorMessage(Format(rsErrorInPrepare, [E.ISC_ErrorCode]), E.Message);
+      LogErrorMessage(Format(rsErrorInPrepare, [E.ISC_ErrorCode]),
+        E.Message,BMP_TVM_ERROR,BMP_TVM_ERR_MSG);
       MainDataModule.MainQry.UnPrepare;
       Result := True;
       Exit;
@@ -588,7 +600,7 @@ begin
     except
       on Er: Exception do
       begin
-        LogErrorMessage(rsErrorInParam, Er.Message);
+        LogErrorMessage(rsErrorInParam, Er.Message,BMP_TVM_ERROR,BMP_TVM_ERR_MSG);
         Exit;
       end;
     end;
@@ -2641,6 +2653,7 @@ var
 begin
   TreeNode := MessagesTreeView.Items.Add(nil, AMsg);
   TreeNode.StateIndex := AImageIndex;
+  MessagesTreeView.Selected := MessagesTreeView.Items.GetLastNode;
 end;
 
 procedure TBrowserForm.LogErrorMessage(const AMsg: string; const AErrorMsg: string;
@@ -2660,10 +2673,13 @@ begin
       TreeChildNode := MessagesTreeView.Items.AddChild(TreeNode, sl.Strings[i]);
       TreeChildNode.StateIndex := AImageErrorIndex;
     end;
+    MessagesTreeView.Selected := MessagesTreeView.Items.GetLastNode;
   finally
     sl.Free;
   end;
 end;
+
+
 
 //------------------------------------------------------------------------------
 {Events procedure}
@@ -2938,7 +2954,6 @@ begin
     UserModForm.Free;
   end;
 end;
-
 
 //------------------------------------------------------------------------------
 
@@ -3467,8 +3482,6 @@ begin
   if ActiveControl is TCustomSynEdit then
     TCustomSynEdit(ActiveControl).SelectAll;
 end;
-
-
 
 //------------------------------------------------------------------------------
 
