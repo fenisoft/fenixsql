@@ -38,6 +38,8 @@ resourcestring
   rsDDDLSStateme = '%d DDL(s) Statement executed.';
   rsScriptExecuted = 'Script executed. [Time: %s]';
   rsErrorInTransR = 'Error in Transaction rollback. [isc_error :%d]';
+  rsGeneratorSet = 'Generator Set.';
+  rsErrorInExecute = 'Error in execute. [isc_error : %d]';
 
 implementation
 
