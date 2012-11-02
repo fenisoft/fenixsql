@@ -29,7 +29,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   SynMemo, ComCtrls, ActnList, Menus, StdCtrls, Grids, StdActns,
   SynEdit, FBLDatabase, FBLDsql, FBLExcept,
-  FBLTextGridExport, ibase_h, FBLmixf, Math, FBLScript;
+  FBLTextGridExport, ibase_h, FBLmixf, Math, FBLScript, SynEditMiscClasses, SynEditMarkupSpecialLine;
 
 type
 
@@ -213,6 +213,8 @@ type
     procedure ShowOptionDescriptionActionExecute(Sender: TObject);
     procedure ShowOptionsActionExecute(Sender: TObject);
     procedure ShowTextOptionsActionExecute(Sender: TObject);
+    procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
+      var Special: boolean; var FG, BG: TColor);
     procedure UsersActionExecute(Sender: TObject);
     procedure ViewDataActionExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -273,6 +275,7 @@ type
     FNeedRefresh: boolean;
     {$ENDIF}
     FErrorDllNotFound: boolean;
+    FLineWithError: Integer;
     procedure DoAfterDisconnect;
     procedure CarretPos;
     procedure EndTr(ATrCommit: boolean = False); //False rollback (default) True commit
@@ -399,7 +402,7 @@ uses
   fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext,
   fslogin, fsdialogtran, fstableview, fscreatedb,
   fsdescription, fsoptions, fstextoptions, fsservice, fsusers, fsbackup,
-  fsabout, fsdbconnections, fsgridintf, fsexport, fsmessages;
+  fsabout, fsdbconnections, fsexport, fsmessages;
 
 { TNodeDesc }
 
@@ -544,7 +547,8 @@ var
   i: integer;
 begin
   Result := False;
-
+  FLineWithError := 0;
+  SqlSynEdit.Invalidate;
   if  MessagesTreeview.Items.Count > 0 then
      LogMessage(' ');
 
@@ -858,8 +862,7 @@ begin
             (MainQry.FieldType(i) = SQL_DOUBLE) or (MainQry.FieldType(i) = SQL_FLOAT) or
             (MainQry.FieldType(i) = SQL_D_FLOAT) then
             if MainQry.FieldScale(i) <> 0 then
-              ResultSetStringGrid.Cells[i + 1, r] :=
-                fsgridintf.FormatNumericValue(
+              ResultSetStringGrid.Cells[i + 1, r] := FormatNumericValue(
                 MainQry.FieldAsDouble(i), MainQry.FieldScale(i))
             else
               ResultSetStringGrid.Cells[i + 1, r] := MainQry.FieldAsString(i)
@@ -2672,6 +2675,8 @@ begin
       TreeChildNode.StateIndex := AImageErrorIndex;
     end;
     MessagesTreeView.Selected := MessagesTreeView.Items.GetLastNode;
+    FLineWithError := StmErrorAtLine(AErrorMsg);
+    SqlSynEdit.Invalidate;
   finally
     sl.Free;
   end;
@@ -2952,6 +2957,20 @@ begin
     UserModForm.Free;
   end;
 end;
+
+
+procedure TBrowserForm.SqlSynEditSpecialLineColors(Sender: TObject;
+  Line: integer; var Special: boolean; var FG, BG: TColor);
+begin
+  if Line = FLineWithError then
+  begin
+    FG := clWhite;
+    BG := clRed;
+   special := true;
+  end;
+end;
+
+
 
 //------------------------------------------------------------------------------
 
@@ -3253,7 +3272,8 @@ begin
     ShowMessage(rsEmpyQuery)
   else
   begin
-    if not ExecuteSQL(stm, True) then
+
+    if not ExecuteSQL(SqlSynEdit.Lines.Text, True) then
     begin
       AddToHistory(stm);
       RefreshStatusBar;

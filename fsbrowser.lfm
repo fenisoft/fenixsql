@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 306
+  Left = 239
   Height = 526
-  Top = 131
+  Top = 148
   Width = 781
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -30,7 +30,7 @@ object BrowserForm: TBrowserForm
       Top = 1
       Width = 174
       Align = alClient
-      DefaultItemHeight = 16
+      DefaultItemHeight = 18
       Images = TreeViewImageList
       ParentShowHint = False
       ReadOnly = True
@@ -84,7 +84,7 @@ object BrowserForm: TBrowserForm
       OnChange = MainPageControlChange
       object DdlTabSheet: TTabSheet
         Caption = 'DDL'
-        ClientHeight = 452
+        ClientHeight = 450
         ClientWidth = 590
         object pTitle: TPanel
           Left = 0
@@ -1698,6 +1698,7 @@ object BrowserForm: TBrowserForm
             LineHighlightColor.Background = clNone
             LineHighlightColor.Foreground = clNone
             OnChange = SqlSynEditChange
+            OnSpecialLineColors = SqlSynEditSpecialLineColors
             inline TSynGutterPartList
               object TSynGutterMarks
                 Width = 24
