@@ -116,7 +116,7 @@ implementation
 {$R *.lfm}
 
 uses
-  ibase_h, fsdm, fstablefilter, fsblobviewdialog, fsblobtext, fsconfig, fsgridintf;
+  ibase_h, fsdm, fstablefilter, fsblobviewdialog, fsblobtext, fsconfig, fsmixf;
 
 { TTableViewForm }
 
@@ -277,8 +277,7 @@ begin
             SQL_INT64, SQL_LONG, SQL_SHORT, SQL_DOUBLE, SQL_FLOAT, SQL_D_FLOAT:
               if MainDataModule.TableViewQry.FieldScale(i) <> 0 then
                 DataStringGrid.Cells[i, nRows + 1] :=
-                  fsgridintf.FormatNumericValue(
-                  MainDataModule.TableViewQry.FieldAsDouble(i),
+                  FormatNumericValue(MainDataModule.TableViewQry.FieldAsDouble(i),
                   MainDataModule.TableViewQry.FieldScale(i))
               else
                 DataStringGrid.Cells[i, nRows + 1] :=

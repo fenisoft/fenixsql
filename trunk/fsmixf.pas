@@ -1,7 +1,7 @@
 (*
    fenixsql
    author Alessandro Batisti
-    http://code.google.com/p/fenixsql
+   http://code.google.com/p/fenixsql
    http://fblib.altervista.org
 
    file:fsmixf.pas
@@ -27,16 +27,13 @@ unit fsmixf;
 interface
 
 uses
-  SysUtils{$IFNDEF UNIX}, Registry, Windows{$ENDIF}, ibase_h;
+  SysUtils, ibase_h;
 
 function TimeT(ADateTime: TDateTime): string;
 function TypeDesc(const AType: smallint): string;
-{$IFNDEF UNIX}
-//function GetProgramFilesDir: string;
-//function GetFirebirdDirectory: string;     // Firebird 1.5.x
-//function GetAppDataFolder: string;
-{$ENDIF}
-//function GetFileDialogFilter: string;
+function FormatNumericValue(AValue: Double; AScale: Integer): string;
+function StmErrorAtLine(const AErrorMsg: string):Integer;
+
 
 implementation
 
@@ -61,7 +58,6 @@ begin
   end;
 end;
 
-//------------------------------------------------------------------------------
 
 function TimeT(ADateTime: TDateTime): string;
 var
@@ -74,70 +70,47 @@ begin
     Result := Format('%d.%d s', [s, ms]);
 end;
 
-//------------------------------------------------------------------------------
-{$IFNDEF UNIX}
-function GetProgramFilesDir: string;
+function FormatNumericValue(AValue: Double; AScale: Integer): string;
 var
-  Reg: TRegistry;
+  FormStr: string;
 begin
-  Result := '';
-  Reg := TRegistry.Create;
-  try
-    Reg.Access := KEY_QUERY_VALUE;
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
-    if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion', False) then
-    begin
-      Result := Reg.ReadString('ProgramFilesDir');
-      Reg.CloseKey;
-    end;
-  finally
-    Reg.Free;
-  end;
+  if AScale < 0 then
+  begin
+    FormStr := '%.' + IntToStr(Abs(AScale)) + 'f';
+    Result := Format(FormStr, [AValue]);
+  end
+  else
+    Result := FloatToStr(AValue);
 end;
 
-//------------------------------------------------------------------------------
-
-function GetFirebirdDirectory: string;
+function StmErrorAtLine(const AErrorMsg: string): Integer;
+const
+  L = 'line ';
 var
-  Reg: TRegistry;
-begin
-  Result := '';
-  Reg := TRegistry.Create;
-  try
-    Reg.Access := KEY_QUERY_VALUE;
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
-    if Reg.OpenKey('\Software\Firebird Project\Firebird Server\Instances', False) then
-    begin
-      Result := Reg.ReadString('DefaultInstance');
-      Reg.CloseKey;
-    end;
-  finally
-    Reg.Free;
+  i: integer;
+  c: char;
+  Num: string;
+  function IsDigit(c: char): boolean;
+  begin
+    Result := (c in ['0'..'9']);
   end;
-end;
 
-//------------------------------------------------------------------------------
-
-function GetAppDataFolder: string;
-var
-  Reg: TRegistry;
 begin
-  Result := '';
-  Reg := TRegistry.Create;
-  try
-    Reg.Access := KEY_QUERY_VALUE;
-    Reg.RootKey := HKEY_CURRENT_USER;
-    if Reg.OpenKey('\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders',
-      False) then
-    begin
-      Result := Reg.ReadString('AppData');
-      Reg.CloseKey;
-    end;
-  finally
-    Reg.Free;
-  end;
+  Num := '';
+  i := Pos(L, AErrorMsg) + Length(L);
+  if i > 0 then
+  begin
+      c := AErrorMsg[i];
+      while IsDigit(c) do
+      begin
+        Num := Num + c;
+        Inc(i);
+        c := AErrorMsg[i];
+      end;
+    Result := StrToInt(Num);
+  end
+  else
+    Result := 0;
 end;
-
-{$ENDIF}
 
 end.
