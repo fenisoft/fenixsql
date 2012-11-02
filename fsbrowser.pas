@@ -54,9 +54,29 @@ type
     property ObjDesc: string read FObjDesc write FObjDesc;
   end;
 
+  type
+
+  { TScriptStm }
+
+ TScriptStm = class
+  private
+    FLineStart: Integer;
+    FStm: string;
+  public
+    constructor Create(ALineStart: Integer;const AStm:string);
+    property LineStart: Integer read FLineStart write FLineStart;
+    property Stm: string read FStm write FStm;
+  end;
+
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    MenuItem50: TMenuItem;
+    SqlCreateTableAutoInc: TAction;
+    MenuItem26: TMenuItem;
+    MenuItem27: TMenuItem;
+    MenuItem28: TMenuItem;
+    SqlCreateTableAction: TAction;
     ResultSetToJson: TAction;
     ResultSetToCsv: TAction;
     ExportToJsonAction: TAction;
@@ -213,6 +233,8 @@ type
     procedure ShowOptionDescriptionActionExecute(Sender: TObject);
     procedure ShowOptionsActionExecute(Sender: TObject);
     procedure ShowTextOptionsActionExecute(Sender: TObject);
+    procedure SqlCreateTableActionExecute(Sender: TObject);
+    procedure SqlCreateTableAutoIncExecute(Sender: TObject);
     procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure UsersActionExecute(Sender: TObject);
@@ -300,13 +322,15 @@ type
     procedure DoAfterConnect;
     procedure LoadFontColor;
     procedure SetOutputType(const AType: integer);
-    function ExecuteSQL(const ASqlText: string; const AVerbose: boolean): boolean;
+    function ExecuteSQL(const ASqlText: string; const AVerbose: boolean; ALineStart: Integer = 0): boolean;
     function AbjustColWidth(const ACol: integer): integer;
     procedure ShowTableView(const ATableName: string);
     procedure ShowObjectDescription(const AType: integer; const ASqlObject: string);
     procedure LogMessage(const AMsg: string; AImageIndex: integer = -1);
     procedure LogErrorMessage(const AMsg: string; const AErrorMsg: string;
       AImageIndex: integer = -1; AImageErrorIndex: integer = -1);
+    procedure EditLineError(ALineError: Integer);
+    procedure EditResetError;
   public
     { public declarations }
   end;
@@ -399,10 +423,18 @@ implementation
 {$R *.lfm}
 
 uses
-  fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext,
-  fslogin, fsdialogtran, fstableview, fscreatedb,
-  fsdescription, fsoptions, fstextoptions, fsservice, fsusers, fsbackup,
-  fsabout, fsdbconnections, fsexport, fsmessages;
+  fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext, fslogin,
+  fsdialogtran, fstableview, fscreatedb, fsdescription, fsoptions,
+  fstextoptions, fsservice, fsusers, fsbackup, fsabout, fsdbconnections,
+  fsexport, fsmessages, fssqlcodetemplate;
+
+{ TScriptStm }
+
+constructor TScriptStm.Create(ALineStart: Integer; const AStm: string);
+begin
+  FLineStart := ALineStart;
+  FStm := AStm;
+end;
 
 { TNodeDesc }
 
@@ -491,8 +523,8 @@ begin
   RollBackAction.Enabled := False;
   if FExecutedDDLStm then
   begin
-    if ATrCommit then
-      RefreshAllActionExecute(Self);
+    //if ATrCommit then
+      //RefreshAllActionExecute(Self);
     FExecutedDDLStm := False;
   end;
   RefreshStatusBar;
@@ -541,14 +573,13 @@ end;
 { return true if error}
 
 function TBrowserForm.ExecuteSQL(const ASqlText: string;
-  const AVerbose: boolean): boolean;
+  const AVerbose: boolean; ALineStart: Integer = 0): boolean;
 var
   PrepareTimeStart, ExecTime, ExecTimeStart, FetchTime, FetchTimeStart: TDateTime;
   i: integer;
 begin
   Result := False;
-  FLineWithError := 0;
-  SqlSynEdit.Invalidate;
+  EditResetError;
   if  MessagesTreeview.Items.Count > 0 then
      LogMessage(' ');
 
@@ -592,6 +623,7 @@ begin
       beep;
       LogErrorMessage(Format(rsErrorInPrepare, [E.ISC_ErrorCode]),
         E.Message,BMP_TVM_ERROR);
+      EditLineError(StmErrorAtLine(E.Message) + ALineStart);
       MainDataModule.MainQry.UnPrepare;
       Result := True;
       Exit;
@@ -783,7 +815,8 @@ begin
       on E: EFBLError do
       begin
         LogErrorMessage(Format(rsErrorInExecute,
-          [E.ISC_ErrorCode]), E.Message,BMP_TVM_ERROR);
+          [E.ISC_ErrorCode]),E.Message,BMP_TVM_ERROR);
+        EditLineError(StmErrorAtLine(E.Message) + ALineStart);
         MainDataModule.MainQry.Close;
         Result := True;
         Exit;
@@ -2675,11 +2708,21 @@ begin
       TreeChildNode.StateIndex := AImageErrorIndex;
     end;
     MessagesTreeView.Selected := MessagesTreeView.Items.GetLastNode;
-    FLineWithError := StmErrorAtLine(AErrorMsg);
-    SqlSynEdit.Invalidate;
   finally
     sl.Free;
   end;
+end;
+
+procedure TBrowserForm.EditLineError(ALineError: Integer);
+begin
+   FLineWithError := ALineError;
+   SqlSynEdit.Invalidate;
+end;
+
+procedure TBrowserForm.EditResetError;
+begin
+   FLineWithError := 0;
+   SqlSynEdit.Invalidate;
 end;
 
 
@@ -2956,6 +2999,21 @@ begin
   finally
     UserModForm.Free;
   end;
+end;
+
+procedure TBrowserForm.SqlCreateTableActionExecute(Sender: TObject);
+begin
+   SqlSynEdit.Lines.Text:=TableCreate('TableName');;
+end;
+
+procedure TBrowserForm.SqlCreateTableAutoIncExecute(Sender: TObject);
+var
+  TableName: string;
+begin
+   TableName := InputBox('table name',
+    'New Table with PK Autoinc','');
+  if TableName  <> ''  then
+       SqlSynEdit.Lines.Text := TableCreateWithAutoIncrement(TableName);
 end;
 
 
@@ -3272,7 +3330,7 @@ begin
     ShowMessage(rsEmpyQuery)
   else
   begin
-
+    ClearMessagesActionExecute(nil);
     if not ExecuteSQL(SqlSynEdit.Lines.Text, True) then
     begin
       AddToHistory(stm);
@@ -3288,7 +3346,7 @@ var
   i: integer;
   SqlError: boolean;
   stm: string;
-  SQLScript: TStringList;
+  SQLScript: TList;
   FParseError: boolean;
 begin
   FParseError := False;
@@ -3299,12 +3357,13 @@ begin
   FScriptStat.upg_rows := 0;
   FScriptStat.ddl_cmds := 0;
   FScriptStat.start_t := now;
-  if trim(SqlSynEdit.Text) = '' then
+  if Trim(SqlSynEdit.Text) = '' then
   begin
     ShowMessage(rsEmpyQuery);
     Exit;
   end;
-  SQLScript := TStringList.Create;
+  ClearMessagesActionExecute(nil);
+  SQLScript := TList.Create;
   try
     Screen.Cursor := crSqlWait;
     Script.SQLScript := SqlSynEdit.Lines;
@@ -3317,21 +3376,23 @@ begin
       if script.StatementType = stUnknow then
       begin
         FParseError := True;
-        LogErrorMessage(rsErrorStatementUnknow,stm,BMP_TVM_UNKNOW);
+        LogErrorMessage(rsErrorStatementUnknow,stm +  'at line ' +
+          IntToStr(Script.CurrentLineNumber),BMP_TVM_UNKNOW);
+        EditLineError(Script.CurrentLineNumber);
         LogMessage(rsScriptStopped,BMP_TVM_NOTE);
       end;
       if (Script.StatementType <> stSetTerm) and (script.StatementType <> stSelect) then
-        SQLScript.Add(stm);
+        SQLScript.Add(TScriptStm.Create(Script.CurrentLineNumber,stm));
     end;
 
     if not FParseError then
     begin
       for i := 0 to SQLScript.Count - 1 do
       begin
-        SqlError := ExecuteSQL(SQLScript.Strings[i], FsConfig.VerboseSqlScript);
+        SqlError := ExecuteSQL(TScriptStm(SQLScript.Items[i]).Stm, FsConfig.VerboseSqlScript,TScriptStm(SQLScript.Items[i]).LineStart - 1);
         if SqlError then
         begin
-          LogErrorMessage(rsErrorInStatement, SQLScript.Strings[i],BMP_TVM_ERROR);
+          LogErrorMessage(rsErrorInStatement, TScriptStm(SQLScript.Items[i]).Stm,BMP_TVM_ERROR);
           LogMessage(rsScriptStopped,BMP_TVM_NOTE);
           LogMessage(' ');
           LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]),BMP_TVM_STATE);
@@ -3354,6 +3415,8 @@ begin
     end;
   finally
     Screen.Cursor := crDefault;
+    for i:=0 to  SQLScript.Count -1 do
+        TScriptStm(SQLScript.Items[i]).Free;
     SQLScript.Free;
   end;
 end;
