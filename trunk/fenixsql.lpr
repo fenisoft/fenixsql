@@ -9,9 +9,9 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, fsusers, fsabout, fsbackup, fsblobinput, fsblobtext, fsblobviewdialog,
   fsbrowser, fsconfig, fscreatedb, fsdbconnections, fsdescription, fsdialogtran,
-  fsdm, fslogin, fsmixf, fsoptions, fsparaminput, fsservice,
-  fstablefilter, fstableview, fstextoptions, fsusermod, fsexport, fsmessages
-  { you can add units after this };
+  fsdm, fslogin, fsmixf, fsoptions, fsparaminput, fsservice, fstablefilter,
+  fstableview, fstextoptions, fsusermod, fsexport, fsmessages,
+  fssqlcodetemplate;
 
 {$R *.res}
 

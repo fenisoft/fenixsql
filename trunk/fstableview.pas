@@ -272,7 +272,6 @@ begin
                 DataStringGrid.Cells[i, nRows + 1] := '(Blob)';
 
             SQL_ARRAY:
-              //DataStringGrid.Cells[i, FRowsInGrid] := dmib.qryTableView.FieldAsString(i);
               DataStringGrid.Cells[i, nRows + 1] := '(Array)';
             SQL_INT64, SQL_LONG, SQL_SHORT, SQL_DOUBLE, SQL_FLOAT, SQL_D_FLOAT:
               if MainDataModule.TableViewQry.FieldScale(i) <> 0 then

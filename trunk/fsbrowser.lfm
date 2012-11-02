@@ -2121,6 +2121,16 @@ object BrowserForm: TBrowserForm
       ImageIndex = 18
       OnExecute = ResultSetToJsonExecute
     end
+    object SqlCreateTableAction: TAction
+      Category = 'SqlCodeTemplate'
+      Caption = 'Create Table'
+      OnExecute = SqlCreateTableActionExecute
+    end
+    object SqlCreateTableAutoInc: TAction
+      Category = 'SqlCodeTemplate'
+      Caption = 'Create Table with Primary Key autoincrement'
+      OnExecute = SqlCreateTableAutoIncExecute
+    end
   end
   object MainMenu: TMainMenu
     Images = BrowserImageList
@@ -3227,7 +3237,7 @@ object BrowserForm: TBrowserForm
   end
   object DbPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 24
+    left = 32
     top = 40
     object MenuItem13: TMenuItem
       Action = BackupDatabaseAction
@@ -3327,6 +3337,18 @@ object BrowserForm: TBrowserForm
     end
     object MenuItem49: TMenuItem
       Action = SelectAllSynMemoAction
+    end
+    object MenuItem26: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem27: TMenuItem
+      Caption = 'Sql Code'
+      object MenuItem28: TMenuItem
+        Action = SqlCreateTableAction
+      end
+      object MenuItem50: TMenuItem
+        Action = SqlCreateTableAutoInc
+      end
     end
   end
   object MessagesPopUpMenu: TPopupMenu

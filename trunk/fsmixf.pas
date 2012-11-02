@@ -94,12 +94,12 @@ var
   begin
     Result := (c in ['0'..'9']);
   end;
-
 begin
   Num := '';
-  i := Pos(L, AErrorMsg) + Length(L);
+  i := Pos(L, AErrorMsg);
   if i > 0 then
   begin
+      i := i + Length(L);
       c := AErrorMsg[i];
       while IsDigit(c) do
       begin
@@ -110,7 +110,7 @@ begin
     Result := StrToInt(Num);
   end
   else
-    Result := 0;
+    Result := 1;
 end;
 
 end.
