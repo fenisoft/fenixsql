@@ -11,7 +11,7 @@ uses
   fsbrowser, fsconfig, fscreatedb, fsdbconnections, fsdescription, fsdialogtran,
   fsdm, fslogin, fsmixf, fsoptions, fsparaminput, fsservice, fstablefilter,
   fstableview, fstextoptions, fsusermod, fsexport, fsmessages,
-  fssqlcodetemplate;
+  fssqlcodetemplate, fscreatetable;
 
 {$R *.res}
 

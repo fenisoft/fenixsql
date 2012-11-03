@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 239
+  Left = 269
   Height = 526
-  Top = 148
+  Top = 196
   Width = 781
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -625,17 +625,17 @@ object BrowserForm: TBrowserForm
         ClientWidth = 590
         object SqlDownPanel: TPanel
           Left = 0
-          Height = 281
-          Top = 169
+          Height = 286
+          Top = 164
           Width = 590
           Align = alClient
           BevelOuter = bvNone
-          ClientHeight = 281
+          ClientHeight = 286
           ClientWidth = 590
           TabOrder = 0
           object sqlPageControl: TPageControl
             Left = 0
-            Height = 281
+            Height = 286
             Top = 0
             Width = 590
             ActivePage = messagesTabSheet
@@ -644,11 +644,11 @@ object BrowserForm: TBrowserForm
             TabOrder = 0
             object messagesTabSheet: TTabSheet
               Caption = 'Messages'
-              ClientHeight = 253
+              ClientHeight = 258
               ClientWidth = 582
               object MessagesTreeView: TTreeView
                 Left = 0
-                Height = 253
+                Height = 258
                 Top = 0
                 Width = 582
                 Align = alClient
@@ -1243,24 +1243,24 @@ object BrowserForm: TBrowserForm
           Cursor = crVSplit
           Left = 0
           Height = 4
-          Top = 165
+          Top = 160
           Width = 590
           Align = alTop
           ResizeAnchor = akTop
         end
         object SqlEditPanel: TPanel
           Left = 0
-          Height = 165
+          Height = 160
           Top = 0
           Width = 590
           Align = alTop
           BevelOuter = bvNone
-          ClientHeight = 165
+          ClientHeight = 160
           ClientWidth = 590
           TabOrder = 2
           inline SqlSynEdit: TSynEdit
             Left = 0
-            Height = 116
+            Height = 111
             Top = 26
             Width = 590
             Align = alClient
@@ -1780,7 +1780,7 @@ object BrowserForm: TBrowserForm
           object sbarEdit: TStatusBar
             Left = 0
             Height = 23
-            Top = 142
+            Top = 137
             Width = 590
             Panels = <            
               item
@@ -2125,11 +2125,6 @@ object BrowserForm: TBrowserForm
       Category = 'SqlCodeTemplate'
       Caption = 'Create Table'
       OnExecute = SqlCreateTableActionExecute
-    end
-    object SqlCreateTableAutoInc: TAction
-      Category = 'SqlCodeTemplate'
-      Caption = 'Create Table with Primary Key autoincrement'
-      OnExecute = SqlCreateTableAutoIncExecute
     end
   end
   object MainMenu: TMainMenu
@@ -3345,9 +3340,6 @@ object BrowserForm: TBrowserForm
       Caption = 'Sql Code'
       object MenuItem28: TMenuItem
         Action = SqlCreateTableAction
-      end
-      object MenuItem50: TMenuItem
-        Action = SqlCreateTableAutoInc
       end
     end
   end

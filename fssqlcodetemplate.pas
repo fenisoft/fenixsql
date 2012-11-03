@@ -7,14 +7,14 @@ interface
 uses
   Classes, SysUtils;
 
-function TableCreate(const AName: string): string;
+function TableCreate(const AName: string;const APk: string = ''): string;
 function TableCreateWithAutoIncrement(AName: string; APk: string = 'ID'): string;
 
 
 implementation
 
 
-function TableCreate(const AName: string): string;
+function TableCreate(const AName: string; const APk: string = ''): string;
 var
   code: TStringList;
 begin
@@ -24,15 +24,13 @@ begin
     begin
       Add('CREATE TABLE ' + AName);
       Add('(');
+      if (APk <> '') then
+         Add(Format('  %s INTEGER NOT NULL,',[APk]));
       Add('  column_name {< datatype> | COMPUTED BY (< expr>) | domain}');
       Add('    [DEFAULT { literal | NULL | USER}] [NOT NULL]');
-      Add('  ...');
-      Add('  CONSTRAINT constraint_name');
-      Add('        PRIMARY KEY (column_list),');
-      Add('        UNIQUE      (column_list),');
-      Add('        FOREIGN KEY (column_list) REFERENCES other_table (column_list),');
-      Add('        CHECK       (condition),');
-      Add('  ...');
+      Add('  ');
+      Add(Format('  CONSTRAINT %s_PK',[AName]));
+      Add(Format('        PRIMARY KEY (%s)',[APk]));
       Add(');');
     end;
     Result := code.Text;
@@ -52,6 +50,8 @@ begin
       Add(Format('CREATE TABLE %s',[AName]));
       Add('(');
       Add(Format('  %s INTEGER NOT NULL,',[APk]));
+      Add('  column_name {< datatype> | COMPUTED BY (< expr>) | domain}');
+      Add('    [DEFAULT { literal | NULL | USER}] [NOT NULL]');
       Add('  ');
       Add(Format('  CONSTRAINT %s_PK',[AName]));
       Add(Format('        PRIMARY KEY (%s)',[APk]));
