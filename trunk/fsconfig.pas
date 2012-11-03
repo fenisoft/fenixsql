@@ -39,6 +39,7 @@ var
   FileExtentionForDialog: string;
   ConfigDirPath: string;
   LastAliasConnected: string;
+  SqlEditPanelHeight: Integer;
 
 const
   APP_TITLE = 'fenixsql';
@@ -119,12 +120,14 @@ begin
     VerboseSqlScript := inifile.ReadBool(SECTION_GENERAL, 'VerboseSqlScript', False);
     SetTermVisible := inifile.ReadBool(SECTION_GENERAL, 'ShowSetTerm', False);
     OutputGridType := inifile.ReadInteger(SECTION_GENERAL, 'SetOutputGrid', 0);
+    SqlEditPanelHeight := inifile.ReadInteger(SECTION_GENERAL, 'SqlEditPanelHeight',160);
   finally
     iniFile.Free;
   end;
 end;
 
 //------------------------------------------------------------------------------
+
 
 procedure WriteConfigFile;
 var
@@ -140,6 +143,7 @@ begin
     Inifile.WriteBool(SECTION_GENERAL, 'VerboseSqlScript', VerboseSqlScript);
     Inifile.WriteBool(SECTION_GENERAL, 'ShowSetTerm', SetTermVisible);
     inifile.WriteInteger(SECTION_GENERAL, 'SetOutputGrid', OutputGridType);
+    inifile.WriteInteger(SECTION_GENERAL, 'SqlEditPanelHeight',SqlEditPanelHeight);
     iniFile.UpdateFile;
   finally
     iniFile.Free;

@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="26">
+    <Units Count="27">
       <Unit0>
         <Filename Value="fenixsql.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -232,6 +232,14 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="fssqlcodetemplate"/>
       </Unit25>
+      <Unit26>
+        <Filename Value="fscreatetable.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CreateTableForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fscreatetable"/>
+      </Unit26>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

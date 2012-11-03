@@ -71,8 +71,6 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
-    MenuItem50: TMenuItem;
-    SqlCreateTableAutoInc: TAction;
     MenuItem26: TMenuItem;
     MenuItem27: TMenuItem;
     MenuItem28: TMenuItem;
@@ -234,7 +232,6 @@ type
     procedure ShowOptionsActionExecute(Sender: TObject);
     procedure ShowTextOptionsActionExecute(Sender: TObject);
     procedure SqlCreateTableActionExecute(Sender: TObject);
-    procedure SqlCreateTableAutoIncExecute(Sender: TObject);
     procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure UsersActionExecute(Sender: TObject);
@@ -426,7 +423,7 @@ uses
   fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext, fslogin,
   fsdialogtran, fstableview, fscreatedb, fsdescription, fsoptions,
   fstextoptions, fsservice, fsusers, fsbackup, fsabout, fsdbconnections,
-  fsexport, fsmessages, fssqlcodetemplate;
+  fsexport, fsmessages, fssqlcodetemplate, fscreatetable;
 
 { TScriptStm }
 
@@ -3002,20 +2999,24 @@ begin
 end;
 
 procedure TBrowserForm.SqlCreateTableActionExecute(Sender: TObject);
-begin
-   SqlSynEdit.Lines.Text:=TableCreate('TableName');;
-end;
-
-procedure TBrowserForm.SqlCreateTableAutoIncExecute(Sender: TObject);
 var
-  TableName: string;
+  CreateTableForm: TCreateTableForm;
 begin
-   TableName := InputBox('table name',
-    'New Table with PK Autoinc','');
-  if TableName  <> ''  then
-       SqlSynEdit.Lines.Text := TableCreateWithAutoIncrement(TableName);
+   CreateTableForm := TCreateTableForm.Create(self);
+   try
+      if CreateTableForm.ShowModal = mrOk then
+      begin
+        if CreateTableForm.AutoInc then
+           SqlSynEdit.Lines.Text:=TableCreateWithAutoIncrement(CreateTableForm.TableName,
+             CreateTableForm.PrimaryKey)
+        else
+           SqlSynEdit.Lines.Text:=TableCreate(CreateTableForm.TableName,
+             CreateTableForm.PrimaryKey);
+      end;
+   finally
+      CreateTableForm.Free;
+   end;
 end;
-
 
 procedure TBrowserForm.SqlSynEditSpecialLineColors(Sender: TObject;
   Line: integer; var Special: boolean; var FG, BG: TColor);
@@ -3027,8 +3028,6 @@ begin
    special := true;
   end;
 end;
-
-
 
 //------------------------------------------------------------------------------
 
@@ -3062,6 +3061,8 @@ end;
 
 procedure TBrowserForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  fsconfig.SqlEditPanelHeight := SqlEditPanel.Height;
+  fsconfig.WriteConfigFile;
   if FCurrentAlias <> '' then
     fsconfig.SaveHistory(FcurrentAlias, FHistory);
   fsconfig.SaveFormPos(self);
@@ -3130,6 +3131,7 @@ begin
   DdlSynMemo.Highlighter := MainDataModule.SynSQLSyn1;
   SqlSynEdit.Highlighter := MainDataModule.SynSQLSyn1;
   DdlSynMemo.Align := alClient;
+  SqlEditPanel.Height := fsconfig.SqlEditPanelHeight;
   if FErrorDllNotFound then
   begin
     ShowMessage('firebird client dll library [fbclient.dll or gds32.dll] not found');
