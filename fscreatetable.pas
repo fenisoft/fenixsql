@@ -22,7 +22,6 @@ type
     procedure PrimaryKeyEditChange(Sender: TObject);
     procedure TableNameEditChange(Sender: TObject);
   private
-    FAutoInc: boolean;
     { private declarations }
     function GetTableName: string;
     function GetPrimaryKey: string;
@@ -31,7 +30,7 @@ type
     { public declarations }
     property TableName: string read GetTableName;
     property PrimaryKey: string read GetPrimaryKey;
-    property AutoInc: boolean read FAutoInc;
+    property AutoInc: boolean read GetAutoInc;
   end;
 
 //var

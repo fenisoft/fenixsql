@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 269
+  Left = 223
   Height = 526
-  Top = 196
+  Top = 268
   Width = 781
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -4804,5 +4804,16 @@ object BrowserForm: TBrowserForm
       FF00FFFFFF006945210069452100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00
     }
+  end
+  object PopupNotifier1: TPopupNotifier
+    Color = 14483455
+    Icon.Data = {
+      07544269746D617000000000
+    }
+    Text = 'Text'
+    Title = 'Caption'
+    Visible = False
+    left = 112
+    top = 216
   end
 end
