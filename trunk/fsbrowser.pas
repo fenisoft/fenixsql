@@ -28,8 +28,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   SynMemo, ComCtrls, ActnList, Menus, StdCtrls, Grids, StdActns,
-  SynEdit, FBLDatabase, FBLDsql, FBLExcept,
-  FBLTextGridExport, ibase_h, FBLmixf, Math, FBLScript, SynEditMiscClasses, SynEditMarkupSpecialLine;
+  SynEdit, FBLDatabase, FBLDsql, FBLExcept, PopupNotifier,
+  FBLTextGridExport, ibase_h, FBLmixf, Math, FBLScript;
 
 type
 
@@ -74,6 +74,7 @@ type
     MenuItem26: TMenuItem;
     MenuItem27: TMenuItem;
     MenuItem28: TMenuItem;
+    PopupNotifier1: TPopupNotifier;
     SqlCreateTableAction: TAction;
     ResultSetToJson: TAction;
     ResultSetToCsv: TAction;
@@ -328,6 +329,7 @@ type
       AImageIndex: integer = -1; AImageErrorIndex: integer = -1);
     procedure EditLineError(ALineError: Integer);
     procedure EditResetError;
+    procedure ShowPopUpNotifier(const ACaption,AText: string; AImageIndex: Integer);
   public
     { public declarations }
   end;
@@ -2722,6 +2724,24 @@ begin
    SqlSynEdit.Invalidate;
 end;
 
+procedure TBrowserForm.ShowPopUpNotifier(const ACaption, AText: string;
+  AImageIndex: Integer);
+var
+  bmp: TBitmap;
+begin
+  bmp := TBitmap.Create;
+  try
+    PopUpNotifier1.Title := ACaption;
+    PopUpNotifier1.Text := AText;
+    BrowserImageList.GetBitmap(AImageIndex,bmp);
+    PopUpNotifier1.Icon.Assign(bmp);
+    PopUpNotifier1.ShowAtPos(SqlSynEdit.ClientOrigin.x ,SqlSynEdit.ClientOrigin.y);
+  finally
+    bmp.Free;
+  end;
+
+end;
+
 
 
 //------------------------------------------------------------------------------
@@ -3007,11 +3027,18 @@ begin
       if CreateTableForm.ShowModal = mrOk then
       begin
         if CreateTableForm.AutoInc then
+        begin
            SqlSynEdit.Lines.Text:=TableCreateWithAutoIncrement(CreateTableForm.TableName,
-             CreateTableForm.PrimaryKey)
+             CreateTableForm.PrimaryKey);
+           ShowPopUpNotifier('Fenixsql:create table',
+             rsUseExecuteSc, 3 );
+        end
         else
+        begin
            SqlSynEdit.Lines.Text:=TableCreate(CreateTableForm.TableName,
              CreateTableForm.PrimaryKey);
+
+        end;
       end;
    finally
       CreateTableForm.Free;

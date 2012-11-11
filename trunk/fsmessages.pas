@@ -40,6 +40,7 @@ resourcestring
   rsErrorInTransR = 'Error in Transaction rollback. [isc_error :%d]';
   rsGeneratorSet = 'Generator Set.';
   rsErrorInExecute = 'Error in execute. [isc_error : %d]';
+  rsUseExecuteSc = 'use [Execute Script(CTRL+F9)] for run this script';
 
 implementation
 

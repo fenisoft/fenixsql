@@ -1,6 +1,6 @@
 object CreateTableForm: TCreateTableForm
   Left = 445
-  Height = 163
+  Height = 173
   Top = 376
   Width = 304
   BorderStyle = bsDialog
@@ -8,14 +8,14 @@ object CreateTableForm: TCreateTableForm
   ChildSizing.LeftRightSpacing = 6
   ChildSizing.TopBottomSpacing = 6
   ChildSizing.VerticalSpacing = 3
-  ClientHeight = 163
+  ClientHeight = 173
   ClientWidth = 304
   Position = poMainFormCenter
   LCLVersion = '1.0.2.0'
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
-    Top = 123
+    Top = 133
     Width = 292
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
