@@ -3037,7 +3037,6 @@ begin
         begin
            SqlSynEdit.Lines.Text:=TableCreate(CreateTableForm.TableName,
              CreateTableForm.PrimaryKey);
-
         end;
       end;
    finally
@@ -3052,7 +3051,7 @@ begin
   begin
     FG := clWhite;
     BG := clRed;
-   special := true;
+    special := true;
   end;
 end;
 
