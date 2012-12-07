@@ -309,20 +309,20 @@ end;
 
 procedure TTableViewForm.ExecuteSql;
 var
-  SqlText, SqlNumRecord: string;
+  SqlText, SqlNumRecord, DQuoteTableName: string;
 begin
-
+  DQuoteTableName := '"' + FTableName + '"';
   if FFilter = '' then
   begin
-    SqlText := 'Select RDB$DB_KEY ,' + FTableName + '.*  from ' + FTableName;
-    SqlNumRecord := 'Select count(*) from ' + FTableName;
+    SqlText := 'Select RDB$DB_KEY ,' + DQuoteTableName + '.*  from ' + DQuoteTableName;
+    SqlNumRecord := 'Select count(*) from ' + DQuoteTableName;
   end
   else
   begin
-    SqlText := 'Select RDB$DB_KEY ,' + FTableName + '.*  from ' +
-      FTableName + ' where ' + FFilter;
+    SqlText := 'Select RDB$DB_KEY ,' + DQuoteTableName + '.*  from ' +
+      DQuoteTableName + ' where ' + FFilter;
     if not FisOrder then
-      SqlNumRecord := 'Select count(*) from ' + FTableName + ' where ' + FFilter;
+      SqlNumRecord := 'Select count(*) from ' + DQuoteTableName + ' where ' + FFilter;
   end;
 
   try
@@ -506,13 +506,15 @@ end;
 procedure TTableViewForm.BlobView(const AdbKey, AFieldName: string);
 var
   BlobViewDialogForm: TBlobViewDialogForm;
+  DQuoteTableName: string;
 begin
+  DQuoteTableName := '"' + FTableName + '"';
   BlobViewDialogForm := TBlobViewDialogForm.Create(self);
   try
     if not MainDataModule.BlobViewTr.InTransaction then
       MainDataModule.BlobViewTr.StartTransaction;
     MainDataModule.BlobViewQry.SQL.Text :=
-      'Select ' + AFieldName + ' from ' + FTableName + ' where RDB$DB_KEY = ?';
+      'Select ' + AFieldName + ' from ' + DQuoteTableName + ' where RDB$DB_KEY = ?';
     MainDataModule.BlobViewQry.Prepare;
     MainDataModule.BlobViewQry.ParamAsString(0, ADbkey);
     MainDataModule.BlobViewQry.ExecSQL;

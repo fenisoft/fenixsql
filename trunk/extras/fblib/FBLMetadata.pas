@@ -464,13 +464,12 @@ begin
     qry.ExecSQL;
     while not Qry.EOF do
     begin
-      FTables.Add(trim(Qry.FieldAsString(0)));
+      FTables.Add(Trim(Qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
     if FTransaction.InTransaction then FTransaction.Commit;
   finally
-
     qry.Free;
   end;
 end;
@@ -494,7 +493,7 @@ begin
     qry.ExecSQL;
     while not Qry.EOF do
     begin
-      FSystemTables.Add(trim(Qry.FieldAsString(0)));
+      FSystemTables.Add(Trim(Qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -531,7 +530,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FViews.Add(trim(qry.FieldAsString(0)));
+      FViews.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -559,7 +558,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FProcedures.Add(trim(qry.FieldAsString(0)));
+      FProcedures.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -588,7 +587,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FGenerators.Add(trim(qry.FieldAsString(0)));
+      FGenerators.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -617,7 +616,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FDomains.Add(trim(qry.FieldAsString(0)));
+      FDomains.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -645,7 +644,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      Fudfs.Add(trim(Qry.FieldAsString(0)));
+      Fudfs.Add(Trim(Qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -673,7 +672,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FExceptions.Add(trim(qry.FieldAsString(0)));
+      FExceptions.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -701,7 +700,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FRoles.Add(trim(qry.FieldAsString(0)));
+      FRoles.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -733,7 +732,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FTriggers.Add(trim(qry.FieldAsString(0)));
+      FTriggers.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -765,7 +764,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FSystemTriggers.Add(trim(qry.FieldAsString(0)));
+      FSystemTriggers.Add(Trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -844,7 +843,7 @@ begin
           Result := 'BLOB SUB_TYPE TEXT';
       end;
   end;
-  result:=trim(result);
+  result:=Trim(Result);
 end;
 
 //------------------------------------------------------------------------------
@@ -866,7 +865,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do 
     begin
-      Result := Result + trim(qry.FieldAsString(0));
+      Result := Result + Trim(qry.FieldAsString(0));
       qry.Next;
       if not qry.EOF then Result := Result + ',';
     end;
@@ -898,9 +897,9 @@ begin
     qry.Prepare;
     qry.ParamAsString(0, AConstraintName);
     qry.ExecSQL;
-    pk := trim(qry.FieldAsString(0));
-    up := trim(qry.FieldAsString(1));
-    de := trim(qry.FieldAsString(2));
+    pk := Trim(qry.FieldAsString(0));
+    up := Trim(qry.FieldAsString(1));
+    de := Trim(qry.FieldAsString(2));
     qry.UnPrepare;
     qry.SQL.Text := 'SELECT RDB$RELATION_NAME,' +       //0
       'RDB$INDEX_NAME ' +                //1
@@ -909,8 +908,8 @@ begin
     qry.Prepare;
     qry.ParamAsString(0,pk);
     qry.ExecSQL;
-    Result := 'REFERENCES ' + trim(qry.FieldAsString(0)) +
-      '(' + trim(FieldsInIndex(Qry.FieldAsString(1))) +
+    Result := 'REFERENCES ' + Trim(qry.FieldAsString(0)) +
+      '(' + Trim(FieldsInIndex(Qry.FieldAsString(1))) +
       ')' + NEW_LINE + INTEND + 'ON UPDATE ' + up + ' ON DELETE ' + de;
     qry.UnPrepare;
   finally
@@ -1017,7 +1016,7 @@ begin
     while not qry.EOF do
     begin
       Result := Result + INTEND +
-        Format('%-31s', [trim(qry.FieldAsString(0))]) + ' ';
+        Format('%-31s', [Trim(qry.FieldAsString(0))]) + ' ';
       if not qry.FieldIsNull(9) then
         Result := Result + 'COMPUTED BY ' + UpperCase(qry.FieldAsString(9))
       else
@@ -1028,7 +1027,7 @@ begin
             qry.FieldAsLong(6), qry.FieldAsLong(7),
             qry.FieldAsLong(8));
           if (not qry.FieldIsNull(10)) and (qry.FieldAsInteger(10) <> 0) then
-            Result := Result + ' CHARACTER SET ' + trim(qry.FieldAsString(12));
+            Result := Result + ' CHARACTER SET ' + Trim(qry.FieldAsString(12));
           if qry.FieldAsLong(11) > 0 then   //array
             Result := Result + ArrayFieldDimension(qry.FieldAsString(1));
           if not qry.FieldIsNull(3) then   // default value
@@ -1073,7 +1072,7 @@ begin
     if not qry.EOF then Result := Result + '(' + NEW_LINE;
     while not qry.EOF do
     begin
-      Result := Result + INTEND + trim(Qry.FieldAsString(0));
+      Result := Result + INTEND + Trim(Qry.FieldAsString(0));
       Qry.Next;
       if qry.EOF then
         Result := Result + NEW_LINE + ')' + NEW_LINE
@@ -1133,7 +1132,7 @@ begin
     while not qry.EOF do
     begin
       Result := Result + NEW_LINE;
-      Result := Result + INTEND + trim(qry.FieldAsString(0)) + ' ' +
+      Result := Result + INTEND + Trim(qry.FieldAsString(0)) + ' ' +
         FieldType(qry.FieldAsInteger(2), qry.FieldAsInteger(3),
         qry.FieldAsInteger(4),
         qry.FieldAsInteger(5), qry.FieldAsInteger(6));
@@ -1151,7 +1150,7 @@ begin
     while not qry.EOF do
     begin
       Result := Result + NEW_LINE;
-      Result := Result + '  ' + trim(qry.FieldAsString(0)) + ' ' +
+      Result := Result + '  ' + Trim(qry.FieldAsString(0)) + ' ' +
         FieldType(qry.FieldAsLong(2), qry.FieldAsLong(3),
         qry.FieldAsLong(4),
         qry.FieldAsLong(5), qry.FieldAsLong(6));
@@ -1262,7 +1261,7 @@ begin
       FieldType(qry.FieldAsLong(3), qry.FieldAsLong(4), qry.FieldAsLong(5),
       qry.FieldAsLong(6), qry.FieldAsLong(7));
     if (not qry.FieldIsNull(8)) and (qry.FieldAsInteger(8) <> 0) then
-      Result := Result + ' CHARACTER SET ' + trim(qry.FieldAsString(9));
+      Result := Result + ' CHARACTER SET ' + Trim(qry.FieldAsString(9));
     if not qry.FieldIsNull(1) then
       Result := Result + NEW_LINE + Trim(qry.FieldAsString(1));
     if qry.FieldAsLong(2) = 1 then
@@ -1300,8 +1299,8 @@ begin
     qry.Prepare;
     qry.ParamAsString(0,AUDFName);
     qry.ExecSQL;
-    ModuleName := trim(qry.FieldAsString(0));
-    EntryPoint := trim(qry.FieldAsString(1));
+    ModuleName := Trim(qry.FieldAsString(0));
+    EntryPoint := Trim(qry.FieldAsString(1));
     Return_Argument := qry.FieldAsLong(2);
     qry.UnPrepare;
     qry.SQL.Text := 'SELECT ' +
@@ -1390,7 +1389,7 @@ begin
       if Qry.FieldAsLong(3) = 1 then
         Result := Result + 'DESC ';
 
-      Result := Result + 'INDEX ' + trim(Qry.FieldAsString(0)) + NEW_LINE +
+      Result := Result + 'INDEX ' + Trim(Qry.FieldAsString(0)) + NEW_LINE +
         INTEND + 'ON ' + Trim(ATableName) + '(' +
         FieldsInIndex(Qry.FieldAsString(0)) + ');' + NEW_LINE;
       Qry.Next;
@@ -1429,8 +1428,8 @@ begin
     if not Qry.EOF then
     begin
       Result := 'ALTER TABLE ' + Trim(ATableName) + ' ADD CONSTRAINT ' +
-        trim(Qry.FieldAsString(0)) + ' PRIMARY KEY (' +
-        FieldsInIndex(trim(Qry.FieldAsString(1))) + ');';
+        Trim(Qry.FieldAsString(0)) + ' PRIMARY KEY (' +
+        FieldsInIndex(Trim(Qry.FieldAsString(1))) + ');';
     end;
     Qry.UnPrepare;
   finally
@@ -1462,8 +1461,8 @@ begin
     while not Qry.EOF do
     begin
       Result := Result + 'ALTER TABLE ' + Trim(ATableName) + ' ADD CONSTRAINT ' +
-        trim(Qry.FieldAsString(0)) + ' FOREIGN KEY (' +
-        FieldsInIndex(trim(Qry.FieldAsString(1))) + ') ' + NEW_LINE + INTEND +
+        Trim(Qry.FieldAsString(0)) + ' FOREIGN KEY (' +
+        FieldsInIndex(Trim(Qry.FieldAsString(1))) + ') ' + NEW_LINE + INTEND +
         RefConstraints(Qry.FieldAsString(0)) + ';' + NEW_LINE;
       qry.Next;
     end;
@@ -1496,11 +1495,11 @@ begin
     while not Qry.EOF do
     begin
       Result := Result + 'ALTER TABLE ' + Trim(ATableName) +
-        ' ADD CONSTRAINT ' + trim(Qry.FieldAsString(0)) + ' ' +
+        ' ADD CONSTRAINT ' + Trim(Qry.FieldAsString(0)) + ' ' +
         CheckConstraints(qry.FieldAsString(0)) + ';' + NEW_LINE;
       qry.Next;
     end;
-    Result := trim(Result);
+    Result := Trim(Result);
     Qry.UnPrepare;
   finally
     qry.Free;
@@ -1530,8 +1529,8 @@ begin
     while not Qry.EOF do
     begin
       Result := Result + 'ALTER TABLE ' + Trim(ATableName) +
-        ' ADD CONSTRAINT ' + trim(Qry.FieldAsString(0)) + ' UNIQUE (' +
-        FieldsInIndex(trim(Qry.FieldAsString(1))) + ');' + NEW_LINE;
+        ' ADD CONSTRAINT ' + Trim(Qry.FieldAsString(0)) + ' UNIQUE (' +
+        FieldsInIndex(Trim(Qry.FieldAsString(1))) + ');' + NEW_LINE;
       qry.Next;
     end;
     Result := Trim(Result);
@@ -1634,7 +1633,7 @@ begin
     qry.SQL.Text := 'SELECT RDB$CHARACTER_SET_NAME FROM RDB$DATABASE';
     qry.ExecSQL;
     if not qry.FieldIsNull(0) then
-      Result := trim(qry.FieldAsString(0));
+      Result := Trim(qry.FieldAsString(0));
     qry.Close;
     FTransaction.Commit;
   finally
@@ -1657,7 +1656,7 @@ begin
     qry.SQL.Text := 'SELECT USER FROM RDB$DATABASE';
     qry.ExecSQL;
     if not qry.FieldIsNull(0) then
-      Result := trim(qry.FieldAsString(0));
+      Result := Trim(qry.FieldAsString(0));
     qry.Close;
     FTransaction.Commit;
   finally
