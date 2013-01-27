@@ -209,7 +209,7 @@ end;
 
 procedure WriteConfigSynEdit;
 var
-  Inifile: TiniFile;
+  Inifile: TIniFile;
 begin
   IniFile := TiniFile.Create(GetConfigIniFile);
   try
@@ -223,7 +223,7 @@ begin
       SynSQLSyn1.DataTypeAttri.SaveToFile(IniFile);
       SynSQLSyn1.IdentifierAttri.SaveToFile(IniFile);
     end;
-    inifile.UpdateFile;
+    Inifile.UpdateFile;
   finally
     IniFile.Free;
   end;
