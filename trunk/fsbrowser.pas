@@ -71,9 +71,16 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    CloseOtherSQLTabAction: TAction;
+    CloseSQLTabAction: TAction;
+    MenuItem50: TMenuItem;
+    MenuItem51: TMenuItem;
+    MenuItem52: TMenuItem;
+    NewSQLTabAction: TAction;
     MenuItem26: TMenuItem;
     MenuItem27: TMenuItem;
     MenuItem28: TMenuItem;
+    SQLTabsPopupMenu: TPopupMenu;
     PopupNotifier1: TPopupNotifier;
     SqlCreateTableAction: TAction;
     ResultSetToJson: TAction;
@@ -93,10 +100,14 @@ type
     SelectAllSynMemoAction: TAction;
     DbConnectionsAction: TAction;
     ShowAboutAction: TAction;
+    SqlSynEdit: TSynEdit;
+    SqlEditTabControl: TTabControl;
     ToolBar2: TToolBar;
     ToolButton19: TToolButton;
     ToolButton20: TToolButton;
     MessagesTreeView: TTreeView;
+    ToolButton21: TToolButton;
+    ToolButton22: TToolButton;
     UsersAction: TAction;
     ServiceMgrAction: TAction;
     ShowTextOptionsAction: TAction;
@@ -168,7 +179,6 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     PlanMemo: TMemo;
-    SqlSynEdit: TSynEdit;
     MainPageControl: TPageControl;
     FieldsStringGrid: TStringGrid;
     ResultSetStringGrid: TStringGrid;
@@ -219,9 +229,11 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     DbTreeView: TTreeView;
+    procedure NewSQLTabActionExecute(Sender: TObject);
     procedure ClearMessagesActionExecute(Sender: TObject);
     procedure CreateDbActionExecute(Sender: TObject);
     procedure DbConnectionsActionExecute(Sender: TObject);
+    procedure CloseSQLTabActionExecute(Sender: TObject);
     procedure ExportToCsvActionExecute(Sender: TObject);
     procedure ExportToJsonActionExecute(Sender: TObject);
     procedure ExportToSqlActionExecute(Sender: TObject);
@@ -233,6 +245,9 @@ type
     procedure ShowOptionsActionExecute(Sender: TObject);
     procedure ShowTextOptionsActionExecute(Sender: TObject);
     procedure SqlCreateTableActionExecute(Sender: TObject);
+    procedure SqlEditTabControlChange(Sender: TObject);
+    procedure SqlEditTabControlChanging(Sender: TObject;
+      var AllowChange: Boolean);
     procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure UsersActionExecute(Sender: TObject);
@@ -296,6 +311,7 @@ type
     {$ENDIF}
     FErrorDllNotFound: boolean;
     FLineWithError: Integer;
+    FEditBuffers: TList;
     procedure DoAfterDisconnect;
     procedure CarretPos;
     procedure EndTr(ATrCommit: boolean = False); //False rollback (default) True commit
@@ -330,6 +346,7 @@ type
     procedure EditLineError(ALineError: Integer);
     procedure EditResetError;
     procedure ShowPopUpNotifier(const ACaption,AText: string; AImageIndex: Integer);
+    procedure AddTabEdit;
   public
     { public declarations }
   end;
@@ -425,7 +442,7 @@ uses
   fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext, fslogin,
   fsdialogtran, fstableview, fscreatedb, fsdescription, fsoptions,
   fstextoptions, fsservice, fsusers, fsbackup, fsabout, fsdbconnections,
-  fsexport, fsmessages, fssqlcodetemplate, fscreatetable;
+  fsexport, fsmessages, fssqlcodetemplate, fscreatetable,fsbrowserintf;
 
 { TScriptStm }
 
@@ -2744,6 +2761,8 @@ end;
 
 
 
+
+
 //------------------------------------------------------------------------------
 {Events procedure}
 
@@ -2770,6 +2789,7 @@ begin
   Self.Left := (Screen.Width - DEFAULT_WIDTH) div 2;
   Self.Height := DEFAULT_HEIGHT;
   Self.Width := DEFAULT_WIDTH;
+  FEditBuffers := TList.Create;
   try
     ibase_h.CheckFbClientLoaded;
     FsConfig.SetDefaultVariable;
@@ -2825,6 +2845,8 @@ begin
     MessagesTreeView.Items.EndUpdate;
   end;
 end;
+
+
 
 
 //------------------------------------------------------------------------------
@@ -3044,6 +3066,8 @@ begin
    end;
 end;
 
+
+
 procedure TBrowserForm.SqlSynEditSpecialLineColors(Sender: TObject;
   Line: integer; var Special: boolean; var FG, BG: TColor);
 begin
@@ -3144,6 +3168,7 @@ begin
   FRoleList.Free;
   FSysTableList.Free;
   FSysTriggerList.Free;
+  FEditBuffers.Free;
 end;
 
 //------------------------------------------------------------------------------
@@ -3250,6 +3275,38 @@ begin
         E.Message);
   end;
 end;
+
+procedure TBrowserForm.AddTabEdit;
+begin
+  SqlEditTabControl.Tabs.Add('Sql' + IntToStr(SqlEditTabControl.Tabs.Count + 1));
+  FEditBuffers.Add(TFsEditInfo.Create(''));
+end;
+
+procedure TBrowserForm.NewSQLTabActionExecute(Sender: TObject);
+begin
+   AddTabEdit;
+   SqlEditTabControl.TabIndex:= SqlEditTabControl.Tabs.Count -1 ;
+end;
+
+procedure TBrowserForm.CloseSQLTabActionExecute(Sender: TObject);
+begin
+   SqlEditTabControl.Tabs.Delete(SqlEditTabControl.TabIndex);
+   TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Free;
+   FEditBuffers.Delete(SqlEditTabControl.TabIndex);
+end;
+
+procedure TBrowserForm.SqlEditTabControlChange(Sender: TObject);
+begin
+   //
+end;
+
+procedure TBrowserForm.SqlEditTabControlChanging(Sender: TObject;
+  var AllowChange: Boolean);
+begin
+  //
+end;
+
+
 
 procedure TBrowserForm.ExportToCsvActionExecute(Sender: TObject);
 begin
