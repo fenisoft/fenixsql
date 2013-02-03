@@ -14,14 +14,14 @@ TFsEditInfo = class
     FText: string;
     FCarretPos: TPoint;
   public
-    constructor Create(const AText: String);
+    constructor Create(const AText: string = '');
     property Text: String read FText write FText;
     property CarretPos: TPoint read FCarretPos write FCarretPos;
   end;
 
 implementation
 
-constructor TFsEditInfo.Create(const AText: String);
+constructor TFsEditInfo.Create(const AText: string = '');
 begin
   FText := AText;
   FCarretPos.x := 1;

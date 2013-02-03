@@ -54,17 +54,17 @@ type
     property ObjDesc: string read FObjDesc write FObjDesc;
   end;
 
-  type
+type
 
   { TScriptStm }
 
- TScriptStm = class
+  TScriptStm = class
   private
-    FLineStart: Integer;
+    FLineStart: integer;
     FStm: string;
   public
-    constructor Create(ALineStart: Integer;const AStm:string);
-    property LineStart: Integer read FLineStart write FLineStart;
+    constructor Create(ALineStart: integer; const AStm: string);
+    property LineStart: integer read FLineStart write FLineStart;
     property Stm: string read FStm write FStm;
   end;
 
@@ -229,6 +229,7 @@ type
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     DbTreeView: TTreeView;
+    procedure CloseOtherSQLTabActionExecute(Sender: TObject);
     procedure NewSQLTabActionExecute(Sender: TObject);
     procedure ClearMessagesActionExecute(Sender: TObject);
     procedure CreateDbActionExecute(Sender: TObject);
@@ -246,8 +247,7 @@ type
     procedure ShowTextOptionsActionExecute(Sender: TObject);
     procedure SqlCreateTableActionExecute(Sender: TObject);
     procedure SqlEditTabControlChange(Sender: TObject);
-    procedure SqlEditTabControlChanging(Sender: TObject;
-      var AllowChange: Boolean);
+    procedure SqlEditTabControlChanging(Sender: TObject; var AllowChange: boolean);
     procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure UsersActionExecute(Sender: TObject);
@@ -310,7 +310,7 @@ type
     FNeedRefresh: boolean;
     {$ENDIF}
     FErrorDllNotFound: boolean;
-    FLineWithError: Integer;
+    FLineWithError: integer;
     FEditBuffers: TList;
     procedure DoAfterDisconnect;
     procedure CarretPos;
@@ -336,17 +336,20 @@ type
     procedure DoAfterConnect;
     procedure LoadFontColor;
     procedure SetOutputType(const AType: integer);
-    function ExecuteSQL(const ASqlText: string; const AVerbose: boolean; ALineStart: Integer = 0): boolean;
+    function ExecuteSQL(const ASqlText: string; const AVerbose: boolean;
+      ALineStart: integer = 0): boolean;
     function AbjustColWidth(const ACol: integer): integer;
     procedure ShowTableView(const ATableName: string);
     procedure ShowObjectDescription(const AType: integer; const ASqlObject: string);
     procedure LogMessage(const AMsg: string; AImageIndex: integer = -1);
     procedure LogErrorMessage(const AMsg: string; const AErrorMsg: string;
       AImageIndex: integer = -1; AImageErrorIndex: integer = -1);
-    procedure EditLineError(ALineError: Integer);
+    procedure EditLineError(ALineError: integer);
     procedure EditResetError;
-    procedure ShowPopUpNotifier(const ACaption,AText: string; AImageIndex: Integer);
-    procedure AddTabEdit;
+    procedure ShowPopUpNotifier(const ACaption, AText: string; AImageIndex: integer);
+    procedure AddTabEdit(const AText: string = '');
+    procedure LoadTabsHistory;
+    procedure SaveTabsHistory;
   public
     { public declarations }
   end;
@@ -442,11 +445,11 @@ uses
   fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext, fslogin,
   fsdialogtran, fstableview, fscreatedb, fsdescription, fsoptions,
   fstextoptions, fsservice, fsusers, fsbackup, fsabout, fsdbconnections,
-  fsexport, fsmessages, fssqlcodetemplate, fscreatetable,fsbrowserintf;
+  fsexport, fsmessages, fssqlcodetemplate, fscreatetable, fsbrowserintf;
 
 { TScriptStm }
 
-constructor TScriptStm.Create(ALineStart: Integer; const AStm: string);
+constructor TScriptStm.Create(ALineStart: integer; const AStm: string);
 begin
   FLineStart := ALineStart;
   FStm := AStm;
@@ -469,6 +472,7 @@ end;
 
 procedure TBrowserForm.DoAfterDisconnect;
 begin
+  //SaveTabsHistory;
   SqlTabSheet.TabVisible := False;
   ResultSetTabSheet.TabVisible := False;
   FieldCountTabSheet.TabVisible := False;
@@ -489,6 +493,7 @@ begin
   NextAction.Enabled := False;
   SqlSynEdit.Lines.Clear;
   BackupDatabaseAction.Enabled := False;
+
   {$IFDEF UNIX}
   FNeedRefresh := False;
   {$ENDIF}
@@ -502,10 +507,8 @@ var
   i: integer;
 begin
   History := TStringList.Create;
-
   SqlTabSheet.TabVisible := True;
   ResultSetTabSheet.TabVisible := False;
-
   NewScriptAction.Enabled := True;
   OpenScriptAction.Enabled := True;
   ExecSqlAction.Enabled := True;
@@ -514,6 +517,7 @@ begin
   ClearHistoryAction.Enabled := True;
   RefreshStatusBar;
   BackupDatabaseAction.Enabled := True;
+  LoadTabsHistory;
   try
     FsConfig.LoadHistory(FCurrentAlias, History);
     for i := 0 to History.Count - 1 do
@@ -540,7 +544,7 @@ begin
   if FExecutedDDLStm then
   begin
     //if ATrCommit then
-      //RefreshAllActionExecute(Self);
+    //RefreshAllActionExecute(Self);
     FExecutedDDLStm := False;
   end;
   RefreshStatusBar;
@@ -588,22 +592,22 @@ end;
 //------------------------------------------------------------------------------
 { return true if error}
 
-function TBrowserForm.ExecuteSQL(const ASqlText: string;
-  const AVerbose: boolean; ALineStart: Integer = 0): boolean;
+function TBrowserForm.ExecuteSQL(const ASqlText: string; const AVerbose: boolean;
+  ALineStart: integer = 0): boolean;
 var
   PrepareTimeStart, ExecTime, ExecTimeStart, FetchTime, FetchTimeStart: TDateTime;
   i: integer;
 begin
   Result := False;
   EditResetError;
-  if  MessagesTreeview.Items.Count > 0 then
-     LogMessage(' ');
+  if MessagesTreeview.Items.Count > 0 then
+    LogMessage(' ');
 
   if not MainDataModule.MainTr.InTransaction then
   begin
     MainDataModule.MainTr.StartTransaction;
     StartTr;
-    LogMessage(Format(rsStartTransaction, [TimeToStr(Now)]),BMP_TVM_STATE);
+    LogMessage(Format(rsStartTransaction, [TimeToStr(Now)]), BMP_TVM_STATE);
   end;
 
   MainDataModule.MainQry.Close;
@@ -616,12 +620,13 @@ begin
     if not MainDataModule.MainQry.Prepared then
     begin
       if AVerbose then
-        LogMessage(rsPreparing,BMP_TVM_STATE);
+        LogMessage(rsPreparing, BMP_TVM_STATE);
       PrepareTimeStart := Time;
       MainDataModule.MainQry.Prepare;
       if AVerbose then
       begin
-        LogMessage(Format(rsStatementPre, [TimeT(Time - PrepareTimeStart)]),BMP_TVM_CLOCK);
+        LogMessage(Format(rsStatementPre, [TimeT(Time - PrepareTimeStart)]),
+          BMP_TVM_CLOCK);
         PlanMemo.Lines.Text := MainDataModule.MainQry.Plan;
       end;
     end
@@ -630,7 +635,7 @@ begin
     begin
       if AVerbose then
       begin
-        LogMessage(rsStatementAlreadyPrepared,BMP_TVM_NOTE);
+        LogMessage(rsStatementAlreadyPrepared, BMP_TVM_NOTE);
       end;
     end;
   except
@@ -638,7 +643,7 @@ begin
     begin
       beep;
       LogErrorMessage(Format(rsErrorInPrepare, [E.ISC_ErrorCode]),
-        E.Message,BMP_TVM_ERROR);
+        E.Message, BMP_TVM_ERROR);
       EditLineError(StmErrorAtLine(E.Message) + ALineStart);
       MainDataModule.MainQry.UnPrepare;
       Result := True;
@@ -653,7 +658,7 @@ begin
     except
       on Er: Exception do
       begin
-        LogErrorMessage(rsErrorInParam, Er.Message,BMP_TVM_ERROR);
+        LogErrorMessage(rsErrorInParam, Er.Message, BMP_TVM_ERROR);
         Exit;
       end;
     end;
@@ -693,14 +698,14 @@ begin
         qtSelect:
         begin
           if AVerbose then
-            LogMessage(rsExecuting,BMP_TVM_STATE);
+            LogMessage(rsExecuting, BMP_TVM_STATE);
           MainDataModule.MainQry.ExecSQL;
           ExecTime := Time - ExecTimeStart;
           FetchTimeStart := Time;
           if AVerbose then
           begin
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
-            LogMessage(rsFetching,BMP_TVM_STATE);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]), BMP_TVM_CLOCK);
+            LogMessage(rsFetching, BMP_TVM_STATE);
           end;
           Application.ProcessMessages;
           if FsConfig.OutputGridType = 0 then
@@ -709,7 +714,7 @@ begin
             TextGrid(MainDataModule.MainQry, ResultSetSynMemo.Lines, True);
           FetchTime := Time - FetchTimeStart;
           LogMessage(Format(rsDRowSFetched,
-            [MainDataModule.MainQry.FetchCount, TimeT(FetchTime)]),BMP_TVM_STATE);
+            [MainDataModule.MainQry.FetchCount, TimeT(FetchTime)]), BMP_TVM_STATE);
           ResultSetTabSheet.Caption :=
             Format(rsResultSetD, [MainDataModule.MainQry.FetchCount]);
           ResultSetToCsv.Enabled := MainDataModule.MainQry.FetchCount > 0;
@@ -723,9 +728,9 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]), BMP_TVM_CLOCK);
             LogMessage(Format(rsDRowSInserte,
-              [MainDataModule.MainQry.RowsAffected]),BMP_TVM_STATE);
+              [MainDataModule.MainQry.RowsAffected]), BMP_TVM_STATE);
           end;
         end;
         qtUpdate:
@@ -736,9 +741,9 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]), BMP_TVM_CLOCK);
             LogMessage(Format(rsDRowSUpdated,
-              [MainDataModule.MainQry.RowsAffected]),BMP_TVM_STATE);
+              [MainDataModule.MainQry.RowsAffected]), BMP_TVM_STATE);
           end;
         end;
         qtDelete:
@@ -749,9 +754,9 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]), BMP_TVM_CLOCK);
             LogMessage(Format(rsDRowSDeleted,
-              [MainDataModule.MainQry.RowsAffected]),BMP_TVM_STATE);
+              [MainDataModule.MainQry.RowsAffected]), BMP_TVM_STATE);
           end;
         end;
         qtDDL:
@@ -762,12 +767,12 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]), BMP_TVM_CLOCK);
           end;
           if AutoCommitDDL then
           begin
             MainDataModule.MainTr.CommitRetaining;
-            LogMessage(rsTransactionCR,BMP_TVM_COMMIT);
+            LogMessage(rsTransactionCR, BMP_TVM_COMMIT);
           end;
         end;
         qtExecProcedure:
@@ -776,10 +781,10 @@ begin
           if AVerbose then
           begin
             execTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStoredProced, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(Format(rsStoredProced, [TimeT(ExecTime)]), BMP_TVM_CLOCK);
             if MainDataModule.MainQry.FieldCount > 0 then
             begin
-              LogMessage(rsFetching,BMP_TVM_STATE);
+              LogMessage(rsFetching, BMP_TVM_STATE);
               if FsConfig.OutputGridType = 0 then
                 FetchDataGrid
               else if FsConfig.OutputGridType = 1 then
@@ -789,19 +794,19 @@ begin
             end;
             if MainDataModule.MainQry.FieldCount > 0 then
               LogMessage(Format(rsDRowSFetched2,
-                [MainDataModule.MainQry.FetchCount]),BMP_TVM_STATE);
+                [MainDataModule.MainQry.FetchCount]), BMP_TVM_STATE);
           end;
         end;
         qtCommit:
         begin
           MainDataModule.MainQry.ExecSQL;
-          LogMessage(Format(rsTransactionC, [TimeToStr(Now)]),BMP_TVM_CLOCK);
+          LogMessage(Format(rsTransactionC, [TimeToStr(Now)]), BMP_TVM_CLOCK);
           EndTr(True);
         end;
         qtRollback:
         begin
           MainDataModule.MainQry.ExecSQL;
-          LogMessage(Format(rsTransactionR, [TimeToStr(Now)]),BMP_TVM_ROLLBACK);
+          LogMessage(Format(rsTransactionR, [TimeToStr(Now)]), BMP_TVM_ROLLBACK);
           EndTr;
         end;
         qtSelectForUpdate:
@@ -810,8 +815,8 @@ begin
           if AVerbose then
           begin
             execTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),BMP_TVM_CLOCK);
-            LogMessage(rsSelectForUpd,BMP_TVM_STATE);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]), BMP_TVM_CLOCK);
+            LogMessage(rsSelectForUpd, BMP_TVM_STATE);
           end;
         end;
         qtSetGenerator:
@@ -821,8 +826,8 @@ begin
           if AVerbose then
           begin
             ExecTime := Time - ExecTimeStart;
-            LogMessage(Format(rsStatementExecuted,
-              [TimeT(ExecTime)]),BMP_TVM_CLOCK);
+            LogMessage(Format(rsStatementExecuted, [TimeT(ExecTime)]),
+              BMP_TVM_CLOCK);
             LogMessage(rsGeneratorSet, BMP_TVM_STATE);
           end;
         end;
@@ -830,8 +835,8 @@ begin
     except
       on E: EFBLError do
       begin
-        LogErrorMessage(Format(rsErrorInExecute,
-          [E.ISC_ErrorCode]),E.Message,BMP_TVM_ERROR);
+        LogErrorMessage(Format(rsErrorInExecute, [E.ISC_ErrorCode]),
+          E.Message, BMP_TVM_ERROR);
         EditLineError(StmErrorAtLine(E.Message) + ALineStart);
         MainDataModule.MainQry.Close;
         Result := True;
@@ -911,8 +916,8 @@ begin
             (MainQry.FieldType(i) = SQL_DOUBLE) or (MainQry.FieldType(i) = SQL_FLOAT) or
             (MainQry.FieldType(i) = SQL_D_FLOAT) then
             if MainQry.FieldScale(i) <> 0 then
-              ResultSetStringGrid.Cells[i + 1, r] := FormatNumericValue(
-                MainQry.FieldAsDouble(i), MainQry.FieldScale(i))
+              ResultSetStringGrid.Cells[i + 1, r] :=
+                FormatNumericValue(MainQry.FieldAsDouble(i), MainQry.FieldScale(i))
             else
               ResultSetStringGrid.Cells[i + 1, r] := MainQry.FieldAsString(i)
           else
@@ -2729,20 +2734,20 @@ begin
   end;
 end;
 
-procedure TBrowserForm.EditLineError(ALineError: Integer);
+procedure TBrowserForm.EditLineError(ALineError: integer);
 begin
-   FLineWithError := ALineError;
-   SqlSynEdit.Invalidate;
+  FLineWithError := ALineError;
+  SqlSynEdit.Invalidate;
 end;
 
 procedure TBrowserForm.EditResetError;
 begin
-   FLineWithError := 0;
-   SqlSynEdit.Invalidate;
+  FLineWithError := 0;
+  SqlSynEdit.Invalidate;
 end;
 
 procedure TBrowserForm.ShowPopUpNotifier(const ACaption, AText: string;
-  AImageIndex: Integer);
+  AImageIndex: integer);
 var
   bmp: TBitmap;
 begin
@@ -2750,15 +2755,14 @@ begin
   try
     PopUpNotifier1.Title := ACaption;
     PopUpNotifier1.Text := AText;
-    BrowserImageList.GetBitmap(AImageIndex,bmp);
+    BrowserImageList.GetBitmap(AImageIndex, bmp);
     PopUpNotifier1.Icon.Assign(bmp);
-    PopUpNotifier1.ShowAtPos(SqlSynEdit.ClientOrigin.x ,SqlSynEdit.ClientOrigin.y);
+    PopUpNotifier1.ShowAtPos(SqlSynEdit.ClientOrigin.x, SqlSynEdit.ClientOrigin.y);
   finally
     bmp.Free;
   end;
 
 end;
-
 
 
 
@@ -2789,7 +2793,9 @@ begin
   Self.Left := (Screen.Width - DEFAULT_WIDTH) div 2;
   Self.Height := DEFAULT_HEIGHT;
   Self.Width := DEFAULT_WIDTH;
+  //tabs
   FEditBuffers := TList.Create;
+  ///FEditBuffers.Add(TFsEditInfo.Create());
   try
     ibase_h.CheckFbClientLoaded;
     FsConfig.SetDefaultVariable;
@@ -3044,26 +3050,27 @@ procedure TBrowserForm.SqlCreateTableActionExecute(Sender: TObject);
 var
   CreateTableForm: TCreateTableForm;
 begin
-   CreateTableForm := TCreateTableForm.Create(self);
-   try
-      if CreateTableForm.ShowModal = mrOk then
+  CreateTableForm := TCreateTableForm.Create(self);
+  try
+    if CreateTableForm.ShowModal = mrOk then
+    begin
+      if CreateTableForm.AutoInc then
       begin
-        if CreateTableForm.AutoInc then
-        begin
-           SqlSynEdit.Lines.Text:=TableCreateWithAutoIncrement(CreateTableForm.TableName,
-             CreateTableForm.PrimaryKey);
-           ShowPopUpNotifier('Fenixsql:create table',
-             rsUseExecuteSc, 3 );
-        end
-        else
-        begin
-           SqlSynEdit.Lines.Text:=TableCreate(CreateTableForm.TableName,
-             CreateTableForm.PrimaryKey);
-        end;
+        SqlSynEdit.Lines.Text :=
+          TableCreateWithAutoIncrement(CreateTableForm.TableName,
+          CreateTableForm.PrimaryKey);
+        ShowPopUpNotifier('Fenixsql:create table',
+          rsUseExecuteSc, 3);
+      end
+      else
+      begin
+        SqlSynEdit.Lines.Text :=
+          TableCreate(CreateTableForm.TableName, CreateTableForm.PrimaryKey);
       end;
-   finally
-      CreateTableForm.Free;
-   end;
+    end;
+  finally
+    CreateTableForm.Free;
+  end;
 end;
 
 
@@ -3075,7 +3082,7 @@ begin
   begin
     FG := clWhite;
     BG := clRed;
-    special := true;
+    special := True;
   end;
 end;
 
@@ -3114,7 +3121,9 @@ begin
   fsconfig.SqlEditPanelHeight := SqlEditPanel.Height;
   fsconfig.WriteConfigFile;
   if FCurrentAlias <> '' then
-    fsconfig.SaveHistory(FcurrentAlias, FHistory);
+    SaveTabsHistory;
+  //fsconfig.SaveHistory(FcurrentAlias, FHistory);
+
   fsconfig.SaveFormPos(self);
 end;
 
@@ -3219,12 +3228,13 @@ begin
   try
     LogMessage(' ');
     MainDataModule.MainTr.Commit;
-    LogMessage(Format(rsTransactionC, [TimeToStr(Now)]),BMP_TVM_COMMIT);
+    LogMessage(Format(rsTransactionC, [TimeToStr(Now)]), BMP_TVM_COMMIT);
     EndTr(True);
   except
     on E: EFBLError do
     begin
-      LogErrorMessage(Format(rsErrorInTrans, [E.ISC_ErrorCode]), E.Message,BMP_TVM_ERROR);
+      LogErrorMessage(Format(rsErrorInTrans, [E.ISC_ErrorCode]),
+        E.Message, BMP_TVM_ERROR);
     end;
   end;
 end;
@@ -3276,34 +3286,119 @@ begin
   end;
 end;
 
-procedure TBrowserForm.AddTabEdit;
+procedure TBrowserForm.AddTabEdit(const AText: string = '');
 begin
   SqlEditTabControl.Tabs.Add('Sql' + IntToStr(SqlEditTabControl.Tabs.Count + 1));
-  FEditBuffers.Add(TFsEditInfo.Create(''));
+  FEditBuffers.Add(TFsEditInfo.Create(AText));
+end;
+
+procedure TBrowserForm.LoadTabsHistory;
+var
+  sl: TStringList;
+  i: integer;
+begin
+  sl := TStringList.Create;
+  try
+    FsConfig.LoadHistory(FCurrentAlias, sl);
+    for  i := 0 to sl.Count - 1 do
+    begin
+      if i = 0 then
+        SqlSynEdit.Text := sl.Strings[i];
+      AddTabEdit(sl.Strings[i]);
+    end;
+
+    if sl.Count = 0 then
+    begin
+      AddTabEdit;
+    end;
+    CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
+    CloseOtherSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
+  finally
+    sl.Free;
+  end;
+
+end;
+
+procedure TBrowserForm.SaveTabsHistory;
+var
+  i: integer;
+  sl: TStringList;
+begin
+  sl := TStringList.Create;
+  TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Text := SqlSynEdit.Text;
+  try
+    for i := 0 to FEditBuffers.Count - 1 do
+    begin
+      sl.Add(TFsEditInfo(FEditBuffers.Items[i]).Text);
+    end;
+    FsConfig.SaveHistory(FCurrentAlias, sl);
+    i := FEditBuffers.Count - 1;
+    while i >= 0 do
+    begin
+      SqlEditTabControl.Tabs.Delete(i);
+      TFsEditInfo(FEditBuffers.Items[i]).Free;
+      FEditBuffers.Delete(i);
+      Dec(i);
+    end;
+  finally
+    sl.Free;
+  end;
+
 end;
 
 procedure TBrowserForm.NewSQLTabActionExecute(Sender: TObject);
 begin
-   AddTabEdit;
-   SqlEditTabControl.TabIndex:= SqlEditTabControl.Tabs.Count -1 ;
+  AddTabEdit;
+  SqlEditTabControl.TabIndex := SqlEditTabControl.Tabs.Count - 1;
+  CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
+  CloseOtherSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
+end;
+
+procedure TBrowserForm.CloseOtherSQLTabActionExecute(Sender: TObject);
+var
+  buffer: TFsEditInfo;
+  i: integer;
+begin
+  buffer := TFsEditInfo.Create(SqlSynEdit.Text);
+  try
+    buffer.CarretPos := SqlSynEdit.CaretXY;
+    for i := 0 to FEditBuffers.Count - 1 do
+    begin
+      TFsEditInfo(FEditBuffers.Items[i]).Free;
+    end;
+
+    SqlEditTabControl.Tabs.Clear;
+    FEditBuffers.Clear;
+    AddTabEdit(buffer.Text);
+    SqlSynEdit.CaretXY := buffer.CarretPos;
+    CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
+
+  finally
+    buffer.Free;
+  end;
+
 end;
 
 procedure TBrowserForm.CloseSQLTabActionExecute(Sender: TObject);
 begin
-   SqlEditTabControl.Tabs.Delete(SqlEditTabControl.TabIndex);
-   TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Free;
-   FEditBuffers.Delete(SqlEditTabControl.TabIndex);
+  SqlEditTabControl.Tabs.Delete(SqlEditTabControl.TabIndex);
+  TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Free;
+  FEditBuffers.Delete(SqlEditTabControl.TabIndex);
+  CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
 end;
 
 procedure TBrowserForm.SqlEditTabControlChange(Sender: TObject);
 begin
-   //
+  SqlSynEdit.Text := TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Text;
+  SqlSynEdit.CaretXY := TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).CarretPos;
 end;
 
 procedure TBrowserForm.SqlEditTabControlChanging(Sender: TObject;
-  var AllowChange: Boolean);
+  var AllowChange: boolean);
 begin
-  //
+  TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Text := SqlSynEdit.Text;
+  TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).CarretPos :=
+    SqlSynEdit.CaretXY;
 end;
 
 
@@ -3395,6 +3490,7 @@ begin
 
   MainDataModule.MainDb.Disconnect;
   FsConfig.SaveHistory(FCurrentAlias, FHistory);
+  SaveTabsHistory;
   DbConnectionsAction.Enabled := True;
   DisconnectAction.Enabled := False;
   ClearDbTreeView;
@@ -3454,36 +3550,38 @@ begin
     Script.SQLScript := SqlSynEdit.Lines;
     Script.Reset;
     SQLScript.Clear;
-    LogMessage(Format(rsStartScriptS, [TimeToStr(Now)]),BMP_TVM_CLOCK);
+    LogMessage(Format(rsStartScriptS, [TimeToStr(Now)]), BMP_TVM_CLOCK);
     while not Script.EOF do
     begin
       stm := Script.Statement;
       if script.StatementType = stUnknow then
       begin
         FParseError := True;
-        LogErrorMessage(rsErrorStatementUnknow,stm +  'at line ' +
-          IntToStr(Script.CurrentLineNumber),BMP_TVM_UNKNOW);
+        LogErrorMessage(rsErrorStatementUnknow, stm + 'at line ' +
+          IntToStr(Script.CurrentLineNumber), BMP_TVM_UNKNOW);
         EditLineError(Script.CurrentLineNumber);
-        LogMessage(rsScriptStopped,BMP_TVM_NOTE);
+        LogMessage(rsScriptStopped, BMP_TVM_NOTE);
       end;
       if (Script.StatementType <> stSetTerm) and (script.StatementType <> stSelect) then
-        SQLScript.Add(TScriptStm.Create(Script.CurrentLineNumber,stm));
+        SQLScript.Add(TScriptStm.Create(Script.CurrentLineNumber, stm));
     end;
 
     if not FParseError then
     begin
       for i := 0 to SQLScript.Count - 1 do
       begin
-        SqlError := ExecuteSQL(TScriptStm(SQLScript.Items[i]).Stm, FsConfig.VerboseSqlScript,TScriptStm(SQLScript.Items[i]).LineStart - 1);
+        SqlError := ExecuteSQL(TScriptStm(SQLScript.Items[i]).Stm,
+          FsConfig.VerboseSqlScript, TScriptStm(SQLScript.Items[i]).LineStart - 1);
         if SqlError then
         begin
-          LogErrorMessage(rsErrorInStatement, TScriptStm(SQLScript.Items[i]).Stm,BMP_TVM_ERROR);
-          LogMessage(rsScriptStopped,BMP_TVM_NOTE);
+          LogErrorMessage(rsErrorInStatement,
+            TScriptStm(SQLScript.Items[i]).Stm, BMP_TVM_ERROR);
+          LogMessage(rsScriptStopped, BMP_TVM_NOTE);
           LogMessage(' ');
-          LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]),BMP_TVM_STATE);
-          LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]),BMP_TVM_STATE);
-          LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]),BMP_TVM_STATE);
-          LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]),BMP_TVM_STATE);
+          LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]), BMP_TVM_STATE);
+          LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]), BMP_TVM_STATE);
+          LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]), BMP_TVM_STATE);
+          LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]), BMP_TVM_STATE);
           break;
         end;
       end;
@@ -3491,17 +3589,18 @@ begin
     if not SqlError then
     begin
       FScriptStat.end_t := now;
-      LogMessage(Format(rsScriptExecuted, [TimeT(FScriptStat.end_t - FScriptStat.start_t)]),BMP_TVM_CLOCK);
+      LogMessage(Format(rsScriptExecuted,
+        [TimeT(FScriptStat.end_t - FScriptStat.start_t)]), BMP_TVM_CLOCK);
       LogMessage(' ');
-      LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]),BMP_TVM_STATE);
-      LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]),BMP_TVM_STATE);
-      LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]),BMP_TVM_STATE);
-      LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]),BMP_TVM_STATE);
+      LogMessage(Format(rsDRowSInserte, [FScriptStat.ins_rows]), BMP_TVM_STATE);
+      LogMessage(Format(rsDRowSUpdated, [FScriptStat.upg_rows]), BMP_TVM_STATE);
+      LogMessage(Format(rsDRowSDeleted, [FScriptStat.del_rows]), BMP_TVM_STATE);
+      LogMessage(Format(rsDDDLSStateme, [FScriptStat.ddl_cmds]), BMP_TVM_STATE);
     end;
   finally
     Screen.Cursor := crDefault;
-    for i:=0 to  SQLScript.Count -1 do
-        TScriptStm(SQLScript.Items[i]).Free;
+    for i := 0 to SQLScript.Count - 1 do
+      TScriptStm(SQLScript.Items[i]).Free;
     SQLScript.Free;
   end;
 end;
@@ -3604,12 +3703,13 @@ procedure TBrowserForm.RollBackActionExecute(Sender: TObject);
 begin
   try
     MainDataModule.MainTr.Rollback;
-    LogMessage(Format(rsTransactionR, [TimeToStr(Now)]),BMP_TVM_ROLLBACK);
+    LogMessage(Format(rsTransactionR, [TimeToStr(Now)]), BMP_TVM_ROLLBACK);
     EndTr;
   except
     on E: EFBLError do
     begin
-      LogErrorMessage(Format(rsErrorInTransR,[E.ISC_ErrorCode]),E.Message,BMP_TVM_ERROR);
+      LogErrorMessage(Format(rsErrorInTransR, [E.ISC_ErrorCode]),
+        E.Message, BMP_TVM_ERROR);
     end;
   end;
 end;
