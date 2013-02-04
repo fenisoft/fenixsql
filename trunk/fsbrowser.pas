@@ -1014,8 +1014,8 @@ begin
           raise Exception.Create(Format('Param #%d not assigned', [i]));
       SQL_FLOAT,
       SQL_D_FLOAT:
-        if inputParamFloat(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if inputParamFloat(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), isNull, ParaFloat) then
         begin
           if isnull then
@@ -1088,8 +1088,8 @@ begin
       SQL_BLOB:
         if MainDataModule.MainQry.ParamSubType(i) = 1 then
         begin
-          if InputParamMemo(Format('%d of %d',
-            [i + 1, MainDataModule.MainQry.ParamCount]),
+          if InputParamMemo(Format('%d of %d', [i + 1,
+            MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaText) then
           begin
             if IsNull then
@@ -1108,8 +1108,8 @@ begin
         end
         else
         begin
-          if InputParamBlob(Format('%d of %d',
-            [i + 1, MainDataModule.MainQry.ParamCount]),
+          if InputParamBlob(Format('%d of %d', [i + 1,
+            MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, Paratext) then
           begin
             if IsNull then
@@ -1130,8 +1130,8 @@ begin
       SQL_QUAD: ;
       SQL_TYPE_TIME:
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1147,8 +1147,8 @@ begin
       end;
       SQL_TYPE_DATE:
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1164,8 +1164,8 @@ begin
       end;
       SQL_DATE:  //timestamp
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -3326,6 +3326,8 @@ var
 begin
   sl := TStringList.Create;
   TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Text := SqlSynEdit.Text;
+  SqlEditTabControl.OnChange := nil;
+  SqlEditTabControl.OnChanging := nil;
   try
     for i := 0 to FEditBuffers.Count - 1 do
     begin
@@ -3342,6 +3344,8 @@ begin
     end;
   finally
     sl.Free;
+    SqlEditTabControl.OnChange := @SqlEditTabControlChange;
+    SqlEditTabControl.OnChanging := @SqlEditTabControlChanging;
   end;
 
 end;
@@ -3360,6 +3364,8 @@ var
   i: integer;
 begin
   buffer := TFsEditInfo.Create(SqlSynEdit.Text);
+  SqlEditTabControl.OnChange := nil;
+  SqlEditTabControl.OnChanging := nil;
   try
     buffer.CarretPos := SqlSynEdit.CaretXY;
     for i := 0 to FEditBuffers.Count - 1 do
@@ -3372,19 +3378,27 @@ begin
     AddTabEdit(buffer.Text);
     SqlSynEdit.CaretXY := buffer.CarretPos;
     CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
-
   finally
     buffer.Free;
+    SqlEditTabControl.OnChange := @SqlEditTabControlChange;
+    SqlEditTabControl.OnChanging := @SqlEditTabControlChanging;
   end;
 
 end;
 
 procedure TBrowserForm.CloseSQLTabActionExecute(Sender: TObject);
 begin
-  SqlEditTabControl.Tabs.Delete(SqlEditTabControl.TabIndex);
-  TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Free;
-  FEditBuffers.Delete(SqlEditTabControl.TabIndex);
-  CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
+  SqlEditTabControl.OnChange := nil;
+  SqlEditTabControl.OnChanging := nil;
+  try
+    SqlEditTabControl.Tabs.Delete(SqlEditTabControl.TabIndex);
+    TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Free;
+    FEditBuffers.Delete(SqlEditTabControl.TabIndex);
+    CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
+  finally
+    SqlEditTabControl.OnChange := @SqlEditTabControlChange;
+    SqlEditTabControl.OnChanging := @SqlEditTabControlChanging;
+  end;
 end;
 
 procedure TBrowserForm.SqlEditTabControlChange(Sender: TObject);
