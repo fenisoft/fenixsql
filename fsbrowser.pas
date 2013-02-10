@@ -76,6 +76,10 @@ type
     MenuItem50: TMenuItem;
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
+    MenuItem53: TMenuItem;
+    MenuItem54: TMenuItem;
+    MenuItem55: TMenuItem;
+    MenuItem56: TMenuItem;
     NewSQLTabAction: TAction;
     MenuItem26: TMenuItem;
     MenuItem27: TMenuItem;
@@ -88,7 +92,6 @@ type
     ExportToJsonAction: TAction;
     ExportToCsvAction: TAction;
     CommitAction: TAction;
-    ClearHistoryAction: TAction;
     BackupDatabaseAction: TAction;
     CreateDbAction: TAction;
     ClearMessagesAction: TAction;
@@ -106,8 +109,6 @@ type
     ToolButton19: TToolButton;
     ToolButton20: TToolButton;
     MessagesTreeView: TTreeView;
-    ToolButton21: TToolButton;
-    ToolButton22: TToolButton;
     UsersAction: TAction;
     ServiceMgrAction: TAction;
     ShowTextOptionsAction: TAction;
@@ -118,8 +119,6 @@ type
     ViewDataAction: TAction;
     DisconnectAction: TAction;
     RefreshAllAction: TAction;
-    NextAction: TAction;
-    PreviousAction: TAction;
     MetadataExtractAction: TAction;
     ExecSqlScriptAction: TAction;
     ExecSqlAction: TAction;
@@ -216,10 +215,6 @@ type
     ToolButton12: TToolButton;
     ToolButton13: TToolButton;
     ToolButton14: TToolButton;
-    ToolButton15: TToolButton;
-    ToolButton16: TToolButton;
-    ToolButton17: TToolButton;
-    ToolButton18: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
@@ -258,16 +253,13 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BackupDatabaseActionExecute(Sender: TObject);
-    procedure ClearHistoryActionExecute(Sender: TObject);
     procedure CommitActionExecute(Sender: TObject);
     procedure DisconnectActionExecute(Sender: TObject);
     procedure ExecSqlActionExecute(Sender: TObject);
     procedure ExecSqlScriptActionExecute(Sender: TObject);
     procedure MetadataExtractActionExecute(Sender: TObject);
     procedure NewScriptActionExecute(Sender: TObject);
-    procedure NextActionExecute(Sender: TObject);
     procedure OpenScriptActionExecute(Sender: TObject);
-    procedure PreviousActionExecute(Sender: TObject);
     procedure RefreshAllActionExecute(Sender: TObject);
     procedure RollBackActionExecute(Sender: TObject);
     procedure SaveScriptActionExecute(Sender: TObject);
@@ -288,8 +280,6 @@ type
   private
     FParamValue: array of string;
     FColDesc: array of TColDesc;
-    FHistory: TStringList;
-    FHistoryIdx: integer;
     FScriptStat: TScriptStat;
     FCurrentAlias: string;
     {Database Objects List}
@@ -306,9 +296,6 @@ type
     FSysTriggerList: TStringList;
     FExecutedDDLStm: boolean;
     Script: TFBLScript;
-    {$IFDEF UNIX}
-    FNeedRefresh: boolean;
-    {$ENDIF}
     FErrorDllNotFound: boolean;
     FLineWithError: integer;
     FEditBuffers: TList;
@@ -322,7 +309,6 @@ type
     procedure InsertParams;
     procedure ClearDataGrid;
     procedure FetchDataGrid;
-    procedure AddtoHistory(const AStm: string);
     procedure ShowBuffer;
     procedure LoadDbTreeView;
     procedure ClearDbTreeView;
@@ -472,7 +458,6 @@ end;
 
 procedure TBrowserForm.DoAfterDisconnect;
 begin
-  //SaveTabsHistory;
   SqlTabSheet.TabVisible := False;
   ResultSetTabSheet.TabVisible := False;
   FieldCountTabSheet.TabVisible := False;
@@ -485,28 +470,15 @@ begin
   ExecSqlAction.Enabled := False;
   ExecSqlScriptAction.Enabled := False;
   MetadataExtractAction.Enabled := False;
-  ClearHistoryAction.Enabled := False;
   FCurrentAlias := '';
-  FHistory.Clear;
-  FHistoryIdx := 0;
-  PreviousAction.Enabled := False;
-  NextAction.Enabled := False;
   SqlSynEdit.Lines.Clear;
   BackupDatabaseAction.Enabled := False;
-
-  {$IFDEF UNIX}
-  FNeedRefresh := False;
-  {$ENDIF}
 end;
 
 //------------------------------------------------------------------------------
 
 procedure TBrowserForm.DoAfterConnect;
-var
-  History: TStringList;
-  i: integer;
 begin
-  History := TStringList.Create;
   SqlTabSheet.TabVisible := True;
   ResultSetTabSheet.TabVisible := False;
   NewScriptAction.Enabled := True;
@@ -514,17 +486,9 @@ begin
   ExecSqlAction.Enabled := True;
   ExecSqlScriptAction.Enabled := True;
   MetadataExtractAction.Enabled := True;
-  ClearHistoryAction.Enabled := True;
   RefreshStatusBar;
   BackupDatabaseAction.Enabled := True;
   LoadTabsHistory;
-  try
-    FsConfig.LoadHistory(FCurrentAlias, History);
-    for i := 0 to History.Count - 1 do
-      AddtoHistory(History.Strings[i]);
-  finally
-    History.Free;
-  end;
 end;
 
 //------------------------------------------------------------------------------
@@ -1014,8 +978,8 @@ begin
           raise Exception.Create(Format('Param #%d not assigned', [i]));
       SQL_FLOAT,
       SQL_D_FLOAT:
-        if inputParamFloat(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if inputParamFloat(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), isNull, ParaFloat) then
         begin
           if isnull then
@@ -1088,8 +1052,8 @@ begin
       SQL_BLOB:
         if MainDataModule.MainQry.ParamSubType(i) = 1 then
         begin
-          if InputParamMemo(Format('%d of %d', [i + 1,
-            MainDataModule.MainQry.ParamCount]),
+          if InputParamMemo(Format('%d of %d',
+            [i + 1, MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaText) then
           begin
             if IsNull then
@@ -1108,8 +1072,8 @@ begin
         end
         else
         begin
-          if InputParamBlob(Format('%d of %d', [i + 1,
-            MainDataModule.MainQry.ParamCount]),
+          if InputParamBlob(Format('%d of %d',
+            [i + 1, MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, Paratext) then
           begin
             if IsNull then
@@ -1130,8 +1094,8 @@ begin
       SQL_QUAD: ;
       SQL_TYPE_TIME:
       begin
-        if InputParamDateTime(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1147,8 +1111,8 @@ begin
       end;
       SQL_TYPE_DATE:
       begin
-        if InputParamDateTime(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1164,8 +1128,8 @@ begin
       end;
       SQL_DATE:  //timestamp
       begin
-        if InputParamDateTime(Format('%d of %d', [i + 1,
-          MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d',
+          [i + 1, MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1332,24 +1296,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TBrowserForm.AddtoHistory(const AStm: string);
-begin
-  if FHistory.Count = 0 then
-  begin
-    FHistory.Add(AStm);
-    FHistoryIDX := FHistory.Count;
-    PreviousAction.Enabled := True;
-    NextAction.Enabled := False;
-  end
-  else
-  begin
-    if FHistory.IndexOf(AStm) = -1 then
-      FHistory.Add(AStm);
-    FHistoryIDX := FHistory.Count;
-    PreviousAction.Enabled := True;
-    NextAction.Enabled := False;
-  end;
-end;
+
 
 //------------------------------------------------------------------------------
 
@@ -2774,7 +2721,6 @@ procedure TBrowserForm.FormCreate(Sender: TObject);
 begin
   FErrorDllNotFound := False;
   Script := TFBLScript.Create(self);
-  FHIstory := TStringList.Create;
   FDomainList := TStringList.Create;
   FTableList := TStringList.Create;
   FViewList := TStringList.Create;
@@ -2786,7 +2732,6 @@ begin
   FRoleList := TStringList.Create;
   FSysTableList := TStringList.Create;
   FSysTriggerList := TStringList.Create;
-  FHistoryIdx := 0;
   Caption := APP_TITLE + ' ' + APP_VERSION;
   FExecutedDDLstm := False;
   Self.Top := (Screen.Height - DEFAULT_HEIGHT) div 2;
@@ -3165,7 +3110,6 @@ begin
   Script.Free;
   FParamValue := nil;
   FColDesc := nil;
-  FHistory.Free;
   FDomainList.Free;
   FTableList.Free;
   FViewList.Free;
@@ -3208,18 +3152,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TBrowserForm.ClearHistoryActionExecute(Sender: TObject);
-begin
-  if MessageDlg('Clear History :: ' + FCurrentAlias, mtConfirmation, [mbYes, mbNo], 0) =
-    mrYes then
-  begin
-    FHistoryIdx := 0;
-    PreviousAction.Enabled := False;
-    NextAction.Enabled := False;
-    FHistory.Clear;
-    fsconfig.DeleteHistory(FCurrentAlias);
-  end;
-end;
+
 
 //------------------------------------------------------------------------------
 
@@ -3387,18 +3320,14 @@ begin
 end;
 
 procedure TBrowserForm.CloseSQLTabActionExecute(Sender: TObject);
+var
+  i: integer;
 begin
-  SqlEditTabControl.OnChange := nil;
-  SqlEditTabControl.OnChanging := nil;
-  try
-    SqlEditTabControl.Tabs.Delete(SqlEditTabControl.TabIndex);
-    TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Free;
-    FEditBuffers.Delete(SqlEditTabControl.TabIndex);
-    CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
-  finally
-    SqlEditTabControl.OnChange := @SqlEditTabControlChange;
-    SqlEditTabControl.OnChanging := @SqlEditTabControlChanging;
-  end;
+  i := SqlEditTabControl.TabIndex;
+  SqlEditTabControl.Tabs.Delete(i);
+  TFsEditInfo(FEditBuffers.Items[i]).Free;
+  FEditBuffers.Delete(i);
+  CloseSQLTabAction.Enabled := (SqlEditTabControl.Tabs.Count > 1);
 end;
 
 procedure TBrowserForm.SqlEditTabControlChange(Sender: TObject);
@@ -3503,7 +3432,6 @@ begin
   end;
 
   MainDataModule.MainDb.Disconnect;
-  FsConfig.SaveHistory(FCurrentAlias, FHistory);
   SaveTabsHistory;
   DbConnectionsAction.Enabled := True;
   DisconnectAction.Enabled := False;
@@ -3528,7 +3456,6 @@ begin
     ClearMessagesActionExecute(nil);
     if not ExecuteSQL(SqlSynEdit.Lines.Text, True) then
     begin
-      AddToHistory(stm);
       RefreshStatusBar;
     end;
   end;
@@ -3667,29 +3594,12 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TBrowserForm.PreviousActionExecute(Sender: TObject);
-begin
-  Dec(FHistoryIDX);
-  SqlSynEdit.Lines.Text := FHistory.Strings[FHistoryIDX];
-  if FHistoryIDX = 0 then
-    PreviousAction.Enabled := False;
-  if (FHistory.Count > 1) and (FHistoryIDX < (FHistory.Count - 1)) then
-    NextAction.Enabled := True
-  else
-    NextAction.Enabled := False;
-end;
-
-//------------------------------------------------------------------------------
-
 procedure TBrowserForm.RefreshAllActionExecute(Sender: TObject);
 begin
   DbTreeView.OnChange := nil;
   try
     if MainDataModule.MainDb.Connected then
     begin
-      {$IFDEF UNIX}
-      FNeedRefresh := True;
-      {$ENDIF}
       ShowBuffer;
       DdlSynMemo.Lines.Clear;
       DbTreeView.FullCollapse;
@@ -3702,14 +3612,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TBrowserForm.NextActionExecute(Sender: TObject);
-begin
-  Inc(FHistoryIDX);
-  SqlSynEdit.Lines.Text := FHistory.Strings[FHistoryIDX];
-  if FHistoryIdx = (FHistory.Count - 1) then
-    NextAction.Enabled := False;
-  PreviousAction.Enabled := True;
-end;
+
 
 //------------------------------------------------------------------------------
 
@@ -3932,4 +3835,4 @@ begin
   end;
 end;
 
-end.
+end.
