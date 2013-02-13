@@ -1,0 +1,38 @@
+object SelectATableForm: TSelectATableForm
+  Left = 622
+  Height = 178
+  Top = 384
+  Width = 252
+  Caption = 'Select a table'
+  ClientHeight = 178
+  ClientWidth = 252
+  Position = poMainFormCenter
+  LCLVersion = '1.0.6.0'
+  object ListBox1: TListBox
+    Left = 0
+    Height = 132
+    Top = 0
+    Width = 252
+    Align = alClient
+    ItemHeight = 0
+    Sorted = True
+    TabOrder = 0
+  end
+  object ButtonPanel1: TButtonPanel
+    Left = 6
+    Height = 34
+    Top = 138
+    Width = 240
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    ButtonOrder = boCloseCancelOK
+    TabOrder = 1
+    ShowButtons = [pbOK, pbCancel]
+  end
+end

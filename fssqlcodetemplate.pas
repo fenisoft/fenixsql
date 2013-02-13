@@ -9,9 +9,13 @@ uses
 
 function TableCreate(const AName: string;const APk: string = ''): string;
 function TableCreateWithAutoIncrement(AName: string; APk: string = 'ID'): string;
+function TableInsert(const ATableName: string): string;
+
 
 
 implementation
+
+uses fsdm;
 
 
 function TableCreate(const AName: string; const APk: string = ''): string;
@@ -75,6 +79,49 @@ begin
   finally
     code.Free;
   end;
+end;
+
+function TableInsert(const ATableName: string): string;
+var
+  i: integer;
+  code:  TStringList;
+  sep : string;
+begin
+   code :=  TStringList.Create;
+   try
+      if not MainDataModule.BrowserTr.InTransaction then
+        MainDataModule.BrowserTr.StartTransaction;
+      MainDataModule.BrowserQry.SQL.Text := 'select * from ' +   ATableName;
+      MainDataModule.BrowserQry.Prepare;
+      code.Add('insert into ' + ATableName);
+      code.Add('(');
+      for i:= 0 to  MainDataModule.BrowserQry.FieldCount - 1 do
+      begin
+        if (i <  (MainDataModule.BrowserQry.FieldCount - 1)) then
+          sep := ' ,'
+        else
+          sep := '';
+        code.Add('  ' + MainDataModule.BrowserQry.FieldName(i) + sep);
+      end;
+      code.Add(')');
+      code.Add('values');
+      code.Add('(');
+      for i:= 0 to  MainDataModule.BrowserQry.FieldCount - 1 do
+      begin
+        if (i <  (MainDataModule.BrowserQry.FieldCount - 1)) then
+          sep := ' ,'
+        else
+          sep := '';
+        code.Add('  ?'  + sep);
+      end;
+      code.Add(')');
+      MainDataModule.BrowserQry.UnPrepare;
+      Result := code.Text;
+   finally
+      code.Free;
+   end;
+
+
 end;
 
 end.

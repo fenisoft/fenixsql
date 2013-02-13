@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 220
+  Left = 196
   Height = 684
-  Top = 130
+  Top = 274
   Width = 970
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -2131,6 +2131,11 @@ object BrowserForm: TBrowserForm
       ImageIndex = 32
       OnExecute = CloseOtherSQLTabActionExecute
     end
+    object SqlInsertTableAction: TAction
+      Category = 'SqlCodeTemplate'
+      Caption = 'Insert in Table'
+      OnExecute = SqlInsertTableActionExecute
+    end
   end
   object MainMenu: TMainMenu
     Images = BrowserImageList
@@ -3469,6 +3474,9 @@ object BrowserForm: TBrowserForm
       Caption = 'Sql Code'
       object MenuItem28: TMenuItem
         Action = SqlCreateTableAction
+      end
+      object MenuItem57: TMenuItem
+        Action = SqlInsertTableAction
       end
     end
   end
