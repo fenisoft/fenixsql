@@ -41,6 +41,7 @@ resourcestring
   rsGeneratorSet = 'Generator Set.';
   rsErrorInExecute = 'Error in execute. [isc_error : %d]';
   rsUseExecuteSc = 'use [Execute Script(CTRL+F9)] for run this script';
+  rsNoTablesInCu = 'no tables in current database';
 
 implementation
 

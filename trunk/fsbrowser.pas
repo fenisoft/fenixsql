@@ -71,6 +71,7 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    SqlInsertTableAction: TAction;
     CloseOtherSQLTabAction: TAction;
     CloseSQLTabAction: TAction;
     MenuItem50: TMenuItem;
@@ -80,6 +81,7 @@ type
     MenuItem54: TMenuItem;
     MenuItem55: TMenuItem;
     MenuItem56: TMenuItem;
+    MenuItem57: TMenuItem;
     NewSQLTabAction: TAction;
     MenuItem26: TMenuItem;
     MenuItem27: TMenuItem;
@@ -243,6 +245,7 @@ type
     procedure SqlCreateTableActionExecute(Sender: TObject);
     procedure SqlEditTabControlChange(Sender: TObject);
     procedure SqlEditTabControlChanging(Sender: TObject; var AllowChange: boolean);
+    procedure SqlInsertTableActionExecute(Sender: TObject);
     procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure UsersActionExecute(Sender: TObject);
@@ -431,7 +434,8 @@ uses
   fsdm, fsconfig, fsmixf, fsparaminput, fsblobinput, fsblobtext, fslogin,
   fsdialogtran, fstableview, fscreatedb, fsdescription, fsoptions,
   fstextoptions, fsservice, fsusers, fsbackup, fsabout, fsdbconnections,
-  fsexport, fsmessages, fssqlcodetemplate, fscreatetable, fsbrowserintf;
+  fsexport, fsmessages, fssqlcodetemplate, fscreatetable, fsbrowserintf,
+  fsselectatable;
 
 { TScriptStm }
 
@@ -978,8 +982,8 @@ begin
           raise Exception.Create(Format('Param #%d not assigned', [i]));
       SQL_FLOAT,
       SQL_D_FLOAT:
-        if inputParamFloat(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if inputParamFloat(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), isNull, ParaFloat) then
         begin
           if isnull then
@@ -1052,8 +1056,8 @@ begin
       SQL_BLOB:
         if MainDataModule.MainQry.ParamSubType(i) = 1 then
         begin
-          if InputParamMemo(Format('%d of %d',
-            [i + 1, MainDataModule.MainQry.ParamCount]),
+          if InputParamMemo(Format('%d of %d', [i + 1,
+            MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaText) then
           begin
             if IsNull then
@@ -1072,8 +1076,8 @@ begin
         end
         else
         begin
-          if InputParamBlob(Format('%d of %d',
-            [i + 1, MainDataModule.MainQry.ParamCount]),
+          if InputParamBlob(Format('%d of %d', [i + 1,
+            MainDataModule.MainQry.ParamCount]),
             MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, Paratext) then
           begin
             if IsNull then
@@ -1094,8 +1098,8 @@ begin
       SQL_QUAD: ;
       SQL_TYPE_TIME:
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1111,8 +1115,8 @@ begin
       end;
       SQL_TYPE_DATE:
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -1128,8 +1132,8 @@ begin
       end;
       SQL_DATE:  //timestamp
       begin
-        if InputParamDateTime(Format('%d of %d',
-          [i + 1, MainDataModule.MainQry.ParamCount]),
+        if InputParamDateTime(Format('%d of %d', [i + 1,
+          MainDataModule.MainQry.ParamCount]),
           MainDataModule.MainQry.ParamSQLTypeDesc(i), IsNull, ParaDate) then
         begin
           try
@@ -3344,6 +3348,31 @@ begin
     SqlSynEdit.CaretXY;
 end;
 
+procedure TBrowserForm.SqlInsertTableActionExecute(Sender: TObject);
+var
+  SelectATableForm: TSelectATableForm;
+begin
+  SelectATableForm := TSelectATableForm.Create(nil);
+  try
+
+    if FTableList.Count > 0 then
+    begin
+      SelectATableForm.ListBox1.Items.Assign(FTableList);
+      SelectATableForm.ListBox1.ItemIndex := 0;
+
+      if SelectATableForm.ShowModal = mrOk then
+        SqlSynEdit.Text := TableInsert(SelectATableForm.TableSelected);
+    end
+    else
+    begin
+      ShowMessage(rsNoTablesInCu);
+    end;
+
+  finally
+    SelectATableForm.Free;
+  end;
+end;
+
 
 
 procedure TBrowserForm.ExportToCsvActionExecute(Sender: TObject);
@@ -3835,4 +3864,4 @@ begin
   end;
 end;
 
-end.
+end.

@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="28">
       <Unit0>
         <Filename Value="fenixsql.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -240,6 +240,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fscreatetable"/>
       </Unit26>
+      <Unit27>
+        <Filename Value="fsselectatable.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SelectATableForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsselectatable"/>
+      </Unit27>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
