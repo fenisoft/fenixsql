@@ -29,7 +29,8 @@ uses
 
 procedure ExportToCsvFile(AQuery: TFBLDsql; const AFilename: string);
 procedure ExportToSQLScript(AQuery: TFBLDsql; const ATablename, AFilename: string);
-procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string);
+procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string;
+  AJsonArray: boolean = True);
 
 implementation
 
@@ -189,7 +190,7 @@ begin
     repeat
       Unicode := UTF8CharacterToUnicode(p, CharLen);
 
-      if CharLen > 1  then
+      if CharLen > 1 then
         Result := Result + '\u' + LowerCase(IntToHex(unicode, 4))
       else
       begin
@@ -204,18 +205,19 @@ begin
           39: Result := Result + '\''';
           92: Result := Result + '\\';
           else
-            if unicode > 0   then
-               Result := Result + char(Unicode);
+            if unicode > 0 then
+              Result := Result + char(Unicode);
         end;
       end;
-      inc(p,CharLen);
+      Inc(p, CharLen);
     until (CharLen = 0) or (unicode = 0);
   end;
   Result := '"' + Result + '"';
 end;
 
 
-procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string);
+procedure ExportToJson(AQuery: TFBLDsql; const AFileName: string;
+  AJsonArray: boolean = True);
 var
   Line: string;
   f: TextFile;
@@ -228,9 +230,15 @@ begin
     while not AQuery.EOF do
     begin
       if Aquery.FetchCount = 1 then
-        Line := '[{'
+      begin
+        if AJsonArray then
+          Line := '[{'
+        else
+          Line := '{';
+      end
       else
         Line := '{';
+
       for i := 0 to AQuery.FieldCount - 1 do
       begin
         if AQuery.FieldIsNull(i) then
@@ -243,7 +251,7 @@ begin
             begin
               if AQuery.FieldSubType(i) = isc_blob_text then
                 Line :=
-                  Line + '"' +AQuery.FieldName(i) + '":' +
+                  Line + '"' + AQuery.FieldName(i) + '":' +
                   StringForJson(AQuery.BlobFieldAsString(i)) + ','
               else
                 Line := Line + '"' + AQuery.FieldName(i) + '":"",';
@@ -261,7 +269,7 @@ begin
               try
                 DefaultFormatSettings.DecimalSeparator := '.';
                 Line :=
-                  Line + '"'+ AQuery.FieldName(i) + '":' + AQuery.FieldAsString(i) + ',';
+                  Line + '"' + AQuery.FieldName(i) + '":' + AQuery.FieldAsString(i) + ',';
               finally
                 DefaultFormatSettings.DecimalSeparator := TempDecimalSeparator
               end;
@@ -272,11 +280,13 @@ begin
       end;
       AQuery.Next;
       Line := LeftStr(Line, Length(Line) - 1) + '}';
-      if Aquery.EOF then
-        Line := Line + ']'
-      else
-        Line := Line + ',';
-
+      if AJsonArray then
+      begin
+        if AQuery.EOF then
+          Line := Line + ']'
+        else
+          Line := Line + ',';
+      end;
       Writeln(f, Line);
     end;
   finally

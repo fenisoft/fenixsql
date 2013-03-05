@@ -10,7 +10,7 @@ object OptionsForm: TOptionsForm
   ClientWidth = 511
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '1.0.2.0'
+  LCLVersion = '1.0.6.0'
   object PageControl1: TPageControl
     Left = 4
     Height = 283
@@ -137,10 +137,10 @@ object OptionsForm: TOptionsForm
         TabOrder = 1
         object OutputRadioGroup: TRadioGroup
           Left = 4
-          Height = 90
-          Top = 161
+          Height = 111
+          Top = 140
           Width = 311
-          Align = alBottom
+          Align = alClient
           AutoFill = True
           Caption = 'Result set output'
           ChildSizing.LeftRightSpacing = 6
@@ -151,7 +151,7 @@ object OptionsForm: TOptionsForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 72
+          ClientHeight = 93
           ClientWidth = 307
           ItemIndex = 0
           Items.Strings = (
@@ -162,10 +162,10 @@ object OptionsForm: TOptionsForm
         end
         object SqlCheckGroup: TCheckGroup
           Left = 4
-          Height = 157
+          Height = 136
           Top = 4
           Width = 311
-          Align = alClient
+          Align = alTop
           AutoFill = True
           Caption = 'Sql '
           ChildSizing.LeftRightSpacing = 6
@@ -176,7 +176,7 @@ object OptionsForm: TOptionsForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 139
+          ClientHeight = 118
           ClientWidth = 307
           Items.Strings = (
             'Auto commit DDL statement'
