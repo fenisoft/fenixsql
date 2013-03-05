@@ -164,7 +164,10 @@ begin
        SQL_TEXT:
          begin
           TempStr := FDsql.FieldAsString(i);
-          Move(TempStr[1],(bData)^,FDsql.FieldSize(i));
+          if TempStr <> '' then
+            Move(TempStr[1],(bData)^,FDsql.FieldSize(i))
+          else
+            Move('',(bData)^,FDsql.FieldSize(i));
          end;
        SQL_D_FLOAT,
        SQL_FLOAT:
@@ -270,8 +273,8 @@ begin
       SQL_VARYING,
       SQL_TEXT:
         begin
-        //TempString := FDsql.FieldAsString(FieldNo);
-        Move((pTemp)^,Buffer^,FDsql.FieldSize(FieldNo));
+//        TempString := FDsql.FieldAsString(FieldNo);
+          Move((pTemp)^,Buffer^,FDsql.FieldSize(FieldNo));
         end;
       SQL_D_FLOAT,
       SQL_DOUBLE,

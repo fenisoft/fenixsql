@@ -435,7 +435,7 @@ uses
   fsdialogtran, fstableview, fscreatedb, fsdescription, fsoptions,
   fstextoptions, fsservice, fsusers, fsbackup, fsabout, fsdbconnections,
   fsexport, fsmessages, fssqlcodetemplate, fscreatetable, fsbrowserintf,
-  fsselectatable;
+  fsselectatable, fsjsontype;
 
 { TScriptStm }
 
@@ -2854,18 +2854,29 @@ begin
 end;
 
 procedure TBrowserForm.ResultSetToJsonExecute(Sender: TObject);
+var
+  JsonTypeForm: TJsonTypeForm;
 begin
-  MainDataModule.MainQry.Close;
-  MainDataModule.MainQry.ExecSQL;
-  SaveDialog.DefaultExt := 'js';
-  SaveDialog.Filter :=
-    'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
-  SaveDialog.Title := 'Export resultset  to Json';
-  if SaveDialog.Execute then
-  begin
-    ExportToJson(MainDataModule.MainQry, SaveDialog.FileName);
-    ShowMessage('File: [' + SaveDialog.FileName + '] created' +
-      LineEnding + IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
+  JsonTypeForm := TJsonTypeForm.Create(self);
+  try
+    if JsonTypeForm.ModalResult = mrOk then
+    begin
+      MainDataModule.MainQry.Close;
+      MainDataModule.MainQry.ExecSQL;
+      SaveDialog.DefaultExt := 'js';
+      SaveDialog.Filter :=
+        'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
+      SaveDialog.Title := 'Export resultset  to Json';
+      if SaveDialog.Execute then
+      begin
+        ExportToJson(MainDataModule.MainQry, SaveDialog.FileName,
+          JsonTypeForm.JsonArray);
+        ShowMessage('File: [' + SaveDialog.FileName + '] created' +
+          LineEnding + IntToStr(MainDataModule.MainQry.FetchCount) + ' record exported');
+      end;
+    end;
+  finally
+    JsonTypeForm.Free;
   end;
 end;
 
@@ -3338,6 +3349,7 @@ procedure TBrowserForm.SqlEditTabControlChange(Sender: TObject);
 begin
   SqlSynEdit.Text := TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).Text;
   SqlSynEdit.CaretXY := TFsEditInfo(FEditBuffers.Items[SqlEditTabControl.TabIndex]).CarretPos;
+  FLineWithError := 0;
 end;
 
 procedure TBrowserForm.SqlEditTabControlChanging(Sender: TObject;
@@ -3385,7 +3397,6 @@ begin
       (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
     begin
       try
-
         MainDataModule.BrowserQry.SQL.Text :=
           'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName;
         MainDataModule.BrowserQry.ExecSQL;
@@ -3408,35 +3419,45 @@ begin
 end;
 
 procedure TBrowserForm.ExportToJsonActionExecute(Sender: TObject);
+var
+  JsonTypeForm: TJsonTypeForm;
 begin
-  if not MainDataModule.BrowserTr.InTransaction then
-    MainDataModule.BrowserTr.StartTransaction;
-
-  if Assigned(DbTreeView.Selected.Data) then
-    if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
-      (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
-    begin
-      try
-
-        MainDataModule.BrowserQry.SQL.Text :=
-          'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName;
-        MainDataModule.BrowserQry.ExecSQL;
-        SaveDialog.DefaultExt := 'js';
-        SaveDialog.Filter :=
-          'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
-        SaveDialog.Title := 'Export table ::' +
-          TNodeDesc(DbTreeView.Selected.Data).ObjName + ':: To Json';
-        if SaveDialog.Execute then
-        begin
-          ExportToJson(MainDataModule.BrowserQry, SaveDialog.FileName);
-          ShowMessage('File: [' + SaveDialog.FileName + '] created' +
-            LineEnding + IntToStr(MainDataModule.BrowserQry.FetchCount) +
-            ' record exported');
+  JsonTypeForm := TJsonTypeForm.Create(self);
+  try
+    if not MainDataModule.BrowserTr.InTransaction then
+      MainDataModule.BrowserTr.StartTransaction;
+    if Assigned(DbTreeView.Selected.Data) then
+      if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) or
+        (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_SYSTABLE) then
+      begin
+        try
+          if JsonTypeForm.ShowModal = mrOk then
+          begin
+            MainDataModule.BrowserQry.SQL.Text :=
+              'select * from ' + TNodeDesc(DbTreeView.Selected.Data).ObjName;
+            MainDataModule.BrowserQry.ExecSQL;
+            SaveDialog.DefaultExt := 'js';
+            SaveDialog.Filter :=
+              'javascript (*.js)|*.js|json (*.json)|*.json|Text (*.txt)|*.txt|Any(*.*)|*.*';
+            SaveDialog.Title :=
+              'Export table ::' + TNodeDesc(DbTreeView.Selected.Data).ObjName +
+              ':: To Json';
+            if SaveDialog.Execute then
+            begin
+              ExportToJson(MainDataModule.BrowserQry,
+                SaveDialog.FileName, JsonTypeForm.JsonArray);
+              ShowMessage('File: [' + SaveDialog.FileName + '] created' +
+                LineEnding + IntToStr(MainDataModule.BrowserQry.FetchCount) +
+                ' record exported');
+            end;
+          end;
+        finally
+          MainDataModule.BrowserQry.UnPrepare;
         end;
-      finally
-        MainDataModule.BrowserQry.UnPrepare;
       end;
-    end;
+  finally
+    JsonTypeForm.Free;
+  end;
 end;
 
 //------------------------------------------------------------------------------

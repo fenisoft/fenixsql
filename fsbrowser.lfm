@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 196
+  Left = 158
   Height = 684
-  Top = 274
+  Top = 141
   Width = 970
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -2085,27 +2085,32 @@ object BrowserForm: TBrowserForm
       OnExecute = SelectAllSynMemoActionExecute
     end
     object ExportToSqlAction: TAction
+      Category = 'Export'
       Caption = 'To SQL script'
       ImageIndex = 16
       OnExecute = ExportToSqlActionExecute
     end
     object ExportToCsvAction: TAction
+      Category = 'Export'
       Caption = 'To Csv'
       ImageIndex = 17
       OnExecute = ExportToCsvActionExecute
     end
     object ExportToJsonAction: TAction
+      Category = 'Export'
       Caption = 'To Json'
       ImageIndex = 18
       OnExecute = ExportToJsonActionExecute
     end
     object ResultSetToCsv: TAction
+      Category = 'Export'
       Caption = 'Export To Csv'
       Hint = 'Export To Csv'
       ImageIndex = 17
       OnExecute = ResultSetToCsvExecute
     end
     object ResultSetToJson: TAction
+      Category = 'Export'
       Caption = 'Export To Json'
       Hint = 'Export to Json'
       ImageIndex = 18
@@ -2989,8 +2994,8 @@ object BrowserForm: TBrowserForm
   object SaveDialog: TSaveDialog
     FilterIndex = 0
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 96
-    top = 408
+    left = 120
+    top = 304
   end
   object ItemPopUpMenu: TPopupMenu
     Images = BrowserImageList
