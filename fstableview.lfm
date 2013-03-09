@@ -1,7 +1,7 @@
 object TableViewForm: TTableViewForm
-  Left = 256
+  Left = 336
   Height = 476
-  Top = 236
+  Top = 242
   Width = 734
   ActiveControl = DataStringGrid
   Caption = 'TableViewForm'
@@ -12,7 +12,7 @@ object TableViewForm: TTableViewForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '1.0.2.0'
+  LCLVersion = '1.0.6.0'
   object sbTableView: TStatusBar
     Left = 0
     Height = 23

@@ -7,8 +7,8 @@ object BlobTextForm: TBlobTextForm
   Caption = 'Memo'
   ClientHeight = 300
   ClientWidth = 400
-  Position = poScreenCenter
-  LCLVersion = '1.0.2.0'
+  Position = poMainFormCenter
+  LCLVersion = '1.0.6.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
