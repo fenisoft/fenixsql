@@ -9,7 +9,7 @@ object OptionsForm: TOptionsForm
   ClientHeight = 329
   ClientWidth = 511
   OnCreate = FormCreate
-  Position = poDesktopCenter
+  Position = poMainFormCenter
   LCLVersion = '1.0.6.0'
   object PageControl1: TPageControl
     Left = 4

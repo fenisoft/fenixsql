@@ -71,6 +71,12 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    DDLSynMemoPopUpMenu: TPopupMenu;
+    MenuItem58: TMenuItem;
+    MenuItem59: TMenuItem;
+    MenuItem60: TMenuItem;
+    MenuItem61: TMenuItem;
+    MenuItem62: TMenuItem;
     SqlInsertTableAction: TAction;
     CloseOtherSQLTabAction: TAction;
     CloseSQLTabAction: TAction;
@@ -511,8 +517,8 @@ begin
   RollBackAction.Enabled := False;
   if FExecutedDDLStm then
   begin
-    //if ATrCommit then
-    //RefreshAllActionExecute(Self);
+    if ATrCommit then
+      RefreshAllActionExecute(Self);
     FExecutedDDLStm := False;
   end;
   RefreshStatusBar;
@@ -743,6 +749,7 @@ begin
             LogMessage(rsTransactionCR, BMP_TVM_COMMIT);
           end;
         end;
+
         qtExecProcedure:
         begin
           MainDataModule.MainQry.ExecSQL;
@@ -3650,8 +3657,8 @@ begin
   try
     if MainDataModule.MainDb.Connected then
     begin
-      ShowBuffer;
-      DdlSynMemo.Lines.Clear;
+      //ShowBuffer;
+      //DdlSynMemo.Lines.Clear;
       DbTreeView.FullCollapse;
       LoadDbTreeView;
     end;

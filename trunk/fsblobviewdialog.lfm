@@ -12,8 +12,8 @@ object BlobViewDialogForm: TBlobViewDialogForm
   ChildSizing.LeftRightSpacing = 4
   ClientHeight = 171
   ClientWidth = 464
-  Position = poDesktopCenter
-  LCLVersion = '1.0.2.0'
+  Position = poMainFormCenter
+  LCLVersion = '1.0.6.0'
   object Panel5: TPanel
     Left = 4
     Height = 34
@@ -41,7 +41,7 @@ object BlobViewDialogForm: TBlobViewDialogForm
     object BitBtn2: TBitBtn
       Left = 301
       Height = 24
-      Top = 8
+      Top = 7
       Width = 75
       Anchors = [akTop, akRight]
       BorderSpacing.InnerBorder = 2

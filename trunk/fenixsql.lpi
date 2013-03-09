@@ -252,6 +252,7 @@
         <Filename Value="fsjsontype.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="JsonTypeForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fsjsontype"/>
       </Unit28>

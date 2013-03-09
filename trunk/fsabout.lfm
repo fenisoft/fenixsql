@@ -1,7 +1,7 @@
 object AboutForm: TAboutForm
-  Left = 449
+  Left = 589
   Height = 334
-  Top = 270
+  Top = 277
   Width = 436
   ActiveControl = BitBtn1
   BorderIcons = [biSystemMenu]
@@ -10,8 +10,8 @@ object AboutForm: TAboutForm
   ClientHeight = 334
   ClientWidth = 436
   OnCreate = FormCreate
-  Position = poDesktopCenter
-  LCLVersion = '1.0.2.0'
+  Position = poMainFormCenter
+  LCLVersion = '1.0.6.0'
   object Panel1: TPanel
     Left = 0
     Height = 88

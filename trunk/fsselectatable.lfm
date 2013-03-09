@@ -1,7 +1,7 @@
 object SelectATableForm: TSelectATableForm
-  Left = 622
+  Left = 467
   Height = 178
-  Top = 384
+  Top = 358
   Width = 252
   Caption = 'Select a table'
   ClientHeight = 178
