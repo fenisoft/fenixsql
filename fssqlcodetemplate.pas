@@ -1,3 +1,23 @@
+(*
+   fenixsql
+   author Alessandro Batisti
+   http://code.google.com/p/fenixsql
+   http://fblib.altervista.org
+
+   file: fssqlcodetemplate.pas
+
+
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation; either version 2 of the License, or
+  * (at your option) any later version.
+  *
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+
+*)
 unit fssqlcodetemplate;
 
 {$mode objfpc}{$H+}
@@ -10,7 +30,7 @@ uses
 function TableCreate(const AName: string;const APk: string = ''): string;
 function TableCreateWithAutoIncrement(AName: string; APk: string = 'ID'): string;
 function TableInsert(const ATableName: string): string;
-
+function TableUpdate(const ATableName: string): string;
 
 
 implementation
@@ -120,8 +140,43 @@ begin
    finally
       code.Free;
    end;
+end;
+
+function TableUpdate(const ATableName: string): string;
+var
+  i: integer;
+  code:  TStringList;
+  sep : string;
+begin
+   code :=  TStringList.Create;
+   try
+      if not MainDataModule.BrowserTr.InTransaction then
+        MainDataModule.BrowserTr.StartTransaction;
+      MainDataModule.BrowserQry.SQL.Text := 'select * from ' +   ATableName;
+      MainDataModule.BrowserQry.Prepare;
+      code.Add('update ' + ATableName);
+
+      for i:= 0 to  MainDataModule.BrowserQry.FieldCount - 1 do
+      begin
+        if (i <  (MainDataModule.BrowserQry.FieldCount - 1)) then
+          sep := ' ,'
+        else
+          sep := '';
+
+        if i = 0 then
+          code.Add('set ' + MainDataModule.BrowserQry.FieldName(i) + ' = ?' + sep)
+        else
+          code.Add('    ' + MainDataModule.BrowserQry.FieldName(i) + ' = ?' + sep)
+      end;
+      code.Add('where');
+      code.Add('<primary key> = ?');
 
 
+      MainDataModule.BrowserQry.UnPrepare;
+      Result := code.Text;
+   finally
+      code.Free;
+   end;
 end;
 
 end.

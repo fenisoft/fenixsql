@@ -1,7 +1,7 @@
 object CreateDbForm: TCreateDbForm
-  Left = 441
+  Left = 337
   Height = 347
-  Top = 290
+  Top = 284
   Width = 321
   HorzScrollBar.Page = 347
   VertScrollBar.Page = 318
@@ -14,7 +14,7 @@ object CreateDbForm: TCreateDbForm
   ClientWidth = 321
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '1.0.2.0'
+  LCLVersion = '1.0.6.0'
   object GroupBox1: TGroupBox
     Left = 4
     Height = 64
