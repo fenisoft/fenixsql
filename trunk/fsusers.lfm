@@ -16,7 +16,8 @@ object UsersForm: TUsersForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '1.0.1.3'
+  Position = poMainFormCenter
+  LCLVersion = '1.0.6.0'
   object Panel1: TPanel
     Left = 4
     Height = 30

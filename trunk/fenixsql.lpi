@@ -41,7 +41,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="29">
+    <Units Count="30">
       <Unit0>
         <Filename Value="fenixsql.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -256,6 +256,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fsjsontype"/>
       </Unit28>
+      <Unit29>
+        <Filename Value="fsselectfields.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SelectFieldsForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fsselectfields"/>
+      </Unit29>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

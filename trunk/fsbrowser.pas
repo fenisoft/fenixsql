@@ -71,6 +71,8 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    MenuItem63: TMenuItem;
+    SqlUpdateTableAction: TAction;
     DDLSynMemoPopUpMenu: TPopupMenu;
     MenuItem58: TMenuItem;
     MenuItem59: TMenuItem;
@@ -254,6 +256,7 @@ type
     procedure SqlInsertTableActionExecute(Sender: TObject);
     procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
+    procedure SqlUpdateTableActionExecute(Sender: TObject);
     procedure UsersActionExecute(Sender: TObject);
     procedure ViewDataActionExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -441,7 +444,7 @@ uses
   fsdialogtran, fstableview, fscreatedb, fsdescription, fsoptions,
   fstextoptions, fsservice, fsusers, fsbackup, fsabout, fsdbconnections,
   fsexport, fsmessages, fssqlcodetemplate, fscreatetable, fsbrowserintf,
-  fsselectatable, fsjsontype;
+  fsselectatable, fsjsontype, fsselectfields;
 
 { TScriptStm }
 
@@ -3040,6 +3043,38 @@ begin
   end;
 end;
 
+procedure TBrowserForm.SqlUpdateTableActionExecute(Sender: TObject);
+var
+   SelectATableForm: TSelectATableForm;
+   SelectFieldsForm: TSelectFieldsForm;
+begin
+   SelectATableForm := TSelectATableForm.Create(nil);
+   SelectFieldsForm := TSelectFieldsForm.Create(nil);
+  try
+
+    if FTableList.Count > 0 then
+    begin
+      SelectATableForm.ListBox1.Items.Assign(FTableList);
+      SelectATableForm.ListBox1.ItemIndex := 0;
+
+      if SelectATableForm.ShowModal = mrOk then
+      begin
+        SelectFieldsForm.TableName := SelectATableForm.TableSelected;
+        SelectFieldsForm.ShowModal;
+      end;
+
+    end
+    else
+    begin
+      ShowMessage(rsNoTablesInCu);
+    end;
+
+  finally
+    SelectATableForm.Free;
+    SelectFieldsForm.Free;
+  end;
+end;
+
 
 
 procedure TBrowserForm.SqlSynEditSpecialLineColors(Sender: TObject;
@@ -3052,6 +3087,8 @@ begin
     special := True;
   end;
 end;
+
+
 
 //------------------------------------------------------------------------------
 

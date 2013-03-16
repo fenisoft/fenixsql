@@ -1,0 +1,38 @@
+object SelectFieldsForm: TSelectFieldsForm
+  Left = 695
+  Height = 215
+  Top = 253
+  Width = 322
+  Caption = 'SelectFieldsForm'
+  ClientHeight = 215
+  ClientWidth = 322
+  OnShow = FormShow
+  Position = poDesktopCenter
+  LCLVersion = '1.0.6.0'
+  object ButtonPanel1: TButtonPanel
+    Left = 6
+    Height = 34
+    Top = 175
+    Width = 310
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    ButtonOrder = boCloseCancelOK
+    TabOrder = 0
+    ShowButtons = [pbOK, pbCancel]
+  end
+  object FieldsCheckList: TCheckListBox
+    Left = 0
+    Height = 169
+    Top = 0
+    Width = 322
+    Align = alClient
+    ItemHeight = 0
+    TabOrder = 1
+  end
+end
