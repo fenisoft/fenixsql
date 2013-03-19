@@ -29,8 +29,8 @@ uses
 
 function TableCreate(const AName: string;const APk: string = ''): string;
 function TableCreateWithAutoIncrement(AName: string; APk: string = 'ID'): string;
-function TableInsert(const ATableName: string): string;
-function TableUpdate(const ATableName: string): string;
+function TableInsert(const ATableName: string; AFields:  TStringList): string;
+function TableUpdate(const ATableName: string; AFields:  TStringList): string;
 
 
 implementation
@@ -101,7 +101,7 @@ begin
   end;
 end;
 
-function TableInsert(const ATableName: string): string;
+function TableInsert(const ATableName: string; AFields:  TStringList): string;
 var
   i: integer;
   code:  TStringList;
@@ -109,40 +109,35 @@ var
 begin
    code :=  TStringList.Create;
    try
-      if not MainDataModule.BrowserTr.InTransaction then
-        MainDataModule.BrowserTr.StartTransaction;
-      MainDataModule.BrowserQry.SQL.Text := 'select * from ' +   ATableName;
-      MainDataModule.BrowserQry.Prepare;
       code.Add('insert into ' + ATableName);
       code.Add('(');
-      for i:= 0 to  MainDataModule.BrowserQry.FieldCount - 1 do
+      for i:= 0 to  AFields.Count - 1 do
       begin
-        if (i <  (MainDataModule.BrowserQry.FieldCount - 1)) then
+        if (i <  (AFields.Count - 1)) then
           sep := ' ,'
         else
           sep := '';
-        code.Add('  ' + MainDataModule.BrowserQry.FieldName(i) + sep);
+        code.Add('  ' + AFields.Strings[i] + sep);
       end;
       code.Add(')');
       code.Add('values');
       code.Add('(');
-      for i:= 0 to  MainDataModule.BrowserQry.FieldCount - 1 do
+      for i:= 0 to  AFields.Count - 1  do
       begin
-        if (i <  (MainDataModule.BrowserQry.FieldCount - 1)) then
+        if (i <  (AFields.Count - 1 )) then
           sep := ' ,'
         else
           sep := '';
         code.Add('  ?'  + sep);
       end;
       code.Add(')');
-      MainDataModule.BrowserQry.UnPrepare;
       Result := code.Text;
    finally
       code.Free;
    end;
 end;
 
-function TableUpdate(const ATableName: string): string;
+function TableUpdate(const ATableName: string; AFields:  TStringList): string;
 var
   i: integer;
   code:  TStringList;
@@ -150,29 +145,21 @@ var
 begin
    code :=  TStringList.Create;
    try
-      if not MainDataModule.BrowserTr.InTransaction then
-        MainDataModule.BrowserTr.StartTransaction;
-      MainDataModule.BrowserQry.SQL.Text := 'select * from ' +   ATableName;
-      MainDataModule.BrowserQry.Prepare;
       code.Add('update ' + ATableName);
-
-      for i:= 0 to  MainDataModule.BrowserQry.FieldCount - 1 do
+      for i:= 0 to AFields.Count - 1 do
       begin
-        if (i <  (MainDataModule.BrowserQry.FieldCount - 1)) then
+        if (i <  (AFields.Count  - 1)) then
           sep := ' ,'
         else
           sep := '';
 
         if i = 0 then
-          code.Add('set ' + MainDataModule.BrowserQry.FieldName(i) + ' = ?' + sep)
+          code.Add('set ' + AFields.Strings[i] + ' = ?' + sep)
         else
-          code.Add('    ' + MainDataModule.BrowserQry.FieldName(i) + ' = ?' + sep)
+          code.Add('    ' + AFields.Strings[i] + ' = ?' + sep)
       end;
       code.Add('where');
       code.Add('<primary key> = ?');
-
-
-      MainDataModule.BrowserQry.UnPrepare;
       Result := code.Text;
    finally
       code.Free;

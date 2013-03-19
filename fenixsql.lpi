@@ -260,6 +260,7 @@
         <Filename Value="fsselectfields.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SelectFieldsForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fsselectfields"/>
       </Unit29>

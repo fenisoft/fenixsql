@@ -3046,10 +3046,10 @@ end;
 procedure TBrowserForm.SqlUpdateTableActionExecute(Sender: TObject);
 var
    SelectATableForm: TSelectATableForm;
-   SelectFieldsForm: TSelectFieldsForm;
+   FieldList: TStringList;
 begin
    SelectATableForm := TSelectATableForm.Create(nil);
-   SelectFieldsForm := TSelectFieldsForm.Create(nil);
+   FieldList := TStringList.Create;
   try
 
     if FTableList.Count > 0 then
@@ -3059,8 +3059,8 @@ begin
 
       if SelectATableForm.ShowModal = mrOk then
       begin
-        SelectFieldsForm.TableName := SelectATableForm.TableSelected;
-        SelectFieldsForm.ShowModal;
+        GetFieldsFromTable(SelectATableForm.TableSelected,FieldList);
+        SqlSynEdit.Text := TableUpdate(SelectATableForm.TableSelected,FieldList)
       end;
 
     end
@@ -3070,8 +3070,8 @@ begin
     end;
 
   finally
+    FieldList.Free;
     SelectATableForm.Free;
-    SelectFieldsForm.Free;
   end;
 end;
 
@@ -3407,8 +3407,10 @@ end;
 procedure TBrowserForm.SqlInsertTableActionExecute(Sender: TObject);
 var
   SelectATableForm: TSelectATableForm;
+  FieldList: TStringList;
 begin
   SelectATableForm := TSelectATableForm.Create(nil);
+  FieldList := TStringList.Create;
   try
 
     if FTableList.Count > 0 then
@@ -3417,7 +3419,10 @@ begin
       SelectATableForm.ListBox1.ItemIndex := 0;
 
       if SelectATableForm.ShowModal = mrOk then
-        SqlSynEdit.Text := TableInsert(SelectATableForm.TableSelected);
+      begin
+        GetFieldsFromTable(SelectATableForm.TableSelected,FieldList);
+        SqlSynEdit.Text := TableInsert(SelectATableForm.TableSelected,FieldList);
+      end;
     end
     else
     begin
@@ -3425,6 +3430,7 @@ begin
     end;
 
   finally
+    FieldList.Free;
     SelectATableForm.Free;
   end;
 end;

@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 209
+  Left = 274
   Height = 684
-  Top = 149
+  Top = 453
   Width = 970
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -30,7 +30,7 @@ object BrowserForm: TBrowserForm
       Top = 1
       Width = 174
       Align = alClient
-      DefaultItemHeight = 18
+      DefaultItemHeight = 16
       Images = TreeViewImageList
       ParentShowHint = False
       ReadOnly = True
@@ -84,7 +84,7 @@ object BrowserForm: TBrowserForm
       OnChange = MainPageControlChange
       object DdlTabSheet: TTabSheet
         Caption = 'DDL'
-        ClientHeight = 608
+        ClientHeight = 610
         ClientWidth = 779
         object pTitle: TPanel
           Left = 0
