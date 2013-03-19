@@ -1,19 +1,19 @@
 object SelectFieldsForm: TSelectFieldsForm
-  Left = 695
-  Height = 215
-  Top = 253
-  Width = 322
-  Caption = 'SelectFieldsForm'
-  ClientHeight = 215
-  ClientWidth = 322
+  Left = 544
+  Height = 366
+  Top = 302
+  Width = 293
+  Caption = 'Select Fields'
+  ClientHeight = 366
+  ClientWidth = 293
   OnShow = FormShow
-  Position = poDesktopCenter
+  Position = poMainFormCenter
   LCLVersion = '1.0.6.0'
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
-    Top = 175
-    Width = 310
+    Top = 326
+    Width = 281
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
     HelpButton.Name = 'HelpButton'
@@ -28,11 +28,35 @@ object SelectFieldsForm: TSelectFieldsForm
   end
   object FieldsCheckList: TCheckListBox
     Left = 0
-    Height = 169
+    Height = 320
     Top = 0
-    Width = 322
+    Width = 293
     Align = alClient
     ItemHeight = 0
+    OnClickCheck = FieldsCheckListClickCheck
+    PopupMenu = PopupMenu1
     TabOrder = 1
+  end
+  object PopupMenu1: TPopupMenu
+    left = 106
+    top = 59
+    object MenuItem1: TMenuItem
+      Action = SelectAllAction
+    end
+    object MenuItem2: TMenuItem
+      Action = UnSelectAllAction
+    end
+  end
+  object ActionList1: TActionList
+    left = 21
+    top = 176
+    object SelectAllAction: TAction
+      Caption = 'Select All'
+      OnExecute = SelectAllActionExecute
+    end
+    object UnSelectAllAction: TAction
+      Caption = 'Unselect All'
+      OnExecute = UnSelectAllActionExecute
+    end
   end
 end
