@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 274
+  Left = 160
   Height = 684
-  Top = 453
+  Top = 132
   Width = 970
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -13,7 +13,7 @@ object BrowserForm: TBrowserForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '1.0.6.0'
+  LCLVersion = '1.0.8.0'
   object pListView: TPanel
     Left = 0
     Height = 638
@@ -30,7 +30,7 @@ object BrowserForm: TBrowserForm
       Top = 1
       Width = 174
       Align = alClient
-      DefaultItemHeight = 16
+      DefaultItemHeight = 18
       Images = TreeViewImageList
       ParentShowHint = False
       ReadOnly = True
@@ -84,7 +84,7 @@ object BrowserForm: TBrowserForm
       OnChange = MainPageControlChange
       object DdlTabSheet: TTabSheet
         Caption = 'DDL'
-        ClientHeight = 610
+        ClientHeight = 608
         ClientWidth = 779
         object pTitle: TPanel
           Left = 0
@@ -559,6 +559,8 @@ object BrowserForm: TBrowserForm
             object TSynGutterSeparator
               Width = 2
               MouseActions = <>
+              MarkupInfo.Background = clWhite
+              MarkupInfo.Foreground = clGray
             end
             object TSynGutterCodeFolding
               MouseActions = <              
@@ -1158,6 +1160,8 @@ object BrowserForm: TBrowserForm
                   object TSynGutterSeparator
                     Width = 2
                     MouseActions = <>
+                    MarkupInfo.Background = clWhite
+                    MarkupInfo.Foreground = clGray
                   end
                   object TSynGutterCodeFolding
                     MouseActions = <                    
@@ -1836,6 +1840,8 @@ object BrowserForm: TBrowserForm
                 object TSynGutterSeparator
                   Width = 2
                   MouseActions = <>
+                  MarkupInfo.Background = clWhite
+                  MarkupInfo.Foreground = clGray
                 end
                 object TSynGutterCodeFolding
                   MouseActions = <                  
@@ -2151,6 +2157,11 @@ object BrowserForm: TBrowserForm
       Category = 'SqlCodeTemplate'
       Caption = 'Update Table'
       OnExecute = SqlUpdateTableActionExecute
+    end
+    object SqlCreateTableMenuAction: TAction
+      Category = 'SqlCodeTemplate'
+      Caption = 'Create Table'
+      OnExecute = SqlCreateTableMenuActionExecute
     end
   end
   object MainMenu: TMainMenu
@@ -5592,6 +5603,13 @@ object BrowserForm: TBrowserForm
         8B94858A88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A
         88FF858A88FF858A88FF858A88FF858A88FF898E8C94FFFFFF00
       }
+    end
+  end
+  object SqlGenerateTablePopUpMenu: TPopupMenu
+    left = 256
+    top = 320
+    object MenuItem64: TMenuItem
+      Action = SqlCreateTableMenuAction
     end
   end
 end

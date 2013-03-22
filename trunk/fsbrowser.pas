@@ -71,7 +71,10 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    SqlCreateTableMenuAction: TAction;
     MenuItem63: TMenuItem;
+    MenuItem64: TMenuItem;
+    SqlGenerateTablePopUpMenu: TPopupMenu;
     SqlUpdateTableAction: TAction;
     DDLSynMemoPopUpMenu: TPopupMenu;
     MenuItem58: TMenuItem;
@@ -235,6 +238,7 @@ type
     ToolButton9: TToolButton;
     DbTreeView: TTreeView;
     procedure CloseOtherSQLTabActionExecute(Sender: TObject);
+    procedure SqlCreateTableMenuActionExecute(Sender: TObject);
     procedure NewSQLTabActionExecute(Sender: TObject);
     procedure ClearMessagesActionExecute(Sender: TObject);
     procedure CreateDbActionExecute(Sender: TObject);
@@ -348,6 +352,7 @@ type
     procedure AddTabEdit(const AText: string = '');
     procedure LoadTabsHistory;
     procedure SaveTabsHistory;
+    function CreateTableSQL: string;
   public
     { public declarations }
   end;
@@ -3018,29 +3023,11 @@ end;
 
 procedure TBrowserForm.SqlCreateTableActionExecute(Sender: TObject);
 var
-  CreateTableForm: TCreateTableForm;
+  SQLCode: string;
 begin
-  CreateTableForm := TCreateTableForm.Create(self);
-  try
-    if CreateTableForm.ShowModal = mrOk then
-    begin
-      if CreateTableForm.AutoInc then
-      begin
-        SqlSynEdit.Lines.Text :=
-          TableCreateWithAutoIncrement(CreateTableForm.TableName,
-          CreateTableForm.PrimaryKey);
-        ShowPopUpNotifier('Fenixsql:create table',
-          rsUseExecuteSc, 3);
-      end
-      else
-      begin
-        SqlSynEdit.Lines.Text :=
-          TableCreate(CreateTableForm.TableName, CreateTableForm.PrimaryKey);
-      end;
-    end;
-  finally
-    CreateTableForm.Free;
-  end;
+  SQLCode := CreateTableSQL;
+  if SQLCode <> '' then
+    SqlSynEdit.Lines.Text := SQLCode;
 end;
 
 procedure TBrowserForm.SqlUpdateTableActionExecute(Sender: TObject);
@@ -3342,6 +3329,34 @@ begin
 
 end;
 
+function TBrowserForm.CreateTableSQL: string;
+var
+  CreateTableForm: TCreateTableForm;
+begin
+  CreateTableForm := TCreateTableForm.Create(self);
+  Result := '';
+  try
+    if CreateTableForm.ShowModal = mrOk then
+    begin
+      if CreateTableForm.AutoInc then
+      begin
+       Result :=
+          TableCreateWithAutoIncrement(CreateTableForm.TableName,
+          CreateTableForm.PrimaryKey);
+        ShowPopUpNotifier('Fenixsql:Create Table',
+          rsUseExecuteSc, 3);
+      end
+      else
+      begin
+        Result :=
+          TableCreate(CreateTableForm.TableName, CreateTableForm.PrimaryKey);
+      end;
+    end;
+  finally
+    CreateTableForm.Free;
+  end;
+end;
+
 procedure TBrowserForm.NewSQLTabActionExecute(Sender: TObject);
 begin
   AddTabEdit;
@@ -3376,6 +3391,19 @@ begin
     SqlEditTabControl.OnChanging := @SqlEditTabControlChanging;
   end;
 
+end;
+
+procedure TBrowserForm.SqlCreateTableMenuActionExecute(Sender: TObject);
+var
+  SQLCode: string;
+begin
+  SQLCode := CreateTableSQL;
+  if SQLCode <> '' then
+  begin
+    AddTabEdit(SQLCode);
+    MainPageControl.PageIndex := 1;
+    SqlEditTabControl.TabIndex := SqlEditTabControl.Tabs.Count - 1;
+  end;
 end;
 
 procedure TBrowserForm.CloseSQLTabActionExecute(Sender: TObject);
@@ -3849,6 +3877,9 @@ begin
         ViewDataAction.Enabled := False;
         GrantMgrAction.Enabled := False;
         case TNodeDesc(DbTreeView.Selected.Data).Nodetype of
+          CNT_TABLES:
+             SqlGenerateTablePopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X +
+              X, (Sender as TTreeView).ClientOrigin.Y + Y);
           CNT_DATABASE:
             DbPopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X +
               X, (Sender as TTreeView).ClientOrigin.Y + Y);
