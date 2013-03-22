@@ -1,10 +1,10 @@
 compiled with
-  freepascal 2.6.0 32bit
-  lazarus 1.0.6
+  freepascal 2.6.2 32bit
+  lazarus 1.0.8
   fblib 0.86
 
 tested on
-   windows xp/vista/7
+   windows xp/vista/7/8
    ubuntu 12.04
  
 in ubuntu 12.04 install fblient library
