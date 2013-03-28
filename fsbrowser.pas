@@ -71,6 +71,10 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    MenuItem65: TMenuItem;
+    MenuItem66: TMenuItem;
+    MenuItem67: TMenuItem;
+    SqInsertTableMenuAction: TAction;
     SqlCreateTableMenuAction: TAction;
     MenuItem63: TMenuItem;
     MenuItem64: TMenuItem;
@@ -238,6 +242,7 @@ type
     ToolButton9: TToolButton;
     DbTreeView: TTreeView;
     procedure CloseOtherSQLTabActionExecute(Sender: TObject);
+    procedure SqInsertTableMenuActionExecute(Sender: TObject);
     procedure SqlCreateTableMenuActionExecute(Sender: TObject);
     procedure NewSQLTabActionExecute(Sender: TObject);
     procedure ClearMessagesActionExecute(Sender: TObject);
@@ -353,6 +358,7 @@ type
     procedure LoadTabsHistory;
     procedure SaveTabsHistory;
     function CreateTableSQL: string;
+    function InsertTableSQL(const ATableName: string): string;
   public
     { public declarations }
   end;
@@ -3032,11 +3038,11 @@ end;
 
 procedure TBrowserForm.SqlUpdateTableActionExecute(Sender: TObject);
 var
-   SelectATableForm: TSelectATableForm;
-   FieldList: TStringList;
+  SelectATableForm: TSelectATableForm;
+  FieldList: TStringList;
 begin
-   SelectATableForm := TSelectATableForm.Create(nil);
-   FieldList := TStringList.Create;
+  SelectATableForm := TSelectATableForm.Create(nil);
+  FieldList := TStringList.Create;
   try
 
     if FTableList.Count > 0 then
@@ -3046,8 +3052,8 @@ begin
 
       if SelectATableForm.ShowModal = mrOk then
       begin
-        GetFieldsFromTable(SelectATableForm.TableSelected,FieldList);
-        SqlSynEdit.Text := TableUpdate(SelectATableForm.TableSelected,FieldList)
+        GetFieldsFromTable(SelectATableForm.TableSelected, FieldList);
+        SqlSynEdit.Text := TableUpdate(SelectATableForm.TableSelected, FieldList);
       end;
 
     end
@@ -3340,7 +3346,7 @@ begin
     begin
       if CreateTableForm.AutoInc then
       begin
-       Result :=
+        Result :=
           TableCreateWithAutoIncrement(CreateTableForm.TableName,
           CreateTableForm.PrimaryKey);
         ShowPopUpNotifier('Fenixsql:Create Table',
@@ -3354,6 +3360,20 @@ begin
     end;
   finally
     CreateTableForm.Free;
+  end;
+end;
+
+function TBrowserForm.InsertTableSQL(const ATableName: string): string;
+var
+  FieldList: TStringList;
+begin
+  Result := '';
+  FieldList := TStringList.Create;
+  try
+    GetFieldsFromTable(ATableNAme, FieldList);
+    Result := TableInsert(ATableName, FieldList);
+  finally
+    FieldList.Free;
   end;
 end;
 
@@ -3391,6 +3411,23 @@ begin
     SqlEditTabControl.OnChanging := @SqlEditTabControlChanging;
   end;
 
+end;
+
+procedure TBrowserForm.SqInsertTableMenuActionExecute(Sender: TObject);
+var
+  SQLCode: string;
+begin
+  //if Assigned(DbTreeView.Selected.Data) then
+    if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) then
+    begin
+      SQLCode := InsertTableSQL(TNodeDesc(DbTreeView.Selected.Data).ObjName);
+      if SQLCode <> '' then
+      begin
+        AddTabEdit(SQLCode);
+        MainPageControl.PageIndex := 1;
+        SqlEditTabControl.TabIndex := SqlEditTabControl.Tabs.Count - 1;
+      end;
+    end;
 end;
 
 procedure TBrowserForm.SqlCreateTableMenuActionExecute(Sender: TObject);
@@ -3435,22 +3472,15 @@ end;
 procedure TBrowserForm.SqlInsertTableActionExecute(Sender: TObject);
 var
   SelectATableForm: TSelectATableForm;
-  FieldList: TStringList;
 begin
   SelectATableForm := TSelectATableForm.Create(nil);
-  FieldList := TStringList.Create;
   try
-
     if FTableList.Count > 0 then
     begin
       SelectATableForm.ListBox1.Items.Assign(FTableList);
       SelectATableForm.ListBox1.ItemIndex := 0;
-
       if SelectATableForm.ShowModal = mrOk then
-      begin
-        GetFieldsFromTable(SelectATableForm.TableSelected,FieldList);
-        SqlSynEdit.Text := TableInsert(SelectATableForm.TableSelected,FieldList);
-      end;
+        SqlSynEdit.Text := InsertTableSql(SelectATableForm.TableSelected);
     end
     else
     begin
@@ -3458,7 +3488,6 @@ begin
     end;
 
   finally
-    FieldList.Free;
     SelectATableForm.Free;
   end;
 end;
@@ -3876,10 +3905,12 @@ begin
         ExportToJsonAction.Enabled := False;
         ViewDataAction.Enabled := False;
         GrantMgrAction.Enabled := False;
+        SqInsertTableMenuAction.Enabled := False;
         case TNodeDesc(DbTreeView.Selected.Data).Nodetype of
           CNT_TABLES:
-             SqlGenerateTablePopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X +
-              X, (Sender as TTreeView).ClientOrigin.Y + Y);
+            SqlGenerateTablePopUpMenu.Popup(
+              (Sender as TTreeView).ClientOrigin.X + X,
+              (Sender as TTreeView).ClientOrigin.Y + Y);
           CNT_DATABASE:
             DbPopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X +
               X, (Sender as TTreeView).ClientOrigin.Y + Y);
@@ -3896,6 +3927,7 @@ begin
             ExportToJsonAction.Enabled := True;
             ViewDataAction.Enabled := True;
             GrantMgrAction.Enabled := True;
+            SqInsertTableMenuAction.Enabled:=True;
             ShowOptionDescriptionAction.Enabled := True;
             ItemPopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X + X,
               (Sender as TTreeView).ClientOrigin.Y + Y);

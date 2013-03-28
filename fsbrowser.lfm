@@ -2163,6 +2163,11 @@ object BrowserForm: TBrowserForm
       Caption = 'Create Table'
       OnExecute = SqlCreateTableMenuActionExecute
     end
+    object SqInsertTableMenuAction: TAction
+      Category = 'SqlCodeTemplate'
+      Caption = 'Insert '
+      OnExecute = SqInsertTableMenuActionExecute
+    end
   end
   object MainMenu: TMainMenu
     Images = BrowserImageList
@@ -3268,6 +3273,15 @@ object BrowserForm: TBrowserForm
       }
       SubMenuImages = BrowserImageList
       OnClick = ShowOptionDescriptionActionExecute
+    end
+    object MenuItem65: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem66: TMenuItem
+      Caption = 'SQL'
+      object MenuItem67: TMenuItem
+        Action = SqInsertTableMenuAction
+      end
     end
   end
   object DbPopUpMenu: TPopupMenu
