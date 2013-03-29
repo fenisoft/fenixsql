@@ -71,6 +71,8 @@ type
   { TBrowserForm }
 
   TBrowserForm = class(TForm)
+    MenuItem68: TMenuItem;
+    SqlUpdateTableMenuAction: TAction;
     MenuItem65: TMenuItem;
     MenuItem66: TMenuItem;
     MenuItem67: TMenuItem;
@@ -266,6 +268,7 @@ type
     procedure SqlSynEditSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure SqlUpdateTableActionExecute(Sender: TObject);
+    procedure SqlUpdateTableMenuActionExecute(Sender: TObject);
     procedure UsersActionExecute(Sender: TObject);
     procedure ViewDataActionExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -359,6 +362,7 @@ type
     procedure SaveTabsHistory;
     function CreateTableSQL: string;
     function InsertTableSQL(const ATableName: string): string;
+    function UpdateTableSQL(const ATAbleNAme: string): string;
   public
     { public declarations }
   end;
@@ -3039,33 +3043,42 @@ end;
 procedure TBrowserForm.SqlUpdateTableActionExecute(Sender: TObject);
 var
   SelectATableForm: TSelectATableForm;
-  FieldList: TStringList;
 begin
   SelectATableForm := TSelectATableForm.Create(nil);
-  FieldList := TStringList.Create;
   try
-
     if FTableList.Count > 0 then
     begin
       SelectATableForm.ListBox1.Items.Assign(FTableList);
       SelectATableForm.ListBox1.ItemIndex := 0;
-
       if SelectATableForm.ShowModal = mrOk then
       begin
-        GetFieldsFromTable(SelectATableForm.TableSelected, FieldList);
-        SqlSynEdit.Text := TableUpdate(SelectATableForm.TableSelected, FieldList);
+        SqlSynEdit.Text := UpdateTableSQL(SelectATableForm.TableSelected);
       end;
-
     end
     else
     begin
       ShowMessage(rsNoTablesInCu);
     end;
-
   finally
-    FieldList.Free;
     SelectATableForm.Free;
   end;
+end;
+
+procedure TBrowserForm.SqlUpdateTableMenuActionExecute(Sender: TObject);
+var
+  SQLCode: string;
+begin
+   if Assigned(DbTreeView.Selected.Data) then
+    if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) then
+    begin
+      SQLCode := UpdateTableSQL(TNodeDesc(DbTreeView.Selected.Data).ObjName);
+      if SQLCode <> '' then
+      begin
+        AddTabEdit(SQLCode);
+        MainPageControl.PageIndex := 1;
+        SqlEditTabControl.TabIndex := SqlEditTabControl.Tabs.Count - 1;
+      end;
+    end;
 end;
 
 
@@ -3377,6 +3390,20 @@ begin
   end;
 end;
 
+function TBrowserForm.UpdateTableSQL(const ATAbleNAme: string): string;
+var
+  FieldList: TStringList;
+begin
+  Result := '';
+  FieldList := TStringList.Create;
+  try
+    GetFieldsFromTable(ATableNAme, FieldList);
+    Result := TableUpdate(ATableName, FieldList);
+  finally
+    FieldList.Free;
+  end;
+end;
+
 procedure TBrowserForm.NewSQLTabActionExecute(Sender: TObject);
 begin
   AddTabEdit;
@@ -3417,7 +3444,7 @@ procedure TBrowserForm.SqInsertTableMenuActionExecute(Sender: TObject);
 var
   SQLCode: string;
 begin
-  //if Assigned(DbTreeView.Selected.Data) then
+  if Assigned(DbTreeView.Selected.Data) then
     if (TNodeDesc(DbTreeView.Selected.Data).NodeType = CNT_TABLE) then
     begin
       SQLCode := InsertTableSQL(TNodeDesc(DbTreeView.Selected.Data).ObjName);
@@ -3906,6 +3933,7 @@ begin
         ViewDataAction.Enabled := False;
         GrantMgrAction.Enabled := False;
         SqInsertTableMenuAction.Enabled := False;
+        SqlUpdateTableMenuAction.Enabled := False;
         case TNodeDesc(DbTreeView.Selected.Data).Nodetype of
           CNT_TABLES:
             SqlGenerateTablePopUpMenu.Popup(
@@ -3927,7 +3955,8 @@ begin
             ExportToJsonAction.Enabled := True;
             ViewDataAction.Enabled := True;
             GrantMgrAction.Enabled := True;
-            SqInsertTableMenuAction.Enabled:=True;
+            SqInsertTableMenuAction.Enabled := True;
+            SqlUpdateTableMenuAction.Enabled := True;
             ShowOptionDescriptionAction.Enabled := True;
             ItemPopUpMenu.Popup((Sender as TTreeView).ClientOrigin.X + X,
               (Sender as TTreeView).ClientOrigin.Y + Y);

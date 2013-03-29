@@ -1945,8 +1945,8 @@ object BrowserForm: TBrowserForm
   end
   object ActionList1: TActionList
     Images = BrowserImageList
-    left = 32
-    top = 528
+    left = 64
+    top = 544
     object NewScriptAction: TAction
       Caption = 'New script'
       Hint = 'New'
@@ -2168,11 +2168,16 @@ object BrowserForm: TBrowserForm
       Caption = 'Insert '
       OnExecute = SqInsertTableMenuActionExecute
     end
+    object SqlUpdateTableMenuAction: TAction
+      Category = 'SqlCodeTemplate'
+      Caption = 'Update'
+      OnExecute = SqlUpdateTableMenuActionExecute
+    end
   end
   object MainMenu: TMainMenu
     Images = BrowserImageList
-    left = 104
-    top = 40
+    left = 400
+    top = 208
     object MenuItem1: TMenuItem
       Caption = '&Database'
       object MenuItem2: TMenuItem
@@ -3015,19 +3020,19 @@ object BrowserForm: TBrowserForm
   end
   object OpenDialog: TOpenDialog
     FilterIndex = 0
-    left = 32
-    top = 464
+    left = 64
+    top = 480
   end
   object SaveDialog: TSaveDialog
     FilterIndex = 0
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 32
-    top = 408
+    left = 64
+    top = 424
   end
   object ItemPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 32
-    top = 104
+    left = 400
+    top = 264
     object MenuItem8: TMenuItem
       Action = ViewDataAction
       Default = True
@@ -3282,12 +3287,15 @@ object BrowserForm: TBrowserForm
       object MenuItem67: TMenuItem
         Action = SqInsertTableMenuAction
       end
+      object MenuItem68: TMenuItem
+        Action = SqlUpdateTableMenuAction
+      end
     end
   end
   object DbPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 32
-    top = 40
+    left = 400
+    top = 392
     object MenuItem13: TMenuItem
       Action = BackupDatabaseAction
       Bitmap.Data = {
@@ -3371,8 +3379,8 @@ object BrowserForm: TBrowserForm
   end
   object SynMemoPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 32
-    top = 224
+    left = 256
+    top = 208
     object MenuItem56: TMenuItem
       Action = NewSQLTabAction
       Bitmap.Data = {
@@ -3669,16 +3677,16 @@ object BrowserForm: TBrowserForm
     end
   end
   object MessagesPopUpMenu: TPopupMenu
-    left = 32
-    top = 160
+    left = 256
+    top = 392
     object MenuItem4: TMenuItem
       Action = ClearMessagesAction
       OnClick = ClearMessagesActionExecute
     end
   end
   object TreeViewImageList: TImageList
-    left = 32
-    top = 304
+    left = 64
+    top = 296
     Bitmap = {
       4C690E0000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -4132,8 +4140,8 @@ object BrowserForm: TBrowserForm
     }
   end
   object BrowserImageList: TImageList
-    left = 32
-    top = 360
+    left = 64
+    top = 368
     Bitmap = {
       4C69250000001000000010000000FFFFFF00C17D4460C88B4DBBC88C4FEEC88C
       4FF6C88C4FF7C88C4FF7C88D4FF7C98C4FF7C78B4FF7C5894BD4C4763B91B368
@@ -5330,13 +5338,13 @@ object BrowserForm: TBrowserForm
     Text = 'Text'
     Title = 'Caption'
     Visible = False
-    left = 104
-    top = 272
+    left = 64
+    top = 240
   end
   object SQLTabsPopupMenu: TPopupMenu
     Images = BrowserImageList
-    left = 104
-    top = 96
+    left = 400
+    top = 328
     object MenuItem50: TMenuItem
       Action = NewSQLTabAction
       Bitmap.Data = {
@@ -5457,8 +5465,8 @@ object BrowserForm: TBrowserForm
   end
   object DDLSynMemoPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 104
-    top = 184
+    left = 256
+    top = 264
     object MenuItem58: TMenuItem
       Action = EditCutAction
       Bitmap.Data = {
