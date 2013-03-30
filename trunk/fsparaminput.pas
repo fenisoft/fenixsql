@@ -27,7 +27,7 @@ interface
 
 uses
   SysUtils, LResources, Forms, Controls, Dialogs, ExtCtrls,
-  Buttons, StdCtrls;
+  Buttons, StdCtrls, Classes;
 
 type
   TInputValueType = (ivInteger, ivDouble, ivString, ivTimeStamp, ivTime, ivDate);
@@ -50,6 +50,7 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     procedure NowButtonClick(Sender: TObject);
+    procedure NullCheckBoxChange(Sender: TObject);
     procedure OkButtonClick(Sender: TObject);
     procedure NullCheckBoxClick(Sender: TObject);
     procedure edValueChange(Sender: TObject);
@@ -348,16 +349,16 @@ end;
 
 procedure TParamForm.edValueChange(Sender: TObject);
 begin
-  if NullCheckBox.Visible then
-    NullCheckBox.Checked := (ValueEdit.Text = '');
+  // if NullCheckBox.Visible then
+   //  NullCheckBox.Checked := (ValueEdit.Text = '');
 end;
 
 //------------------------------------------------------------------------------
 
 procedure TParamForm.NullCheckBoxClick(Sender: TObject);
 begin
-  if NullCheckBox.Checked then
-    ValueEdit.Text := '';
+  //if NullCheckBox.Checked then
+     // ValueEdit.Text := '';
 end;
 
 //------------------------------------------------------------------------------
@@ -372,6 +373,11 @@ begin
     ivDate:
       ValueEdit.Text := DateTostr(Now);
   end;
+end;
+
+procedure TParamForm.NullCheckBoxChange(Sender: TObject);
+begin
+  ValueEdit.Enabled := not NullCheckBox.Checked;
 end;
 
 //------------------------------------------------------------------------------

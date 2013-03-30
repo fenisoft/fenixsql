@@ -181,10 +181,6 @@ type
     MenuItem4: TMenuItem;
     MenuItem40: TMenuItem;
     MenuItem41: TMenuItem;
-    MenuItem42: TMenuItem;
-    MenuItem43: TMenuItem;
-    MenuItem44: TMenuItem;
-    MenuItem45: TMenuItem;
     MenuItem46: TMenuItem;
     MenuItem47: TMenuItem;
     MenuItem48: TMenuItem;
@@ -2884,7 +2880,7 @@ var
 begin
   JsonTypeForm := TJsonTypeForm.Create(self);
   try
-    if JsonTypeForm.ModalResult = mrOk then
+    if JsonTypeForm.ShowModal = mrOk then
     begin
       MainDataModule.MainQry.Close;
       MainDataModule.MainQry.ExecSQL;
