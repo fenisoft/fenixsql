@@ -10,7 +10,7 @@ object BlobInputForm: TBlobInputForm
   ClientHeight = 177
   ClientWidth = 486
   Position = poMainFormCenter
-  LCLVersion = '1.0.6.0'
+  LCLVersion = '1.0.8.0'
   object Label3: TLabel
     Left = 8
     Height = 16
@@ -22,7 +22,7 @@ object BlobInputForm: TBlobInputForm
   object Bevel2: TBevel
     Left = 0
     Height = 8
-    Top = 44
+    Top = 48
     Width = 486
     Align = alTop
     Shape = bsTopLine
@@ -131,7 +131,7 @@ object BlobInputForm: TBlobInputForm
   end
   object Panel1: TPanel
     Left = 0
-    Height = 44
+    Height = 48
     Top = 0
     Width = 486
     Align = alTop
@@ -140,12 +140,14 @@ object BlobInputForm: TBlobInputForm
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 2
-    ClientHeight = 44
+    ClientHeight = 48
     ClientWidth = 486
+    Color = clWhite
+    ParentColor = False
     TabOrder = 3
     object Label1: TLabel
       Left = 5
-      Height = 22
+      Height = 24
       Top = 0
       Width = 69
       Caption = 'Param # :'
@@ -156,7 +158,7 @@ object BlobInputForm: TBlobInputForm
     end
     object ParamNumberLabel: TLabel
       Left = 74
-      Height = 22
+      Height = 24
       Top = 0
       Width = 107
       Caption = 'ParamNumberLabel'
@@ -166,8 +168,8 @@ object BlobInputForm: TBlobInputForm
     end
     object Label4: TLabel
       Left = 5
-      Height = 22
-      Top = 22
+      Height = 24
+      Top = 24
       Width = 69
       Caption = 'ParamType :'
       Font.Style = [fsBold]
@@ -177,8 +179,8 @@ object BlobInputForm: TBlobInputForm
     end
     object ParamTypeLabel: TLabel
       Left = 74
-      Height = 22
-      Top = 22
+      Height = 24
+      Top = 24
       Width = 107
       Caption = 'ParamTypeLabel'
       Layout = tlCenter

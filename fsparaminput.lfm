@@ -1,7 +1,7 @@
 object ParamForm: TParamForm
-  Left = 517
+  Left = 429
   Height = 174
-  Top = 387
+  Top = 423
   Width = 467
   HorzScrollBar.Page = 489
   VertScrollBar.Page = 193
@@ -13,7 +13,7 @@ object ParamForm: TParamForm
   ClientWidth = 467
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.0.8.0'
   object Bevel2: TBevel
     Left = 2
     Height = 8
@@ -118,6 +118,8 @@ object ParamForm: TParamForm
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 46
     ClientWidth = 463
+    Color = clWhite
+    ParentColor = False
     TabOrder = 1
     object Label1: TLabel
       Left = 6
@@ -216,6 +218,7 @@ object ParamForm: TParamForm
       Width = 73
       Align = alLeft
       Caption = '&Set as null'
+      OnChange = NullCheckBoxChange
       OnClick = NullCheckBoxClick
       TabOrder = 0
     end
