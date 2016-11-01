@@ -149,11 +149,11 @@ begin
     BackupForm.FBLService1.Password := aDb.Password;
     BackupForm.FBLService1.Host := aDb.Host;
     if aDB.Protocol = ptLocal then
-      BackupForm.FBLService1.Protocol := FBLService.ptLocal
+      BackupForm.FBLService1.Protocol := FBLService.sptLocal
     else if aDB.Protocol = ptTcpIp then
-      BackupForm.FBLService1.Protocol := FBLService.ptTcpIp
+      BackupForm.FBLService1.Protocol := FBLService.sptTcpIp
     else if aDb.Protocol = ptNetBeui then
-      BackupForm.FBLService1.Protocol := FBLService.ptNetBeui;
+      BackupForm.FBLService1.Protocol := FBLService.sptNetBeui;
     BackupForm.DBFileEdit.Text := aDb.DBFile;
     BackupForm.ShowModal;
   finally

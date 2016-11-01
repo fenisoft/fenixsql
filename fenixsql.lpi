@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="9"/>
@@ -45,7 +45,6 @@
       <Unit0>
         <Filename Value="fenixsql.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fenixsql"/>
       </Unit0>
       <Unit1>
         <Filename Value="fsusers.pas"/>
@@ -53,7 +52,6 @@
         <ComponentName Value="UsersForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsusers"/>
       </Unit1>
       <Unit2>
         <Filename Value="fsabout.pas"/>
@@ -61,7 +59,6 @@
         <ComponentName Value="AboutForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsabout"/>
       </Unit2>
       <Unit3>
         <Filename Value="fsbackup.pas"/>
@@ -69,7 +66,6 @@
         <ComponentName Value="BackupForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsbackup"/>
       </Unit3>
       <Unit4>
         <Filename Value="fsblobinput.pas"/>
@@ -77,7 +73,6 @@
         <ComponentName Value="BlobInputForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsblobinput"/>
       </Unit4>
       <Unit5>
         <Filename Value="fsblobtext.pas"/>
@@ -85,7 +80,6 @@
         <ComponentName Value="BlobTextForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsblobtext"/>
       </Unit5>
       <Unit6>
         <Filename Value="fsblobviewdialog.pas"/>
@@ -93,7 +87,6 @@
         <ComponentName Value="BlobViewDialogForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsblobviewdialog"/>
       </Unit6>
       <Unit7>
         <Filename Value="fsbrowser.pas"/>
@@ -101,12 +94,10 @@
         <ComponentName Value="BrowserForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsbrowser"/>
       </Unit7>
       <Unit8>
         <Filename Value="fsconfig.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fsconfig"/>
       </Unit8>
       <Unit9>
         <Filename Value="fscreatedb.pas"/>
@@ -114,7 +105,6 @@
         <ComponentName Value="CreateDbForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fscreatedb"/>
       </Unit9>
       <Unit10>
         <Filename Value="fsdbconnections.pas"/>
@@ -122,7 +112,6 @@
         <ComponentName Value="DbConnectionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsdbconnections"/>
       </Unit10>
       <Unit11>
         <Filename Value="fsdescription.pas"/>
@@ -130,7 +119,6 @@
         <ComponentName Value="DescriptionForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsdescription"/>
       </Unit11>
       <Unit12>
         <Filename Value="fsdialogtran.pas"/>
@@ -138,7 +126,6 @@
         <ComponentName Value="DialogTransForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsdialogtran"/>
       </Unit12>
       <Unit13>
         <Filename Value="fsdm.pas"/>
@@ -146,7 +133,6 @@
         <ComponentName Value="MainDataModule"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <UnitName Value="fsdm"/>
       </Unit13>
       <Unit14>
         <Filename Value="fslogin.pas"/>
@@ -154,12 +140,10 @@
         <ComponentName Value="LoginForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fslogin"/>
       </Unit14>
       <Unit15>
         <Filename Value="fsmixf.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fsmixf"/>
       </Unit15>
       <Unit16>
         <Filename Value="fsoptions.pas"/>
@@ -167,7 +151,6 @@
         <ComponentName Value="OptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsoptions"/>
       </Unit16>
       <Unit17>
         <Filename Value="fsparaminput.pas"/>
@@ -175,7 +158,6 @@
         <ComponentName Value="ParamForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsparaminput"/>
       </Unit17>
       <Unit18>
         <Filename Value="fsservice.pas"/>
@@ -183,7 +165,6 @@
         <ComponentName Value="ServiceForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsservice"/>
       </Unit18>
       <Unit19>
         <Filename Value="fstablefilter.pas"/>
@@ -191,7 +172,6 @@
         <ComponentName Value="TableFilterForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fstablefilter"/>
       </Unit19>
       <Unit20>
         <Filename Value="fstableview.pas"/>
@@ -199,7 +179,6 @@
         <ComponentName Value="TableViewForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fstableview"/>
       </Unit20>
       <Unit21>
         <Filename Value="fstextoptions.pas"/>
@@ -207,7 +186,6 @@
         <ComponentName Value="TextOptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fstextoptions"/>
       </Unit21>
       <Unit22>
         <Filename Value="fsusermod.pas"/>
@@ -215,22 +193,18 @@
         <ComponentName Value="UserModForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsusermod"/>
       </Unit22>
       <Unit23>
         <Filename Value="fsexport.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fsexport"/>
       </Unit23>
       <Unit24>
         <Filename Value="fsmessages.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fsmessages"/>
       </Unit24>
       <Unit25>
         <Filename Value="fssqlcodetemplate.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fssqlcodetemplate"/>
       </Unit25>
       <Unit26>
         <Filename Value="fscreatetable.pas"/>
@@ -238,7 +212,6 @@
         <ComponentName Value="CreateTableForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fscreatetable"/>
       </Unit26>
       <Unit27>
         <Filename Value="fsselectatable.pas"/>
@@ -246,7 +219,6 @@
         <ComponentName Value="SelectATableForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsselectatable"/>
       </Unit27>
       <Unit28>
         <Filename Value="fsjsontype.pas"/>
@@ -254,7 +226,6 @@
         <ComponentName Value="JsonTypeForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsjsontype"/>
       </Unit28>
       <Unit29>
         <Filename Value="fsselectfields.pas"/>
@@ -262,7 +233,6 @@
         <ComponentName Value="SelectFieldsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="fsselectfields"/>
       </Unit29>
     </Units>
   </ProjectOptions>
@@ -278,18 +248,15 @@
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="False"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
         </Win32>
       </Options>
     </Linking>
-    <Other>
-      <CompilerMessages>
-        <MsgFileName Value=""/>
-      </CompilerMessages>
-      <CompilerPath Value="$(CompPath)"/>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">

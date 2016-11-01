@@ -149,6 +149,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
+    FLine : Integer;
     FBLService1: TFBLService;
     procedure ShowServerInfo;
     procedure LoadSetting(const AFileName: string);
@@ -410,10 +411,10 @@ begin
   if HostEdit.Text <> '' then
     FblService1.Host := HostEdit.Text;
   case ProtocolComboBox.ItemIndex of
-    1: FblService1.Protocol := ptTcpIp;
-    2: FblService1.Protocol := ptNetBeui;
+    1: FblService1.Protocol := sptTcpIp;
+    2: FblService1.Protocol := sptNetBeui;
     else
-      FblService1.Protocol := ptLocal;
+      FblService1.Protocol := sptLocal;
   end;
   FblService1.User := UserEdit.Text;
   FblService1.Password := PasswordEdit.Text;
@@ -784,7 +785,14 @@ procedure TServiceForm.FBLService1WriteOutput(Sender: TObject;
 begin
   servicesPAgeControl.PageIndex := 5;
   //servicesPageControl.ActivePage := tabOut;
+
   OutputMemo.Lines.Add(Trim(TextLine));
+  Inc(Fline);
+  if FLine = 10 then
+  begin
+    Application.ProcessMessages;
+    FLine := 0;
+  end;
 end;
 
 //------------------------------------------------------------------------------
@@ -795,6 +803,7 @@ end;
 
 procedure TServiceForm.FormCreate(Sender: TObject);
 begin
+  FLine := 0;
   {$IFDEF UNIX}
   ProtocolComboBox.ItemIndex := 1;
   HostEdit.Text := 'Localhost';

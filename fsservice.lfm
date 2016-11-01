@@ -1,7 +1,7 @@
 object ServiceForm: TServiceForm
-  Left = 236
+  Left = 339
   Height = 587
-  Top = 218
+  Top = 62
   Width = 751
   Caption = 'Service manager'
   ClientHeight = 567
@@ -9,7 +9,7 @@ object ServiceForm: TServiceForm
   Menu = MainMenu1
   OnClose = FormClose
   OnCreate = FormCreate
-  LCLVersion = '1.0.1.3'
+  LCLVersion = '1.6.0.4'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -39,6 +39,7 @@ object ServiceForm: TServiceForm
     end
     object ToolButton4: TToolButton
       Left = 49
+      Height = 22
       Top = 2
       Width = 10
       Caption = 'ToolButton4'
@@ -77,7 +78,7 @@ object ServiceForm: TServiceForm
           Width = 735
           Align = alTop
           Caption = 'Service manager connect params'
-          ClientHeight = 106
+          ClientHeight = 104
           ClientWidth = 731
           TabOrder = 0
           object ProtocolLabel: TLabel
@@ -599,11 +600,20 @@ object ServiceForm: TServiceForm
               ShiftMask = [ssShift, ssAlt, ssCtrl]
               Command = emcMouseLink
             end>
+          MouseTextActions = <>
           MouseSelActions = <          
             item
               ClickDir = cdDown
               Command = emcStartDragMove
             end>
+          VisibleSpecialChars = [vscSpace, vscTabAtLast]
+          SelectedColor.BackPriority = 50
+          SelectedColor.ForePriority = 50
+          SelectedColor.FramePriority = 50
+          SelectedColor.BoldPriority = 50
+          SelectedColor.ItalicPriority = 50
+          SelectedColor.UnderlinePriority = 50
+          SelectedColor.StrikeOutPriority = 50
           inline SynLeftGutterPartList1: TSynGutterPartList
             object SynGutterMarks1: TSynGutterMarks
               Width = 24
@@ -628,6 +638,8 @@ object ServiceForm: TServiceForm
             object SynGutterSeparator1: TSynGutterSeparator
               Width = 2
               MouseActions = <>
+              MarkupInfo.Background = clWhite
+              MarkupInfo.Foreground = clGray
             end
             object SynGutterCodeFolding1: TSynGutterCodeFolding
               MouseActions = <              
@@ -704,7 +716,7 @@ object ServiceForm: TServiceForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 162
+          ClientHeight = 160
           ClientWidth = 731
           Items.Strings = (
             ' Verbose output (gbak -v)'
@@ -738,7 +750,6 @@ object ServiceForm: TServiceForm
             Align = alLeft
             Anchors = [akTop, akLeft, akRight, akBottom]
             ButtonWidth = 23
-            CharCase = ecNormal
             Glyph.Data = {
               46050000424D4605000000000000360000002800000012000000120000000100
               2000000000001005000064000000640000000000000000000000000000000000
@@ -787,6 +798,7 @@ object ServiceForm: TServiceForm
             MaxLength = 0
             NumGlyphs = 1
             OnButtonClick = BackupBKEditButtonClick
+            PasswordChar = #0
             TabOrder = 0
           end
         end
@@ -819,7 +831,6 @@ object ServiceForm: TServiceForm
             Align = alLeft
             Anchors = [akTop, akLeft, akRight, akBottom]
             ButtonWidth = 23
-            CharCase = ecNormal
             Glyph.Data = {
               46050000424D4605000000000000360000002800000012000000120000000100
               2000000000001005000064000000640000000000000000000000000000000000
@@ -868,6 +879,7 @@ object ServiceForm: TServiceForm
             MaxLength = 0
             NumGlyphs = 1
             OnButtonClick = BackupDBEditButtonClick
+            PasswordChar = #0
             TabOrder = 0
           end
         end
@@ -889,7 +901,6 @@ object ServiceForm: TServiceForm
           Width = 102
           Action = StartBackupAction
           BorderSpacing.InnerBorder = 2
-          NumGlyphs = 0
           TabOrder = 5
         end
       end
@@ -926,7 +937,6 @@ object ServiceForm: TServiceForm
             Align = alLeft
             Anchors = [akTop, akLeft, akRight, akBottom]
             ButtonWidth = 23
-            CharCase = ecNormal
             Glyph.Data = {
               46050000424D4605000000000000360000002800000012000000120000000100
               2000000000001005000064000000640000000000000000000000000000000000
@@ -975,6 +985,7 @@ object ServiceForm: TServiceForm
             MaxLength = 0
             NumGlyphs = 1
             OnButtonClick = RestoreBKEditButtonClick
+            PasswordChar = #0
             TabOrder = 0
           end
         end
@@ -1007,7 +1018,6 @@ object ServiceForm: TServiceForm
             Align = alLeft
             Anchors = [akTop, akLeft, akRight, akBottom]
             ButtonWidth = 23
-            CharCase = ecNormal
             Glyph.Data = {
               46050000424D4605000000000000360000002800000012000000120000000100
               2000000000001005000064000000640000000000000000000000000000000000
@@ -1056,6 +1066,7 @@ object ServiceForm: TServiceForm
             MaxLength = 0
             NumGlyphs = 1
             OnButtonClick = RestoreDBEditButtonClick
+            PasswordChar = #0
             TabOrder = 0
           end
         end
@@ -1076,7 +1087,7 @@ object ServiceForm: TServiceForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 36
+          ClientHeight = 34
           ClientWidth = 731
           ItemIndex = 0
           Items.Strings = (
@@ -1101,7 +1112,7 @@ object ServiceForm: TServiceForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 54
+          ClientHeight = 52
           ClientWidth = 731
           ItemIndex = 0
           Items.Strings = (
@@ -1118,7 +1129,7 @@ object ServiceForm: TServiceForm
           Width = 735
           Align = alTop
           Caption = 'Page size'
-          ClientHeight = 30
+          ClientHeight = 28
           ClientWidth = 731
           TabOrder = 6
           object Label2: TLabel
@@ -1171,7 +1182,7 @@ object ServiceForm: TServiceForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 120
+          ClientHeight = 118
           ClientWidth = 731
           Items.Strings = (
             'Verbose output (gbak -V)'
@@ -1193,7 +1204,6 @@ object ServiceForm: TServiceForm
           Width = 115
           Action = StartRestoreAction
           BorderSpacing.InnerBorder = 2
-          NumGlyphs = 0
           TabOrder = 8
         end
       end
@@ -1230,7 +1240,6 @@ object ServiceForm: TServiceForm
             Align = alLeft
             Anchors = [akTop, akLeft, akRight, akBottom]
             ButtonWidth = 23
-            CharCase = ecNormal
             Glyph.Data = {
               46050000424D4605000000000000360000002800000012000000120000000100
               2000000000001005000064000000640000000000000000000000000000000000
@@ -1279,6 +1288,7 @@ object ServiceForm: TServiceForm
             MaxLength = 0
             NumGlyphs = 1
             OnButtonClick = GstatDBEditButtonClick
+            PasswordChar = #0
             TabOrder = 0
           end
         end
@@ -1299,7 +1309,7 @@ object ServiceForm: TServiceForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 131
+          ClientHeight = 129
           ClientWidth = 731
           Items.Strings = (
             'Analyze data pages (gstat -d)'
@@ -1321,7 +1331,6 @@ object ServiceForm: TServiceForm
           Width = 101
           Action = GstatAction
           BorderSpacing.InnerBorder = 2
-          NumGlyphs = 0
           TabOrder = 3
         end
       end
@@ -1358,7 +1367,6 @@ object ServiceForm: TServiceForm
             Align = alLeft
             Anchors = [akTop, akLeft, akRight, akBottom]
             ButtonWidth = 23
-            CharCase = ecNormal
             Glyph.Data = {
               46050000424D4605000000000000360000002800000012000000120000000100
               2000000000001005000064000000640000000000000000000000000000000000
@@ -1407,6 +1415,7 @@ object ServiceForm: TServiceForm
             MaxLength = 0
             NumGlyphs = 1
             OnButtonClick = GfixDBEditButtonClick
+            PasswordChar = #0
             TabOrder = 0
           end
         end
@@ -1426,7 +1435,7 @@ object ServiceForm: TServiceForm
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 163
+          ClientHeight = 161
           ClientWidth = 731
           Items.Strings = (
             'Read-only validation (gfix -no_update)'
@@ -1449,7 +1458,6 @@ object ServiceForm: TServiceForm
           Width = 102
           Action = GFixAction
           BorderSpacing.InnerBorder = 2
-          NumGlyphs = 0
           TabOrder = 3
         end
       end

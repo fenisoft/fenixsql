@@ -3197,6 +3197,7 @@ begin
   SqlSynEdit.Highlighter := MainDataModule.SynSQLSyn1;
   DdlSynMemo.Align := alClient;
   SqlEditPanel.Height := fsconfig.SqlEditPanelHeight;
+  MainPageControl.ActivePage := DdlTabSheet;
   if FErrorDllNotFound then
   begin
     ShowMessage('firebird client dll library [fbclient.dll or gds32.dll] not found');
