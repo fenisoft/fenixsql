@@ -188,7 +188,7 @@ begin
   if not fblservice1.Connected then
   begin
     fblservice1.Host := '127.0.0.1'; // localhost
-    fblservice1.Protocol := FBLService.ptTcpIp;
+    fblservice1.Protocol := FBLService.sptTcpIp;
     fblservice1.User := FUser;
     fblservice1.Password := FPassword;
   end;

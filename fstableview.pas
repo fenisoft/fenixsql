@@ -335,8 +335,10 @@ begin
     MainDataModule.TableViewQry.SQL.Text := SqlNumRecord;
     MainDataModule.TableViewQry.ExecSQL;
 
+    //sbTableView.Panels[0].Text :=
+    // Format('Total records : %d', [MainDataModule.TableViewQry.FieldAsInteger(0)]);
     sbTableView.Panels[0].Text :=
-      Format('Total records : %d', [MainDataModule.TableViewQry.FieldAsInteger(0)]);
+      'Total records : ' +   MainDataModule.TableViewQry.FieldAsString(0);
     MainDataModule.TableViewQry.UnPrepare;
     FRecCount := 0;
     FetchNextAction.Enabled := False;

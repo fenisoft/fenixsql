@@ -1,7 +1,7 @@
 object BrowserForm: TBrowserForm
-  Left = 160
+  Left = 159
   Height = 684
-  Top = 132
+  Top = 36
   Width = 970
   ActiveControl = DbTreeView
   Caption = 'BrowserForm'
@@ -13,7 +13,7 @@ object BrowserForm: TBrowserForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '1.0.8.0'
+  LCLVersion = '1.6.0.4'
   object pListView: TPanel
     Left = 0
     Height = 638
@@ -77,14 +77,14 @@ object BrowserForm: TBrowserForm
       Height = 636
       Top = 1
       Width = 787
-      ActivePage = DdlTabSheet
+      ActivePage = SqlTabSheet
       Align = alClient
-      TabIndex = 0
+      TabIndex = 1
       TabOrder = 0
       OnChange = MainPageControlChange
       object DdlTabSheet: TTabSheet
         Caption = 'DDL'
-        ClientHeight = 608
+        ClientHeight = 611
         ClientWidth = 779
         object pTitle: TPanel
           Left = 0
@@ -524,17 +524,20 @@ object BrowserForm: TBrowserForm
               ShiftMask = [ssShift, ssAlt, ssCtrl]
               Command = emcMouseLink
             end>
+          MouseTextActions = <>
           MouseSelActions = <          
             item
               ClickDir = cdDown
               Command = emcStartDragMove
             end>
+          VisibleSpecialChars = [vscSpace, vscTabAtLast]
           SelectedColor.BackPriority = 50
           SelectedColor.ForePriority = 50
           SelectedColor.FramePriority = 50
           SelectedColor.BoldPriority = 50
           SelectedColor.ItalicPriority = 50
           SelectedColor.UnderlinePriority = 50
+          SelectedColor.StrikeOutPriority = 50
           inline TSynGutterPartList
             object TSynGutterMarks
               Width = 24
@@ -676,11 +679,11 @@ object BrowserForm: TBrowserForm
             end
             object planTabSheet: TTabSheet
               Caption = 'Plan'
-              ClientHeight = 375
+              ClientHeight = 380
               ClientWidth = 771
               object PlanMemo: TMemo
                 Left = 0
-                Height = 375
+                Height = 380
                 Top = 0
                 Width = 771
                 Align = alClient
@@ -689,11 +692,11 @@ object BrowserForm: TBrowserForm
             end
             object paramsTabSheet: TTabSheet
               Caption = 'Params'
-              ClientHeight = 375
+              ClientHeight = 380
               ClientWidth = 771
               object ParamsStringGrid: TStringGrid
                 Left = 0
-                Height = 375
+                Height = 380
                 Top = 0
                 Width = 771
                 Align = alClient
@@ -703,7 +706,7 @@ object BrowserForm: TBrowserForm
             end
             object ResultSetTabSheet: TTabSheet
               Caption = 'Result Set'
-              ClientHeight = 375
+              ClientHeight = 380
               ClientWidth = 771
               object ResultSetStringGrid: TStringGrid
                 Left = 2
@@ -1124,11 +1127,13 @@ object BrowserForm: TBrowserForm
                     ShiftMask = [ssShift, ssAlt, ssCtrl]
                     Command = emcMouseLink
                   end>
+                MouseTextActions = <>
                 MouseSelActions = <                
                   item
                     ClickDir = cdDown
                     Command = emcStartDragMove
                   end>
+                VisibleSpecialChars = [vscSpace, vscTabAtLast]
                 ReadOnly = True
                 SelectedColor.BackPriority = 50
                 SelectedColor.ForePriority = 50
@@ -1136,6 +1141,7 @@ object BrowserForm: TBrowserForm
                 SelectedColor.BoldPriority = 50
                 SelectedColor.ItalicPriority = 50
                 SelectedColor.UnderlinePriority = 50
+                SelectedColor.StrikeOutPriority = 50
                 inline TSynGutterPartList
                   object TSynGutterMarks
                     Width = 24
@@ -1242,11 +1248,11 @@ object BrowserForm: TBrowserForm
             end
             object FieldCountTabSheet: TTabSheet
               Caption = 'Fileds'
-              ClientHeight = 375
+              ClientHeight = 380
               ClientWidth = 771
               object FieldsStringGrid: TStringGrid
                 Left = 0
-                Height = 375
+                Height = 380
                 Top = 0
                 Width = 771
                 Align = alClient
@@ -1326,6 +1332,7 @@ object BrowserForm: TBrowserForm
             end
             object ToolButton4: TToolButton
               Left = 70
+              Height = 22
               Top = 2
               Width = 10
               Caption = 'ToolButton4'
@@ -1343,6 +1350,7 @@ object BrowserForm: TBrowserForm
             end
             object ToolButton12: TToolButton
               Left = 126
+              Height = 22
               Top = 2
               Width = 10
               Caption = 'ToolButton12'
@@ -1371,9 +1379,9 @@ object BrowserForm: TBrowserForm
             TabOrder = 2
             inline SqlSynEdit: TSynEdit
               Left = 2
-              Height = 112
-              Top = 30
-              Width = 767
+              Height = 147
+              Top = 3
+              Width = 775
               Align = alClient
               Font.Height = -13
               Font.Name = 'Courier New'
@@ -1791,6 +1799,7 @@ object BrowserForm: TBrowserForm
                   ShiftMask = [ssShift, ssAlt, ssCtrl]
                   Command = emcMouseLink
                 end>
+              MouseTextActions = <>
               MouseSelActions = <              
                 item
                   ClickDir = cdDown
@@ -1803,6 +1812,7 @@ object BrowserForm: TBrowserForm
               SelectedColor.BoldPriority = 50
               SelectedColor.ItalicPriority = 50
               SelectedColor.UnderlinePriority = 50
+              SelectedColor.StrikeOutPriority = 50
               BracketHighlightStyle = sbhsBoth
               BracketMatchColor.Background = clNone
               BracketMatchColor.Foreground = clNone
@@ -1925,6 +1935,7 @@ object BrowserForm: TBrowserForm
     end
     object ToolButton5: TToolButton
       Left = 49
+      Height = 22
       Top = 2
       Width = 10
       Caption = 'ToolButton5'
@@ -1937,6 +1948,7 @@ object BrowserForm: TBrowserForm
     end
     object ToolButton9: TToolButton
       Left = 82
+      Height = 22
       Top = 2
       Width = 10
       Caption = 'ToolButton9'
@@ -2176,8 +2188,8 @@ object BrowserForm: TBrowserForm
   end
   object MainMenu: TMainMenu
     Images = BrowserImageList
-    left = 400
-    top = 488
+    left = 616
+    top = 280
     object MenuItem1: TMenuItem
       Caption = '&Database'
       object MenuItem2: TMenuItem
@@ -2905,8 +2917,8 @@ object BrowserForm: TBrowserForm
   end
   object ItemPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 400
-    top = 568
+    left = 856
+    top = 280
     object MenuItem8: TMenuItem
       Action = ViewDataAction
       Default = True
@@ -3168,8 +3180,8 @@ object BrowserForm: TBrowserForm
   end
   object DbPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 400
-    top = 392
+    left = 480
+    top = 280
     object MenuItem13: TMenuItem
       Action = BackupDatabaseAction
       Bitmap.Data = {
@@ -3253,8 +3265,8 @@ object BrowserForm: TBrowserForm
   end
   object SynMemoPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 248
-    top = 568
+    left = 776
+    top = 280
     object MenuItem56: TMenuItem
       Action = NewSQLTabAction
       Bitmap.Data = {
@@ -3551,8 +3563,8 @@ object BrowserForm: TBrowserForm
     end
   end
   object MessagesPopUpMenu: TPopupMenu
-    left = 256
-    top = 392
+    left = 544
+    top = 280
     object MenuItem4: TMenuItem
       Action = ClearMessagesAction
       OnClick = ClearMessagesActionExecute
@@ -5217,8 +5229,8 @@ object BrowserForm: TBrowserForm
   end
   object SQLTabsPopupMenu: TPopupMenu
     Images = BrowserImageList
-    left = 400
-    top = 328
+    left = 384
+    top = 280
     object MenuItem50: TMenuItem
       Action = NewSQLTabAction
       Bitmap.Data = {
@@ -5339,8 +5351,8 @@ object BrowserForm: TBrowserForm
   end
   object DDLSynMemoPopUpMenu: TPopupMenu
     Images = BrowserImageList
-    left = 256
-    top = 480
+    left = 696
+    top = 280
     object MenuItem58: TMenuItem
       Action = EditCutAction
       Bitmap.Data = {
@@ -5502,8 +5514,8 @@ object BrowserForm: TBrowserForm
     end
   end
   object SqlGenerateTablePopUpMenu: TPopupMenu
-    left = 256
-    top = 320
+    left = 248
+    top = 280
     object MenuItem64: TMenuItem
       Action = SqlCreateTableMenuAction
     end

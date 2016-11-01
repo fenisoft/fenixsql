@@ -1,6 +1,6 @@
 compiled with
-  freepascal 2.6.2 32bit
-  lazarus 1.0.8
+  freepascal 3 32bit
+  lazarus 1.6
   fblib 0.86
 
 tested on
