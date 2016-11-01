@@ -1,5 +1,5 @@
 
-fblib firebird library version 0.86
+fblib firebird library version 0.90
 
 Compilers supported
   
@@ -8,21 +8,22 @@ Compilers supported
   Delphi 6 personal* ,pro ,ent
   Delphi 7 personal* ,pro ,ent
   Turbo Delphi explore (only as library)  *
+  Embarcadero Delphi XE 10.1 Berlin 
 
   Kylix 2  open*, pro, ent
   Kylix 3  open*, pro, ent
 
   * NO component TFBLDataset(1) ;
 
-  freepascal 2.6.0 32bit or above 
-  lazarus ide 1.0  or above
+  Freepascal 3 32bit or above 
+  Lazarus ide 1.6  or above
 
 Firebird server supperted
 
  1.0.x superserver classic
  1.5.x superserver classic
  2.*.* superserver classic
- 
+ 3.* 
 
 
 version 0.80 is thread safe (experimental feature) 

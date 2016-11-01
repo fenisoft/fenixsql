@@ -1,13 +1,13 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    File:FBLDatabase.pas
-   Copyright (c) 2002-2012 Alessandro Batisti
+   Copyright (c) 2002-2006 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -88,17 +88,17 @@ type
     FCSection: TCriticalSection;
     {$ENDIF}
     function GetDbHandle: PISC_DB_HANDLE;
-    function GetConnected: boolean;
-    procedure SetSQLDialect(Value: integer);
+    function GetConnected: Boolean;
+    procedure SetSQLDialect(Value: Integer);
     procedure CheckConnected;
     {  database info  routines }
-    function GetAttachObjectCount: integer;
-    function GetDBSQLDialect: integer;
+    function GetAttachObjectCount: Integer;
+    function GetDBSQLDialect: Integer;
     function GetVersion: string;
     function GetDBSiteName: string;
     function GetDBFileName: string;
-    function GetLocalConnection: boolean;
-    function GetPageSize: integer;
+    function GetLocalConnection: Boolean;
+    function GetPageSize: Integer;
     function GetDBInfoInt2(isc_info: integer; var ok: boolean): integer;
     function GetDBInfoInt(isc_info: integer): integer;
     function GetProviderInfo: TProviderInfo;
@@ -215,7 +215,7 @@ type
     {The firebird database handle , this is used in all calls to firebird api}
     property DBHandle: PISC_DB_HANDLE read GetDBHandle;
     {Value of the db server sql dialect}
-    property DBSqlDialect: integer read GetDBSqlDialect;
+    property DBSqlDialect: Integer read GetDBSqlDialect;
     {Version identification string of the database implementation}
     property Version: string read GetVersion;
     {Host name where the database is attached}
@@ -380,7 +380,7 @@ begin
   FUserNames := nil;
   Connected := False;
   {$IFDEF FBL_THREADSAFE}
-  FCSection := TCriticalSection.Create;
+  // FCSection := TCriticalSection.Create;
   {$ENDIF}
 end;
 
@@ -433,6 +433,8 @@ end;
 {$IFDEF FBL_THREADSAFE}
 procedure TFBLDatabase.Lock;
 begin
+ if not Assigned(FCSection) then
+    FCSection  := TCriticalSection.Create();
   FCSection.Enter;
 end;
 
@@ -513,7 +515,7 @@ end;
 //-------------------------------------
 
 procedure TFBLDatabase.CreateDatabase(const AFilename, AUser, APassword: string;
-  ADialect: word = 3; APagesize: integer = 4096; ACharset: string = '');
+  ADialect: word = 3; APagesize: Integer = 4096; ACharset: string = '');
 var
   Status_vector: ISC_STATUS_VECTOR;
   DBh: TISC_DB_HANDLE;
@@ -529,8 +531,10 @@ begin
     ' PAGE_SIZE ' + IntToStr(APageSize);
   if ACharSet <> '' then
     Params := Params + ' DEFAULT CHARACTER SET ' + ACharSet;
+
+
   isc_dsql_execute_immediate(@Status_Vector, @DBh, @TRh, 0,
-    PChar('CREATE DATABASE ''' + AFileName + ''' ' + Params), ADialect, nil);
+    PAnsiChar('CREATE DATABASE ''' + AFileName + ''' ' + Params), ADialect, nil);
   if (Status_vector[0] = 1) and (Status_vector[1] <> 0) then
     FBLShowError(@Status_vector);
 end;
@@ -587,10 +591,13 @@ end;
 function TFBLDatabase.GetVersion: string;
 var
   Status_vector: ISC_STATUS_VECTOR;
-  Buffer: array[0..1023] of char;
-  DBInfo: char;
+  Buffer: array[0..1023] of AnsiChar;
+  DBInfo: AnsiChar;
+  Res: AnsiString;
+
 begin
   CheckConnected;
+
   {$IFDEF FBL_THREADSAFE}
   Lock;
   try
@@ -599,8 +606,13 @@ begin
     if isc_database_info(@Status_Vector, @FDBHandle, 1, @DBInfo,
       SizeOf(buffer), Buffer) <> 0 then
       FBLShowError(@Status_vector);
-    SetLength(Result, integer(buffer[4]));
-    Move(Buffer[5], Result[1], integer(Buffer[4]));
+    SetLength(Res, Integer(buffer[4]));
+    Move(Buffer[5], Res[1], Integer(Buffer[4]));
+    {$IFDEF D9P}
+      Result := UnicodeString(Res);
+    {$ELSE}
+         Result := Res;
+    {$ENDIF}
   {$IFDEF FBL_THREADSAFE}
   finally
     Unlock;
@@ -610,12 +622,13 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetDBSiteName: string;
+function TFBLDatabase.GetDBSiteName: String;
 var
   Status_vector: ISC_STATUS_VECTOR;
-  buffer: array[0..1023] of char;
-  DBInfo: char;
+  buffer: array[0..1023] of AnsiChar;
+  DBInfo: Ansichar;
   Pos, Len: integer;
+  Res: AnsiString;
 begin
   CheckConnected;
   {$IFDEF FBL_THREADSAFE}
@@ -629,10 +642,15 @@ begin
 
     //in buffer[4] length of DBfilename
     //in buffer[5 + (integer(buffer[4])] length DBSiteName
-    len := integer(buffer[5 + integer(buffer[4])]);
+    len := Integer(buffer[5 + Integer(buffer[4])]);
     pos := 6 + integer(buffer[4]);
-    SetLength(Result, len);
-    Move(Buffer[pos], Result[1], len);
+    SetLength(Res, len);
+    Move(Buffer[pos], Res[1], len);
+    {$IFDEF D9P}
+    Result := UnicodeString(Res);
+    {$ELSE}
+    Result := Res;
+    {$ENDIF}
   {$IFDEF FBL_THREADSAFE}
   finally
     Unlock;
@@ -645,10 +663,12 @@ end;
 function TFBLDatabase.GetDBFileName: string;
 var
   Status_vector: ISC_STATUS_VECTOR;
-  buffer: array[0..1023] of char;
-  DBInfo: char;
+  buffer: array[0..1023] of AnsiChar;
+  DBInfo: Char;
+  Res: AnsiString;
 begin
   CheckConnected;
+
   {$IFDEF FBL_THREADSAFE}
   Lock;
   try
@@ -658,8 +678,13 @@ begin
       SizeOf(buffer), buffer) <> 0 then
       FBLShowError(@Status_vector);
     //in buffer[4] length of DBfilename
-    SetLength(Result, integer(buffer[4]));
-    Move(Buffer[5], Result[1], integer(buffer[4]));
+    SetLength(Res, Integer(buffer[4]));
+    Move(Buffer[5], Res[1], Integer(buffer[4]));
+    {$IFDEF D9P}
+      Result :=  UnicodeString(Res);
+    {$ELSE}
+      Result := Res;
+    {$ENDIF}
   {$IFDEF FBL_THREADSAFE}
   finally
     Unlock;
@@ -669,10 +694,10 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetLocalConnection: boolean;
+function TFBLDatabase.GetLocalConnection: Boolean;
 var
   Status_vector: ISC_STATUS_VECTOR;
-  Buffer: array[0..1023] of char;
+  Buffer: array[0..1023] of AnsiChar;
   DBInfo: char;
 begin
   CheckConnected;
@@ -700,7 +725,7 @@ end;
 function TFBLDatabase.GetDBInfoInt2(isc_info: integer; var Ok: boolean): integer;
 var
   Status_vector: ISC_STATUS_VECTOR;
-  Buffer: array[0..511] of char;
+  Buffer: array[0..511] of AnsiChar;
   Length: integer;
   DBInfo: char;
 begin
@@ -713,7 +738,7 @@ begin
     if isc_database_info(@Status_Vector, @FDBHandle, 1, @DBInfo,
       Sizeof(Buffer), Buffer) <> 0 then
       FBLShowError(@Status_vector);
-    Ok := (Buffer[0] = char(isc_info));
+    Ok := (Buffer[0] = AnsiChar(isc_info));
     Length := isc_vax_integer(@Buffer[1], 2);
     Result := isc_vax_integer(@Buffer[3], Short(Length));
   {$IFDEF FBL_THREADSAFE}
@@ -812,9 +837,9 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetBaseLevel: integer;
+function TFBLDatabase.GetBaseLevel: Integer;
 var
-  buffer: array[0..511] of char;
+  buffer: array[0..511] of AnsiChar;
   DBInfo: char;
   Status_vector: ISC_STATUS_VECTOR;
 begin
@@ -839,8 +864,8 @@ end;
 
 function TFBLDatabase.GetImplementationNumber: integer;
 var
-  buffer: array[0..511] of char;
-  DBInfo: char;
+  buffer: array[0..511] of AnsiChar;
+  DBInfo: AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
 begin
   CheckConnected;
@@ -848,7 +873,7 @@ begin
   Lock;
   try
   {$ENDIF}
-    DBInfo := char(isc_info_implementation);
+    DBInfo := AnsiChar(isc_info_implementation);
     if isc_database_info(@Status_Vector, @FDBHandle, 1, @DBInfo,
       Sizeof(buffer), buffer) <> 0 then
       FBLShowError(@Status_vector);
@@ -864,8 +889,8 @@ end;
 
 function TFBLDatabase.GetImplementationClass: integer;
 var
-  buffer: array[0..511] of char;
-  DBInfo: char;
+  buffer: array[0..511] of AnsiChar;
+  DBInfo: AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
 begin
   CheckConnected;
@@ -873,7 +898,7 @@ begin
   Lock;
   try
   {$ENDIF}
-    DBInfo := char(isc_info_implementation);
+    DBInfo := AnsiChar(isc_info_implementation);
     if isc_database_info(@Status_Vector, @FDBHandle, 1, @DBInfo,
       sizeof(buffer), buffer) <> 0 then
       FBLShowError(@Status_vector);
@@ -887,47 +912,47 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetCurrentMemory: integer;
+function TFBLDatabase.GetCurrentMemory: Integer;
 begin
   Result := GetDBInfoInt(isc_info_current_memory);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetMaxMemory: integer;
+function TFBLDatabase.GetMaxMemory: Integer;
 begin
   Result := GetDBInfoInt(isc_info_max_memory);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetAllocation: integer;
+function TFBLDatabase.GetAllocation: Integer;
 begin
   Result := GetDBInfoInt(isc_info_allocation);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetNumBuffers: integer;
+function TFBLDatabase.GetNumBuffers: Integer;
 begin
   Result := GetDBInfoInt(isc_info_num_buffers);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetSweepInterval: integer;
+function TFBLDatabase.GetSweepInterval: Integer;
 begin
   Result := GetDBInfoInt(isc_info_sweep_interval);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetOperationCounts(DBInfocommand: integer;
+function TFBLDatabase.GetOperationCounts(DBInfocommand: Integer;
   FOperation: TStringList): TStringList;
 var
-  buffer: array[0..10239] of char;
-  DBInfo: char;
-  i, qtd_tables, id_table, qtd_operations: integer;
+  buffer: array[0..10239] of AnsiChar;
+  DBInfo: AnsiChar;
+  i, qtd_tables, id_table, qtd_operations: Integer;
   Status_vector: ISC_STATUS_VECTOR;
 begin
   CheckConnected;
@@ -938,7 +963,7 @@ begin
     if FOperation = nil then
       FOperation := TStringList.Create;
     Result := FOperation;
-    DBInfo := char(DBInfoCommand);
+    DBInfo := AnsiChar(DBInfoCommand);
     if isc_database_info(@Status_Vector, @FDBHandle, 1, @DBInfo,
       sizeof(buffer), buffer) <> 0 then
       FBLShowError(@Status_vector);
@@ -950,11 +975,11 @@ begin
     // Each pair consists of:
     // 1. 2 bytes specifying the table ID.
     // 2. 4 bytes listing the number of operations (e.g., inserts) done on that table.
-    qtd_tables := integer(Trunc(isc_vax_integer(@buffer[1], 2) div 6));
+    qtd_tables := Integer(Trunc(isc_vax_Integer(@buffer[1], 2) div 6));
     for i := 0 to qtd_tables - 1 do
     begin
-      id_table := isc_vax_integer(@buffer[3 + (i * 6)], 2);
-      qtd_operations := isc_vax_integer(@buffer[5 + (i * 6)], 4);
+      id_table := isc_vax_Integer(@buffer[3 + (i * 6)], 2);
+      qtd_operations := isc_vax_Integer(@buffer[5 + (i * 6)], 4);
       FOperation.Add(IntToStr(id_table) + '=' + IntToStr(qtd_operations));
     end;
   {$IFDEF FBL_THREADSAFE}
@@ -1024,7 +1049,7 @@ end;
 
 function TFBLDatabase.GetClientVersion: string;
 var
-  Buffer: array[0..255] of char;
+  Buffer: array[0..255] of AnsiChar;
 begin
   CheckConnected;
   Result := '';
@@ -1037,22 +1062,22 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetClientMajorVersion: integer;
+function TFBLDatabase.GetClientMajorVersion: Integer;
 begin
   CheckConnected;
   Result := 0;
   if GetFbClientVersion = 7 then
-    Result := integer(isc_get_client_major_version());
+    Result := Integer(isc_get_client_major_version());
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLDatabase.GetClientMinorVersion: integer;
+function TFBLDatabase.GetClientMinorVersion: Integer;
 begin
   CheckConnected;
   Result := 0;
   if GetFbClientVersion = 7 then
-    Result := integer(isc_get_client_minor_version());
+    Result := Integer(isc_get_client_minor_version());
 end;
 
 //------------------------------------------------------------------------------
@@ -1060,9 +1085,9 @@ end;
 function TFBLDatabase.GetUserNames: TStringList;
 var
   Status_vector: ISC_STATUS_VECTOR;
-  UserName: string;
-  i, UserNameLength: integer;
-  Buffer: array [0..16383] of char;
+  UserName: AnsiString;
+  i, UserNameLength: Integer;
+  Buffer: array [0..16383] of AnsiChar;
   DBInfo: char;
 begin
   CheckConnected;
@@ -1073,7 +1098,7 @@ begin
     if FUserNames = nil then
       FUserNames := TStringList.Create;
     Result := FUserNames;
-    DBInfo := char(isc_info_user_names);
+    DBInfo := AnsiChar(isc_info_user_names);
 
     if isc_database_info(@Status_Vector, @FDBHandle, 1, @DBInfo,
       Short(SizeOf(Buffer)), Buffer) <> 0 then
@@ -1084,12 +1109,17 @@ begin
     while Buffer[i] = char(isc_info_user_names) do
     begin
       Inc(i, 3);
-      UserNameLength := integer(Buffer[i]);
+      UserNameLength := Integer(Buffer[i]);
       SetLength(UserName, UserNameLength);
       Inc(i, 1);
       Move(Buffer[i], UserName[1], UserNameLength);
       Inc(i, UserNameLength);
-      FUserNames.Add(UserName);
+      {$IFDEF D9P}
+       FUserNames.Add(UnicodeString(UserName));
+      {$ELSE}
+       FUserNames.Add(UserName);
+      {$ENDIF}
+
     end;
   {$IFDEF FBL_THREADSAFE}
   finally
@@ -1138,61 +1168,76 @@ end;
 procedure TFBLDatabase.DoConnect;
 var
   Status_vector: ISC_STATUS_VECTOR;
-  DpbBuffer: PChar;
+  DpbBuffer: PAnsiChar;
   DpbIdx: Short;
-  LenBuffer: integer;
+  LenBuffer: Integer;
+  IntUser,IntPassword: AnsiString;
+  IntCharacterSet,IntConnectString,IntRole: AnsiString;
 begin
   CheckFbClientLoaded;
   if FDBHandle <> nil then
     FBLError(E_DB_ALREADY_CON);
   SetConnectString;
+  {$IFDEF D9P}
+  IntUser :=  WideStringToString(FUser);
+  IntPassword :=   WideStringToString(FPassword);
+  IntCharacterSet :=    WideStringToString(FCharacterSet);
+  IntConnectString :=    WideStringToString(FConnectString);
+  IntRole :=    WideStringToString(FRole);
+  {$ELSE}
+  IntUser :=  FUser;
+  IntPassword :=   FPassword;
+  IntCharacterSet :=    FCharacterSet;
+  IntConnectString :=   FConnectString;
+  IntRole := FRole;
+  {$ENDIF}
   DpbBuffer := nil;
   DpbIdx := 0;
-  LenBuffer := 3 + Length(FUser) + 2 + Length(FPassword);
-  if FRole <> '' then
-    Inc(LenBuffer, 2 + Length(FRole));
+  LenBuffer := 3 + Length(IntUser) + 2 + Length(IntPassword);
+  if IntRole <> '' then
+    Inc(LenBuffer, 2 + Length(IntRole));
   if FCharacterSet <> '' then
-    Inc(LenBuffer, 2 + Length(FCharacterSet));
+    Inc(LenBuffer, 2 + Length(IntCharacterSet));
   FBLmalloc(DpbBuffer, LenBuffer);
   try
-    DpbBuffer[DpbIdx] := char(isc_dpb_version1);
+    DpbBuffer[DpbIdx] := AnsiChar(isc_dpb_version1);
     Inc(DpbIdx);
     // set user name
-    DpbBuffer[DpbIdx] := char(isc_dpb_user_name);
+    DpbBuffer[DpbIdx] := AnsiChar(isc_dpb_user_name);
     Inc(DpbIdx);
-    DpbBuffer[DpbIdx] := char(Length(FUser));
+    DpbBuffer[DpbIdx] := AnsiChar(Length(IntUser));
     Inc(DpbIdx);
-    if Length(FUser) > 0 then
-      Move(FUser[1], DpbBuffer[DpbIdx], Length(FUser));
-    Inc(DpbIdx, Length(FUser));
+    if Length(User) > 0 then
+      Move(IntUser[1], DpbBuffer[DpbIdx], Length(IntUser));
+    Inc(DpbIdx, Length(IntUser));
     // set password
-    DpbBuffer[DpbIdx] := char(isc_dpb_password);
+    DpbBuffer[DpbIdx] := AnsiChar(isc_dpb_password);
     Inc(DpbIdx);
-    DpbBuffer[DpbIdx] := char(Length(FPassword));
+    DpbBuffer[DpbIdx] := AnsiChar(Length(Password));
     Inc(DpbIdx);
-    if Length(FPassword) > 0 then
-      Move(FPassword[1], DpbBuffer[DpbIdx], Length(FPassword));
-    Inc(DpbIdx, Length(FPassword));
-    if FRole <> '' then
+    if Length(Password) > 0 then
+      Move(IntPassword[1], DpbBuffer[DpbIdx], Length(IntPassword));
+    Inc(DpbIdx, Length(IntPassword));
+    if IntRole <> '' then
     begin
-      DpbBuffer[DpbIdx] := char(isc_dpb_sql_role_name);
+      DpbBuffer[DpbIdx] := AnsiChar(isc_dpb_sql_role_name);
       Inc(DpbIdx);
-      DpbBuffer[DpbIdx] := char(Length(FRole));
+      DpbBuffer[DpbIdx] := AnsiChar(Length(IntRole));
       Inc(DpbIdx);
-      Move(FRole[1], DpbBuffer[DpbIdx], Length(FRole));
-      Inc(DpbIdx, Length(FRole));
+      Move(IntRole[1], DpbBuffer[DpbIdx], Length(IntRole));
+      Inc(DpbIdx, Length(IntRole));
     end;
-    if FCharacterSet <> '' then
+    if CharacterSet <> '' then
     begin
-      DpbBuffer[DpbIdx] := char(isc_dpb_lc_ctype);
+      DpbBuffer[DpbIdx] := AnsiChar(isc_dpb_lc_ctype);
       Inc(DpbIdx);
-      DpbBuffer[DpbIdx] := char(Length(FCharacterSet));
+      DpbBuffer[DpbIdx] := AnsiChar(Length(IntCharacterSet));
       Inc(DpbIdx);
-      Move(FCharacterSet[1], DpbBuffer[DpbIdx], Length(FCharacterSet));
-      Inc(DpbIdx, Length(FCharacterSet));
+      Move(IntCharacterSet[1], DpbBuffer[DpbIdx], Length(IntCharacterSet));
+      Inc(DpbIdx, Length(IntCharacterSet));
     end;
-    isc_attach_database(@Status_vector, Short(Length(FConnectString)),
-      PChar(FConnectString), @FDBHandle,
+    isc_attach_database(@Status_vector, Short(Length(IntConnectString)),
+      PAnsiChar(IntConnectString), @FDBHandle,
       DpbIdx, DpbBuffer);
     if (Status_vector[0] = 1) and (Status_vector[1] <> 0) then
       FBLShowError(@Status_vector);
@@ -1217,7 +1262,7 @@ end;
 
 procedure TFBLDatabase.SendBeforeDisconnectEvent;
 var
-  i: integer;
+  i: Integer;
 begin
   for i := 0 to FAttachObjs.Count - 1 do
     IFBLDbEvent(FAttachObjs[i]).DoOnBeforeDisconnect;
@@ -1225,7 +1270,7 @@ end;
 
 procedure TFBLDatabase.SendAfterDisconnectEvent;
 var
-  i: integer;
+  i: Integer;
 begin
   for i := 0 to FAttachObjs.Count - 1 do
     IFBLDbEvent(FAttachObjs[i]).DoOnAfterDisconnect;

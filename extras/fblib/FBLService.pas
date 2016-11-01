@@ -1,13 +1,13 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
    
    File:FBLService.pas
    Copyright (c) 2004 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -51,7 +51,7 @@ uses
 
 type
   {Service manager protocol type}
-  TServiceProtocolType = (ptLocal, ptTcpIp, ptNetBeui);
+  TServiceProtocolType = (sptLocal, sptTcpIp, sptNetBeui);
   {Backup Options}
   TBackupOption = (bkpVerbose, bkpIgnoreCheckSum, bkpIgnoreLimbo, bkpMetadataOnly,
     bkpNoGarbageCollect, bkpOldDescription, bkpNoTrasportable, bkpConvert);
@@ -59,7 +59,7 @@ type
   {Restore options}
   TRestoreOption = (resVerbose, resDeactivateIdx, resNoShadow, resNoValidity,
     resOneAtATime, resReplace, resCreate, resUseAllSpace,
-    resAccessModeReadOnly, resAccessModeReadWrite);
+    resAccessModeReadOnly, resAccessModeReadWrite, resFixFssData,resFixFssMetadata);
   TRestoreOptions = set of TRestoreOption;
   {Gstat options}
   TStatOption = (stsDataPages, stsDbLog, stsHdrPages, stsIdxPages, stsSysRelations,
@@ -318,38 +318,44 @@ end;
 procedure TFBLService.CallProc32(const ADatabaseFile: string;
   AiscAction, AiscParam, AValue: longint);
 var
-  SpbBuffer: PChar;
+  SpbBuffer: PAnsiChar;
   SpbIdx: Short;
-  LenBuffer: integer;
+  LenBuffer: Integer;
   Status_vector: ISC_STATUS_VECTOR;
+  DatabaseFile: AnsiString;
 begin
+  {$IFDEF D9P}
+  DatabaseFile := WideStringToString(ADatabaseFile);
+  {$ELSE}
+  DatabaseFile := ADatabaseFile;
+  {$ENDIF}
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
   SpbBuffer := nil;
   SpbIdx := 0;
-  LenBuffer := 4 + Length(ADatabaseFile) + 5;
+  LenBuffer := 4 + Length(DatabaseFile) + 5;
   FBLMalloc(SpbBuffer, LenBuffer);
   try
-    SpbBuffer[SpbIdx] := char(AiscAction);
+    SpbBuffer[SpbIdx] := AnsiChar(AiscAction);
     Inc(SpbIdx);
     //databasefile
-    SpbBuffer[SpbIdx] := char(isc_spb_dbname);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_dbname);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(DatabaseFile));
     Inc(spbidx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile) shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Length(DatabaseFile) shr 8);
     Inc(SpbIdx);
-    Move(ADatabaseFile[1], SpbBuffer[spbidx], Length(ADatabaseFile));
-    Inc(SpbIdx, Length(ADatabaseFile));
-    SpbBuffer[SpbIdx] := char(AiscParam);
+    Move(DatabaseFile[1], SpbBuffer[spbidx], Length(DatabaseFile));
+    Inc(SpbIdx, Length(DatabaseFile));
+    SpbBuffer[SpbIdx] := AnsiChar(AiscParam);
     Inc(spbidx);
-    SpbBuffer[SpbIdx] := char(AValue);
+    SpbBuffer[SpbIdx] := AnsiChar(AValue);
     Inc(spbidx);
-    SpbBuffer[SpbIdx] := char(AValue shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(AValue shr 8);
     Inc(spbidx);
-    SpbBuffer[SpbIdx] := char(AValue shr 16);
+    SpbBuffer[SpbIdx] := AnsiChar(AValue shr 16);
     Inc(spbidx);
-    SpbBuffer[SpbIdx] := char(AValue shr 24);
+    SpbBuffer[SpbIdx] := AnsiChar(AValue shr 24);
     Inc(SpbIdx);
     // start service
     if isc_service_start(@Status_vector, @FServiceHandle, nil, SpbIdx,
@@ -366,32 +372,38 @@ end;
 procedure TFBLService.CallProc8(const ADatabaseFile: string;
   AiscAction, AiscParam, AValue: longint);
 var
-  SpbBuffer: PChar;
+  SpbBuffer: PAnsiChar;
   SpbIdx: Short;
-  LenBuffer: integer;
+  LenBuffer: Integer;
   Status_vector: ISC_STATUS_VECTOR;
+  DatabaseFile: AnsiString;
 begin
+  {$IFDEF D9P}
+  DatabaseFile := WideStringToString(ADatabaseFile);
+  {$ELSE}
+  DatabaseFile := ADatabaseFile;
+  {$ENDIF}
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
   SpbBuffer := nil;
   SpbIdx := 0;
-  LenBuffer := 4 + Length(ADatabaseFile) + 2;
+  LenBuffer := 4 + Length(DatabaseFile) + 2;
   FBLMalloc(SpbBuffer, LenBuffer);
   try
-    SpbBuffer[SpbIdx] := char(AiscAction);        //isc_action_svc_properties
+    SpbBuffer[SpbIdx] := AnsiChar(AiscAction);        //isc_action_svc_properties
     Inc(SpbIdx);
     //databasefile
-    SpbBuffer[SpbIdx] := char(isc_spb_dbname);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_dbname);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(DatabaseFile));
     Inc(spbidx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile) shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Length(DatabaseFile) shr 8);
     Inc(SpbIdx);
-    Move(ADatabaseFile[1], SpbBuffer[spbidx], Length(ADatabaseFile));
-    Inc(SpbIdx, Length(ADatabaseFile));
-    SpbBuffer[SpbIdx] := char(AiscParam);
+    Move(DatabaseFile[1], SpbBuffer[spbidx], Length(DatabaseFile));
+    Inc(SpbIdx, Length(DatabaseFile));
+    SpbBuffer[SpbIdx] := AnsiChar(AiscParam);
     Inc(spbidx);
-    SpbBuffer[SpbIdx] := char(AValue);
+    SpbBuffer[SpbIdx] := AnsiChar(AValue);
     Inc(spbidx);
     // start service
     if isc_service_start(@Status_vector, @FServiceHandle, nil, SpbIdx,
@@ -404,28 +416,33 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.WriteLineOutput(const AIscAction: integer);
+procedure TFBLService.WriteLineOutput(const AIscAction: Integer);
 var
-  RequestInfo: char;
-  BufferResult: array[0..511] of char;
+  RequestInfo: AnsiChar;
+  BufferResult: array[0..511] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
-  LenLine: integer;
-  Line: string;
+  LenLine: Integer;
+  Line: AnsiString;
 begin
-  RequestInfo := char(isc_info_svc_line);
+  RequestInfo := AnsiChar(isc_info_svc_line);
   LenLine := 0;
   repeat
     if isc_service_query(@Status_vector, @FServiceHandle, nil, 0,nil,
       1, @RequestInfo, SizeOf(BufferResult),
       BufferResult) <> 0 then
       FBLShowError(@Status_vector);
-    if BufferResult[0] = char(isc_info_svc_line) then
+    if BufferResult[0] = AnsiChar(isc_info_svc_line) then
     begin
       LenLine := isc_vax_integer(@BufferResult[1], 2);
       SetLength(Line, LenLine);
       Move(BufferResult[3], Line[1], LenLine);
+      {$IFDEF D9P}
+      if Assigned(FOnWriteOutput) then
+        FOnWriteOutput(Self, UnicodeString(Line), AIscAction);
+      {$ELSE}
       if Assigned(FOnWriteOutput) then
         FOnWriteOutput(self, Line, AIscAction);
+      {$ENDIF}
     end;
   until LenLine = 0
   end;
@@ -434,53 +451,74 @@ begin
 
 procedure TFBLService.Connect;
 var
-  SpbBuffer: PChar;
+  SpbBuffer: PAnsiChar;
   SpbIdx: Short;
   Status_vector: ISC_STATUS_VECTOR;
-  ServiceName: string;
-  LenBuffer: integer;
+  ServiceName,VUser,VPassword: AnsiString;
+  LenBuffer: Integer;
 begin
+  {$IFDEF D9P}
+  VUser :=   WideStringToString(FUser);
+  VPassword := WideStringToString(FPassword);
+  {$ELSE}
+  VUser := FUser;
+  VPassword :=  FPassword;
+  {$ENDIF}
   CheckFbClientLoaded;
   if FServiceHandle <> nil then
     FBLError(E_SM_ALREADY_CON);
   case FProtocol of
-    ptTcpIp:
+    sptTcpIp:
       begin
         if FTcpPort <> 3050 then
-          ServiceName := Format('%s/%d:service_mgr', [FHost, FTcpPort])
+          {$IFDEF D9P}
+          ServiceName := WideStringToString(Format('%s/%d:service_mgr',
+            [FHost, FTcpPort]))
+          {$ELSE}
+           ServiceName := Format('%s/%d:service_mgr',
+            [FHost, FTcpPort])
+          {$ENDIF}
         else
+          {$IFDEF D9P}
+          ServiceName := WideStringToString(Format('%s:service_mgr', [FHost]));
+          {$ELSE}
           ServiceName := Format('%s:service_mgr', [FHost]);
+          {$ENDIF}
       end;
-    ptNetBeui: ServiceName := '\\' + FHost + '\' + 'service_mgr';
+    {$IFDEF D9P}
+    sptNetBeui: ServiceName := WideStringToString('\\' + FHost + '\' + 'service_mgr');
+    {$ELSE}
+    sptNetBeui: ServiceName := '\\' + FHost + '\' + 'service_mgr';
+    {$ENDIF}
     else  
       ServiceName := 'service_mgr';
   end;
   SpbBuffer := nil;
-  LenBuffer := 4 + Length(FUser) + 2 + Length(FPassword);
+  LenBuffer := 4 + Length(VUser) + 2 + Length(VPassword);
   FBLMalloc(SpbBuffer, LenBuffer);
   SpbIdx := 0;
   try
-    SpbBuffer[SpbIdx] := char(isc_spb_version);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_version);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(isc_spb_current_version);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_current_version);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(isc_spb_user_name);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_user_name);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(FUser));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VUser));
     Inc(SpbIdx);
-    Move(FUser[1], SpbBuffer[SpbIdx], Length(FUser));
-    Inc(SpbIdx, Length(FUser));
-    SpbBuffer[SpbIdx] := char(isc_spb_password);
+    Move(VUser[1], SpbBuffer[SpbIdx], Length(VUser));
+    Inc(SpbIdx, Length(VUser));
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_password);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(FPassword));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VPassword));
     Inc(SpbIdx);
-    Move(FPassword[1], SpbBuffer[SpbIdx], Length(FPassword));
-    Inc(SpbIdx, Length(FPassword));
-    if isc_service_attach(@Status_vector, 0,PChar(ServiceName), @FServiceHandle,
+    Move(VPassword[1], SpbBuffer[SpbIdx], Length(VPassword));
+    Inc(SpbIdx, Length(VPassword));
+    if isc_service_attach(@Status_vector, 0,PAnsiChar(ServiceName), @FServiceHandle,
       SpbIdx, SpbBuffer) <> 0 then
       FBLShowError(@Status_vector);
     if Assigned(FOnConnect) then
-      FOnConnect(self);
+      FOnConnect(Self);
   finally
     FBLFree(SpbBuffer);
   end;  
@@ -497,22 +535,30 @@ begin
   if isc_service_detach(@Status_vector, @FServiceHandle) <> 0 then
     FBLShowError(@Status_vector);
   if Assigned(FOnDisconnect) then
-    FOnDisconnect(self);
+    FOnDisconnect(Self);
 end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.Backup(const ADatabaseFile, ABackupFile: string;
+procedure TFBLService.Backup(const ADatabaseFile, ABackupFile: String;
   AOption: TBackupOptions = []);
 var
-  SpbBuffer: PChar;
+  SpbBuffer: PAnsiChar;
   SpbIdx: Short;
-  LenBuffer: integer;
+  LenBuffer: Integer;
   Status_vector: ISC_STATUS_VECTOR;
-  Options: longint;   //bitmask of isc_spb_options
+  Options: LongInt;   //bitmask of isc_spb_options
+  VDatabaseFile, VBackupFile: AnsiString;
 begin
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
+  {$IFDEF D9P}
+  VDatabaseFile :=   WideStringToString(ADatabaseFile);
+  VBackupFile := WideStringToString(ABackupFile);
+  {$ELSE}
+  VDatabaseFile := ADatabaseFile;
+  VBackupFile :=  ABackupFile;
+  {$ENDIF}
   Options := 0;
   SpbBuffer := nil;
   SpbIdx := 0;
@@ -527,37 +573,37 @@ begin
     1 byte : isc_spb_options
     4 byte : Options bitmask
     + 1 byte if verbose request}
-  LenBuffer := 4 + Length(ADatabaseFile) + 3 + Length(ABackupFile) + 5;
+  LenBuffer := 4 + Length(VDatabaseFile) + 3 + Length(VBackupFile) + 5;
   if bkpVerbose in AOption then
     Inc(LenBuffer);
   FBLMalloc(SpbBuffer, LenBuffer);
   try
-    SpbBuffer[SpbIdx] := char(isc_action_svc_backup);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_action_svc_backup);
     Inc(SpbIdx);
     //databasefile
-    SpbBuffer[SpbIdx] := char(isc_spb_dbname);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_dbname);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VDatabaseFile));
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile) shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VDatabaseFile) shr 8);
     Inc(SpbIdx);
-    Move(ADatabaseFile[1], SpbBuffer[SpbIdx], Length(ADatabaseFile));
-    Inc(SpbIdx, Length(ADatabaseFile));
+    Move(VDatabaseFile[1], SpbBuffer[SpbIdx], Length(VDatabaseFile));
+    Inc(SpbIdx, Length(VDatabaseFile));
     // verbose result
     if bkpVerbose in AOption then
     begin
-      SpbBuffer[SpbIdx] := char(isc_spb_verbose);
+      SpbBuffer[SpbIdx] := AnsiChar(isc_spb_verbose);
       Inc(SpbIdx);
     end;
     //backupfile
-    SpbBuffer[SpbIdx] := char(isc_spb_bkp_file);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_bkp_file);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ABackupFile));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VBackupFile));
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ABackupFile) shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VBackupFile) shr 8);
     Inc(SpbIdx);
-    Move(ABackupFile[1], SpbBuffer[SpbIdx], Length(ABackupFile));
-    Inc(SpbIdx, Length(ABackupFile));
+    Move(VBackupFile[1], SpbBuffer[SpbIdx], Length(VBackupFile));
+    Inc(SpbIdx, Length(VBackupFile));
     //options backup
     if bkpIgnoreCheckSum in AOption then
       Options := Options or isc_spb_bkp_ignore_checksums;
@@ -571,15 +617,15 @@ begin
       Options := Options or isc_spb_bkp_old_descriptions;
     if bkpConvert in AOption then
       Options := Options or isc_spb_bkp_convert;
-    SpbBuffer[SpbIdx] := char(isc_spb_options);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_options);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options);
+    SpbBuffer[SpbIdx] := AnsiChar(Options);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Options shr 8);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options shr 16);
+    SpbBuffer[SpbIdx] := AnsiChar(Options shr 16);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options shr 24);
+    SpbBuffer[SpbIdx] := AnsiChar(Options shr 24);
     Inc(SpbIdx);
     // start backup
     if isc_service_start(@Status_vector, @FServiceHandle, nil, SpbIdx,
@@ -595,17 +641,25 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.Restore(const ABackupFile, ADatabaseFile: string;
-  AOption: TRestoreOptions = []; APageSize: integer = 0);
+procedure TFBLService.Restore(const ABackupFile, ADatabaseFile: String;
+  AOption: TRestoreOptions = []; APageSize: Integer = 0);
 var
-  SpbBuffer: PChar;
+  SpbBuffer: PAnsiChar;
   SpbIdx: Short;
-  LenBuffer: integer;
+  LenBuffer: Integer;
   Status_vector: ISC_STATUS_VECTOR;
-  Options: longint;
+  Options: LongInt;
+  VDatabaseFile, VBackupFile: AnsiString;
 begin
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
+  {$IFDEF D9P}
+  VDatabaseFile :=   WideStringToString(ADatabaseFile);
+  VBackupFile := WideStringToString(ABackupFile);
+  {$ELSE}
+  VDatabaseFile := ADatabaseFile;
+  VBackupFile :=  ABackupFile;
+  {$ENDIF}
   if not ((resCreate in AOption) or (resReplace in AOption)) then
     FBLError(E_SM_RES_NO_ACTION);
   SpbBuffer := nil;
@@ -624,7 +678,7 @@ begin
     + 1 byte if verbose request
     + 1 byte if access mode
     + 5 byte if Pagesize > 0}
-  LenBuffer := 4 + Length(ABackupFile) + 3 + Length(ADatabaseFile) + 5;
+  LenBuffer := 4 + Length(VBackupFile) + 3 + Length(VDatabaseFile) + 5;
   if (resVerbose in Aoption) then
     Inc(LenBuffer);
   if (resAccessModeReadOnly in AOption) or (resAccessModeReadWrite in AOption) then
@@ -633,32 +687,32 @@ begin
     Inc(LenBuffer, 5);
   FBLMalloc(spbBuffer, LenBuffer);
   try
-    SpbBuffer[SpbIdx] := char(isc_action_svc_restore);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_action_svc_restore);
     Inc(SpbIdx);
     //backupfile
-    SpbBuffer[SpbIdx] := char(isc_spb_bkp_file);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_bkp_file);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ABackupFile));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VBackupFile));
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ABackupFile) shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VBackupFile) shr 8);
     Inc(SpbIdx);
-    Move(ABackupFile[1], SpbBuffer[SpbIdx], Length(ABackupFile));
-    Inc(SpbIdx, Length(ABackupFile));
+    Move(VBackupFile[1], SpbBuffer[SpbIdx], Length(VBackupFile));
+    Inc(SpbIdx, Length(VBackupFile));
     // verbose result
     if resVerbose in AOption then
     begin
-      SpbBuffer[SpbIdx] := char(isc_spb_verbose);
+      SpbBuffer[SpbIdx] := AnsiChar(isc_spb_verbose);
       Inc(SpbIdx);
     end;
     //databasefile
-    SpbBuffer[SpbIdx] := char(isc_spb_dbname);
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_dbname);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile));
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VDatabaseFile));
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Length(ADatabaseFile) shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Length(VDatabaseFile) shr 8);
     Inc(SpbIdx);
-    Move(ADatabaseFile[1], SpbBuffer[SpbIdx], Length(ADatabaseFile));
-    Inc(SpbIdx, Length(ADatabaseFile));
+    Move(VDatabaseFile[1], SpbBuffer[SpbIdx], Length(VDatabaseFile));
+    Inc(SpbIdx, Length(VDatabaseFile));
     //options
     if resDeactivateIdx in AOption then
       Options := Options or isc_spb_res_deactivate_idx;
@@ -674,44 +728,48 @@ begin
       Options := Options or isc_spb_res_create;
     if resUseAllSpace in AOption then
       Options := Options or isc_spb_res_use_all_space;
-    SpbBuffer[SpbIdx] := char(isc_spb_options);
+    if resFixFssData in AOption then
+      Options :=  Options or isc_spb_res_fix_fss_data;
+    if resFixFssMetadata in AOption then
+      Options :=  Options or isc_spb_res_fix_fss_metadata;
+    SpbBuffer[SpbIdx] := AnsiChar(isc_spb_options);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options);
+    SpbBuffer[SpbIdx] := AnsiChar(Options);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options shr 8);
+    SpbBuffer[SpbIdx] := AnsiChar(Options shr 8);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options shr 16);
+    SpbBuffer[SpbIdx] := AnsiChar(Options shr 16);
     Inc(SpbIdx);
-    SpbBuffer[SpbIdx] := char(Options shr 24);
+    SpbBuffer[SpbIdx] := AnsiChar(Options shr 24);
     Inc(SpbIdx);
     if resAccessModeReadOnly in AOption then
     begin
       if resAccessModeReadWrite in AOption then
         FBLError(E_SM_RES_PARAMS_ACCESSMODE);
-      SpbBuffer[SpbIdx] := char(isc_spb_res_access_mode);
+      SpbBuffer[SpbIdx] := AnsiChar(isc_spb_res_access_mode);
       Inc(SpbIdx);
-      SpbBuffer[SpbIdx] := char(isc_spb_res_am_readonly);
+      SpbBuffer[SpbIdx] := AnsiChar(isc_spb_res_am_readonly);
     end;
     if resAccessModeReadWrite in AOption then
     begin
       if resAccessModeReadOnly in AOption then
         FBLError(E_SM_RES_PARAMS_ACCESSMODE);
-      SpbBuffer[SpbIdx] := char(isc_spb_res_access_mode);
+      SpbBuffer[SpbIdx] := AnsiChar(isc_spb_res_access_mode);
       Inc(SpbIdx);
-      SpbBuffer[SpbIdx] := char(isc_spb_res_am_readwrite);
+      SpbBuffer[SpbIdx] := AnsiChar(isc_spb_res_am_readwrite);
     end;
     // Page Size
     if APageSize <> 0 then
     begin
-      SpbBuffer[SpbIdx] := char(isc_spb_res_page_size);
+      SpbBuffer[SpbIdx] := AnsiChar(isc_spb_res_page_size);
       Inc(SpbIdx);
-      SpbBuffer[SpbIdx] := char(APageSize);
+      SpbBuffer[SpbIdx] := AnsiChar(APageSize);
       Inc(SpbIdx);
-      SpbBuffer[SpbIdx] := char(APageSize shr 8);
+      SpbBuffer[SpbIdx] := AnsiChar(APageSize shr 8);
       Inc(SpbIdx);
-      SpbBuffer[SpbIdx] := char(APageSize shr 16);
+      SpbBuffer[SpbIdx] := AnsiChar(APageSize shr 16);
       Inc(SpbIdx);
-      SpbBuffer[SpbIdx] := char(APageSize shr 24);
+      SpbBuffer[SpbIdx] := AnsiChar(APageSize shr 24);
       Inc(SpbIdx);
     end;
     // start restore
@@ -734,7 +792,7 @@ var
 begin
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
-  RequestInfo := char(isc_action_svc_get_ib_log);
+  RequestInfo := AnsiChar(isc_action_svc_get_ib_log);
   if isc_service_start(@Status_vector, @FServiceHandle, nil, 1, @RequestInfo) <> 0 then
     FBLShowError(@Status_vector);
   WriteLineOutput(isc_action_svc_get_ib_log);
@@ -742,10 +800,10 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GetStatusReports(const ADatabaseFile: string;
+procedure TFBLService.GetStatusReports(const ADatabaseFile: String;
   AOption: TStatOptions = []);
 var
-  Options: longint;
+  Options: LongInt;
 begin
   Options := 0;
   if stsDataPages in AOption then
@@ -768,23 +826,23 @@ end;
 
 function TFBLService.GetUserNames: TStringList;
 var
-  RequestInfo: char;
-  BufferResult: array[0..255] of char; //tempBuffer
-  Buffer: PChar;                       //Full Buffer
+  RequestInfo: AnsiChar;
+  BufferResult: array[0..255] of AnsiChar; //tempBuffer
+  Buffer: PAnsiChar;                       //Full Buffer
   Status_vector: ISC_STATUS_VECTOR;
-  mUser: string;
-  Idx, TotBuffer, PosBuffer, LenResult: integer;
-  BufferError: boolean;
+  mUser: AnsiString;
+  Idx, TotBuffer, PosBuffer, LenResult: Integer;
+  BufferError: Boolean;
 begin
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
   if FUserList = nil then FUserList := TStringList.Create;
   Result := FUserList;
   FUserList.Clear;
-  RequestInfo := char(isc_action_svc_display_user);
+  RequestInfo := AnsiChar(isc_action_svc_display_user);
   if isc_service_start(@Status_vector, @FServiceHandle, nil, 1, @RequestInfo) <> 0 then
     FBLShowError(@Status_vector);
-  RequestInfo := char(isc_info_svc_get_users);
+  RequestInfo := AnsiChar(isc_info_svc_get_users);
   Buffer := nil;
   TotBuffer := 0;
   PosBuffer := 0;
@@ -795,14 +853,14 @@ begin
         1, @RequestInfo, SizeOf(BufferResult),
         BufferResult) <> 0 then
         FBLShowError(@Status_vector);
-      if BufferResult[0] <> char(isc_info_svc_get_users) then
+      if BufferResult[0] <> AnsiChar(isc_info_svc_get_users) then
         Exit;              // function not supported
       LenResult := isc_vax_integer(@BufferResult[1], 2);
       if LenResult = 0 then
       begin
         Inc(TotBuffer, 1);
         ReallocMem(Buffer, TotBuffer);
-        Buffer[TotBuffer - 1] := char(isc_info_end);
+        Buffer[TotBuffer - 1] := AnsiChar(isc_info_end);
       end
       else
       begin
@@ -814,9 +872,9 @@ begin
     until LenResult = 0;
     idx := 0;
 
-    while (Buffer[idx] <> char(isc_info_end)) and (not BufferError) do
+    while (Buffer[idx] <> AnsiChar(isc_info_end)) and (not BufferError) do
     begin
-      case integer(Buffer[idx]) of
+      case Integer(Buffer[idx]) of
         isc_spb_sec_userid:
           Inc(idx, 5);
         isc_spb_sec_groupid:
@@ -828,7 +886,12 @@ begin
             Inc(idx, 2);
             SetLength(mUser, LenResult);
             Move(Buffer[idx], mUser[1], LenResult);
-            FUserList.Add(mUser);
+            {$IFDEF D9P}
+             FUserList.Add(UnicodeString(mUser));
+            {$ELSE}
+             FUserList.Add(mUser);
+            {$ENDIF}
+
             Inc(idx, LenResult);
           end;
         isc_spb_sec_groupname:
@@ -872,55 +935,98 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.AddModifyUser(AIscAction: integer;
-  const AUserName, APassword: string; AFirstName: string = ''; AMiddleName: string = '';
-  ALastName: string = ''; AUserID: longint = 0; AGroupID: longint = 0);
+procedure TFBLService.AddModifyUser(AIscAction: Integer;
+  const AUserName, APassword: String; AFirstName: String = ''; AMiddleName: String = '';
+  ALastName: String = ''; AUserID: LongInt = 0; AGroupID: LongInt = 0);
 var
-  SpbBuffer: array [0..254] of char;
+  SpbBuffer: array [0..254] of  AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
   SpbBufferIdx: Short;
-  UserName, mPassword, FirstName, LastName, MiddleName: string;
+  UserName, mPassword, FirstName, LastName, MiddleName: AnsiString;
 begin
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
   if Length(AUserName) > 31 then
+    {$IFDEF D9P}
+    UserName := WideStringToString(Copy(AUserName, 0,31))
+    {$ELSE}
     UserName := Copy(AUserName, 0,31)
+    {$ENDIF}
   else
+    {$IFDEF D9P}
+    UserName := WideStringToString(AUserName);
+    {$ELSE}
     UserName := AUserName;
+    {$ENDIF}
   if Length(APassword) > 8 then
+    {$IFDEF D9P}
+    mPassword := WideStringToString(Copy(APassword, 0,8))
+    {$ELSE}
     mPassword := Copy(APassword, 0,8)
+    {$ENDIF}
   else
+    {$IFDEF D9P}
+    mPassword := WideStringToString(APassword);
+    {$ELSE}
     mPassword := APassword;
+    {$ENDIF}
   if Length(AFirstName) > 17 then
+    {$IFDEF D9P}
+    FirstName := WideStringToString(Copy(AFirstName, 0,17))
+    {$ELSE}
     FirstName := Copy(AFirstName, 0,17)
+    {$ENDIF}
   else
+    {$IFDEF D9P}
+    FirstName := WideStringToString(AFirstName);
+    {$ELSE}
     FirstName := AFirstName;
+    {$ENDIF}
   if Length(AMiddleName) > 17 then
+    {$IFDEF D9P}
+    MiddleName := WideStringToString(Copy(AMiddleName, 0,17))
+    {$ELSE}
     MiddleName := Copy(AMiddleName, 0,17)
+    {$ENDIF}
   else
+    {$IFDEF D9P}
+    MiddleName := WideStringToString(AMiddleName);
+    {$ELSE}
     MiddleName := AMiddleName;
+    {$ENDIF}
+
   if Length(ALastName) > 17 then
+    {$IFDEF D9P}
+    LastName := WideStringToString(Copy(ALastName, 0,17))
+    {$ELSE}
     LastName := Copy(ALastName, 0,17)
+    {$ENDIF}
   else
-    LastName := ALastName;
+    {$IFDEF D9P}
+    LastName := WideStringToString(ALastName);
+    {$ELSE}
+      LastName := ALastName;
+    {$ENDIF}
+
+
   SpbBufferIdx := 0;
-  SpbBuffer[SpbBufferIdx] := char(AIscAction);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(AIscAction);
   Inc(SpbBufferIdx);
   //UserName
-  SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_username);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_username);
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(UserName));
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(UserName));
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(UserName) shr 8);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(UserName) shr 8);
   Inc(SpbBufferIdx);
   Move(UserName[1], SpbBuffer[SpbBufferIdx], Length(UserName));
   Inc(SpbBufferIdx, Length(UserName));
   //Password
-  SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_password);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_password);
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(mPassword));
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(mPassword));
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(mPassword) shr 8);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(mPassword) shr 8);
   Inc(SpbBufferIdx);
   Move(mPassword[1], SpbBuffer[SpbBufferIdx], Length(mPassword));
   Inc(SpbBufferIdx, Length(mPassword));
@@ -929,20 +1035,20 @@ begin
   begin
     if (FirstName = '#') and (AIscAction = isc_action_svc_modify_user) then
     begin
-      SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_firstname);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_firstname);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(0);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(0);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(0);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(0);
       Inc(SpbBufferIdx);
     end
     else
     begin
-      SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_firstname);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_firstname);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(Length(FirstName));
+      SpbBuffer[SpbBufferIdx] := AnsiChar(Length(FirstName));
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(Length(FirstName) shr 8);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(Length(FirstName) shr 8);
       Inc(SpbBufferIdx);
       Move(FirstName[1], SpbBuffer[SpbBufferIdx], Length(FirstName));
       Inc(SpbBufferIdx, Length(FirstName));
@@ -953,20 +1059,20 @@ begin
   begin
     if (MiddleName = '#') and (AIscAction = isc_action_svc_modify_user) then
     begin
-      SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_middlename);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_middlename);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(0);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(0);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(0);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(0);
       Inc(SpbBufferIdx);
     end
     else
     begin
-      SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_middlename);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_middlename);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(Length(MiddleName));
+      SpbBuffer[SpbBufferIdx] := AnsiChar(Length(MiddleName));
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(Length(MiddleName) shr 8);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(Length(MiddleName) shr 8);
       Inc(SpbBufferIdx);
       Move(MiddleName[1], SpbBuffer[SpbBufferIdx], Length(MiddleName));
       Inc(SpbBufferIdx, Length(MiddleName));
@@ -978,20 +1084,20 @@ begin
   begin
     if (LastName = '#') and (AIscAction = isc_action_svc_modify_user) then
     begin
-      SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_lastname);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_lastname);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(0);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(0);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(0);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(0);
       Inc(SpbBufferIdx);
     end
     else
     begin
-      SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_lastname);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_lastname);
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(Length(LastName));
+      SpbBuffer[SpbBufferIdx] := AnsiChar(Length(LastName));
       Inc(SpbBufferIdx);
-      SpbBuffer[SpbBufferIdx] := char(Length(LastName) shr 8);
+      SpbBuffer[SpbBufferIdx] := AnsiChar(Length(LastName) shr 8);
       Inc(SpbBufferIdx);
       Move(LastName[1], SpbBuffer[SpbBufferIdx], Length(LastName));
       Inc(SpbBufferIdx, Length(LastName));
@@ -1001,29 +1107,29 @@ begin
   //UserId
   if AUserId > 0 then
   begin
-    SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_userid);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_userid);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AUserId);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AUserId);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AUserId shr 8);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AUserId shr 8);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AUserId shr 16);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AUserId shr 16);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AUserId shr 24);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AUserId shr 24);
     Inc(SpbBufferIdx);
   end;
   //GroupId
   if AGroupID > 0 then
   begin
-    SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_groupid);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_groupid);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AGroupID);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AGroupID);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AGroupID shr 8);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AGroupID shr 8);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AGroupID shr 16);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AGroupID shr 16);
     Inc(SpbBufferIdx);
-    SpbBuffer[SpbBufferIdx] := char(AGroupID shr 24);
+    SpbBuffer[SpbBufferIdx] := AnsiChar(AGroupID shr 24);
     Inc(SpbBufferIdx);
   end;
   if isc_service_start(@Status_vector, @FServiceHandle, nil, SpbBufferIdx,
@@ -1055,26 +1161,35 @@ end;
 
 procedure TFBLService.DeleteUser(const AUserName: string);
 var
-  SpbBuffer: array [0..127] of char;
+  SpbBuffer: array [0..127] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
   SpbBufferIdx: Short;
-  UserName: string;
+  UserName: AnsiString;
 begin
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
   if Length(AUserName) > 31 then
-    UserName := Copy(AUserName, 0,31)
+    {$IFDEF D9P}
+    UserName := WideStringToString (Copy(AUserName, 0,31))
+    {$ELSE}
+     UserName :=  AUserName
+    {$ENDIF}
   else
-    UserName := AUserName;
+     {$IFDEF D9P}
+      UserName := WideStringToString(AUserName);
+     {$ELSE}
+      UserName := AUserName;
+     {$ENDIF}
+
   SpbBufferIdx := 0;
-  SpbBuffer[SpbBufferIdx] := char(isc_action_svc_delete_user);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(isc_action_svc_delete_user);
   Inc(SpbBufferIdx);
   //UserName
-  SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_username);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_username);
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(UserName));
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(UserName));
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(UserName) shr 8);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(UserName) shr 8);
   Inc(SpbBufferIdx);
   Move(UserName[1], SpbBuffer[SpbBufferIdx], Length(UserName));
   Inc(SpbBufferIdx, Length(UserName));
@@ -1085,33 +1200,41 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.ViewUser(const AUserName: string;
-  var AFirstName, AMiddleName, ALastName: string;
+procedure TFBLService.ViewUser(const AUserName: String;
+  var AFirstName, AMiddleName, ALastName: String;
   var AUserID, AGroupId: longint);
 var
-  SpbBuffer: array [0..254] of char;
-  BufferResult: array[0..254] of char;
+  SpbBuffer: array [0..254] of AnsiChar;
+  BufferResult: array[0..254] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
   SpbBufferIdx: Short;
-  LenData: integer;
-  UserName: string;
-  BufferError: boolean;
+  LenData: Integer;
+  UserName: AnsiString;
+  BufferError: Boolean;
 begin
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
   BufferError := False;
   if Length(AUserName) > 31 then
+    {$IFDEF D9P}
+    UserName := WideStringToString(Copy(AUserName, 0,31))
+    {$ELSE}
     UserName := Copy(AUserName, 0,31)
+    {$ENDIF}
   else
+    {$IFDEF D9P}
+    UserName := WideStringToString(AUserName);
+    {$ELSE}
     UserName := AUserName;
+    {$ENDIF}
   SpbBufferIdx := 0;
-  SpbBuffer[SpbBufferIdx] := char(isc_action_svc_display_user);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(isc_action_svc_display_user);
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(isc_spb_sec_username);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(isc_spb_sec_username);
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(UserName));
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(UserName));
   Inc(SpbBufferIdx);
-  SpbBuffer[SpbBufferIdx] := char(Length(UserName) shr 8);
+  SpbBuffer[SpbBufferIdx] := AnsiChar(Length(UserName) shr 8);
   Inc(SpbBufferIdx);
   Move(UserName[1], SpbBuffer[SpbBufferIdx], Length(UserName));
   Inc(SpbBufferIdx, Length(UserName));
@@ -1125,14 +1248,14 @@ begin
     BufferResult) <> 0 then
     FBLShowError(@Status_vector);
   SpbBufferIdx := 3;
-  if BufferResult[0] = char(isc_info_svc_get_users) then
+  if BufferResult[0] = AnsiChar(isc_info_svc_get_users) then
   begin
-    if BufferResult[3] = char(isc_info_end) then
+    if BufferResult[3] = AnsiChar(isc_info_end) then
       FBLError(E_SM_USER_NOT_EXIST, [UserName]);
     //LenBuffer := isc_vax_integer(@BufferResult[1],2);
     while (BufferResult[SpbBufferIdx] <> char(isc_info_end)) and (not BufferError) do
     begin
-      case integer(BufferResult[SpbBufferIdx]) of
+      case Integer(BufferResult[SpbBufferIdx]) of
         isc_spb_sec_userid:
           begin
             Inc(SpbBufferIdx);
@@ -1195,16 +1318,16 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetVersion: integer;
+function TFBLService.GetVersion: Integer;
 var
-  RequestInfo: char;
-  BufferResult: array[0..31] of char;
+  RequestInfo: AnsiChar;
+  BufferResult: array[0..31] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
 begin
   Result := 0;
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
-  RequestInfo := char(isc_info_svc_version);
+  RequestInfo := AnsiChar(isc_info_svc_version);
   if isc_service_query(@Status_vector, @FServiceHandle, nil, 0,nil,
     1, @RequestInfo, SizeOf(BufferResult),
     BufferResult) <> 0 then
@@ -1215,113 +1338,119 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetInfoString(Aisc_info: integer): string;
+function TFBLService.GetInfoString(Aisc_info: Integer): String;
 var
-  RequestInfo: char;
-  BufferResult: array[0..1023] of char;
+  RequestInfo: AnsiChar;
+  BufferResult: array[0..1023] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
-  StringLength: integer;
+  StringLength: Integer;
+  VResult: AnsiString;
 begin
-  Result := '';
+  VResult := '';
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
-  RequestInfo := char(Aisc_info);
+  RequestInfo := AnsiChar(Aisc_info);
   if isc_service_query(@Status_vector, @FServiceHandle, nil, 0,nil,
     1, @RequestInfo, SizeOf(BufferResult),
     BufferResult) <> 0 then
     FBLShowError(@Status_vector);
-  if BufferResult[0] = char(Aisc_info) then
+  if BufferResult[0] = AnsiChar(Aisc_info) then
   begin
     StringLength := isc_vax_integer(@BufferResult[1], 2);
-    SetLength(Result, StringLength);
+    SetLength(VResult, StringLength);
     Move(BufferResult[3], Result[1], StringLength);
   end;
+  {$IFDEF D9P}
+  Result := UnicodeString(VResult);
+  {$ELSE}
+  Result := VResult;
+  {$ENDIF}
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetServerVersion: string;
+function TFBLService.GetServerVersion: String;
 begin
   Result := GetInfoString(isc_info_svc_server_version);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetServerImplementation: string;
+function TFBLService.GetServerImplementation: String;
 begin
   Result := GetInfoString(isc_info_svc_implementation);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetServerPath: string;
+function TFBLService.GetServerPath: String;
 begin
   Result := GetInfoString(isc_info_svc_get_env);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetServerLockPath: string;
+function TFBLService.GetServerLockPath: String;
 begin
   Result := GetInfoString(isc_info_svc_get_env_lock);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetServerMsgPath: string;
+function TFBLService.GetServerMsgPath: String;
 begin
   Result := GetInfoString(isc_info_svc_get_env_msg);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetUserDBPath: string;
+function TFBLService.GetUserDBPath: String;
 begin
   Result := GetInfoString(isc_info_svc_user_dbpath);
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetNumOfAttachments: integer;
+function TFBLService.GetNumOfAttachments: Integer;
 var
-  RequestInfo: char;
-  BufferResult: array [0..127] of char;
+  RequestInfo: AnsiChar;
+  BufferResult: array [0..127] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
 begin
   Result := 0;
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
-  RequestInfo := char(isc_info_svc_svr_db_info);
+  RequestInfo := AnsiChar(isc_info_svc_svr_db_info);
   if isc_service_query(@Status_vector, @FServiceHandle, nil, 0,nil,
     1, @RequestInfo, SizeOf(BufferResult),
     BufferResult) <> 0 then
     FBLShowError(@Status_vector);
-  if BufferResult[0] = char(isc_info_svc_svr_db_info) then
+  if BufferResult[0] = AnsiChar(isc_info_svc_svr_db_info) then
   begin
-    if BufferResult[1] = char(isc_spb_num_att) then
+    if BufferResult[1] = AnsiChar(isc_spb_num_att) then
       Result := isc_vax_integer(@BufferResult[2], 4);
   end;
 end;
 
 //------------------------------------------------------------------------------
 
-function TFBLService.GetNumOfDatabases: integer;
+function TFBLService.GetNumOfDatabases: Integer;
 var
-  RequestInfo: char;
-  BufferResult: array [0..127] of char;
+  RequestInfo: AnsiChar;
+  BufferResult: array [0..127] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
 begin
   Result := 0;
   if FServiceHandle = nil then
     FBLError(E_SM_NO_CON);
-  RequestInfo := char(isc_info_svc_svr_db_info);
+  RequestInfo := AnsiChar(isc_info_svc_svr_db_info);
   if isc_service_query(@Status_vector, @FServiceHandle, nil, 0,nil,
     1, @RequestInfo, SizeOf(BufferResult),
     BufferResult) <> 0 then
     FBLShowError(@Status_vector);
-  if BufferResult[0] = char(isc_info_svc_svr_db_info) then
+  if BufferResult[0] = AnsiChar(isc_info_svc_svr_db_info) then
   begin
-    if BufferResult[6] = char(isc_spb_num_db) then
+    if BufferResult[6] = AnsiChar(isc_spb_num_db) then
       Result := isc_vax_integer(@BufferResult[7], 4);
   end;
 end;
@@ -1331,10 +1460,10 @@ end;
 
 function TFBLService.GetDatabaseNames: TStringList;
 var
-  RequestInfo: char;
-  BufferResult: array[0..32767] of char;
+  RequestInfo: AnsiChar;
+  BufferResult: array[0..32767] of AnsiChar;
   Status_vector: ISC_STATUS_VECTOR;
-  DBName: string;
+  DBName: AnsiString;
   DbNameLength, Idx: integer;
 begin
   if FServiceHandle = nil then
@@ -1344,15 +1473,14 @@ begin
   FDatabaseNames.Clear;
   DBName := '';
   idx := 11;
-  RequestInfo := char(isc_info_svc_svr_db_info);
+  RequestInfo := AnsiChar(isc_info_svc_svr_db_info);
   //ShowMessage('o');
   if isc_service_query(@Status_vector, @FServiceHandle, nil, 0,nil,
-    1, @RequestInfo, SizeOf(BufferResult),
-    BufferResult) <> 0 then
+    1, @RequestInfo, SizeOf(BufferResult), BufferResult) <> 0 then
     FBLShowError(@Status_vector);
-  if BufferResult[0] = char(isc_info_svc_svr_db_info) then
+  if BufferResult[0] = AnsiChar(isc_info_svc_svr_db_info) then
   begin
-    while BufferResult[idx] = char(isc_spb_dbname) do
+    while BufferResult[idx] = AnsiChar(isc_spb_dbname) do
     begin
       Inc(Idx);
       DbNameLength := isc_vax_integer(@BufferResult[idx], 2);
@@ -1360,7 +1488,7 @@ begin
       SetLength(DBName, DbNameLength);
       Move(BufferResult[idx], DBName[1], DbNameLength);
       Inc(Idx, DbNameLength);
-      FDatabaseNames.Add(DBName);
+      FDatabaseNames.Add({$IFDEF D9P}UnicodeString(DBName){$ELSE}DBName{$ENDIF});
     end;
   end;
 end;
@@ -1392,7 +1520,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetShutDownDbTran(const ADatabaseFile: string;
+procedure TFBLService.GFixSetShutDownDbTran(const ADatabaseFile: String;
   ATimeOut: longint);
 begin
   CallProc32(ADatabaseFile, isc_action_svc_properties,
@@ -1401,7 +1529,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetShutDownDbAttach(const ADatabaseFile: string;
+procedure TFBLService.GFixSetShutDownDbAttach(const ADatabaseFile: String;
   ATimeOut: longint);
 begin
   CallProc32(ADatabaseFile, isc_action_svc_properties,
@@ -1410,7 +1538,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetReserveSpaceFull(const ADatabaseFile: string);
+procedure TFBLService.GFixSetReserveSpaceFull(const ADatabaseFile: String);
 begin
   CallProc8(ADatabaseFile, isc_action_svc_properties, isc_spb_prp_reserve_space,
     isc_spb_prp_res_use_full);
@@ -1418,7 +1546,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetReserveSpaceRes(const ADatabaseFile: string);
+procedure TFBLService.GFixSetReserveSpaceRes(const ADatabaseFile: String);
 begin
   CallProc8(ADatabaseFile, isc_action_svc_properties, isc_spb_prp_reserve_space,
     isc_spb_prp_res);
@@ -1426,7 +1554,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetWriteModeAsync(const ADatabaseFile: string);
+procedure TFBLService.GFixSetWriteModeAsync(const ADatabaseFile: String);
 begin
   CallProc8(ADatabaseFile, isc_action_svc_properties, isc_spb_prp_write_mode,
     isc_spb_prp_wm_async);
@@ -1434,7 +1562,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetWriteModeSync(const ADatabaseFile: string);
+procedure TFBLService.GFixSetWriteModeSync(const ADatabaseFile: String);
 begin
   CallProc8(ADatabaseFile, isc_action_svc_properties, isc_spb_prp_write_mode,
     isc_spb_prp_wm_sync);
@@ -1442,7 +1570,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetAccessModeReadOnly(const ADatabaseFile: string);
+procedure TFBLService.GFixSetAccessModeReadOnly(const ADatabaseFile: String);
 begin
   CallProc8(ADatabaseFile, isc_action_svc_properties, isc_spb_prp_access_mode,
     isc_spb_prp_am_readonly);
@@ -1450,7 +1578,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetAccessModeReadWrite(const ADatabaseFile: string);
+procedure TFBLService.GFixSetAccessModeReadWrite(const ADatabaseFile: String);
 begin
   CallProc8(ADatabaseFile, isc_action_svc_properties, isc_spb_prp_access_mode,
     isc_spb_prp_am_readwrite);
@@ -1458,7 +1586,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure TFBLService.GFixSetSqlDialect(const ADatabaseFile: string; AValue: integer);
+procedure TFBLService.GFixSetSqlDialect(const ADatabaseFile: string; AValue: Integer);
 begin
   if (AValue <> 1) and (AValue <> 3) then
     FBLError(E_DB_SQLDIALECT_INVALID);
@@ -1469,7 +1597,7 @@ end;
 
 procedure TFBLService.GfixRepair(const ADatabaseFile: string; AOption: TGfixRepairs);
 var
-  Options: longint;   //bitmask of isc_spb_options
+  Options: Longint;   //bitmask of isc_spb_options
 begin
   Options := 0;
   //gfrCheckDb,gfrIgnore,gfrKill,gfrMend,gfrValidate,gfrFull,gfrSweep

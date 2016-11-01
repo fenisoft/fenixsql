@@ -1,13 +1,13 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    File:FBLDataset.pas
-   Copyright (c) 2012 Alessandro Batisti
+   Copyright (c) 2006 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -32,7 +32,7 @@ unit FBLDataset;
 
 interface
 uses
-  SysUtils, Classes, DB, FBLDsql, FBLTransaction, ibase_h 
+  SysUtils, Classes, DB, FBLDsql, FBLTransaction, ibase_h ,FBLMixf
   {$IFDEF D6P},FMTBcd{$ENDIF};
 
 type
@@ -77,9 +77,9 @@ type
     function GetCanModify: Boolean; override;
     function GetRecNo: LongInt; override;
     function GetRecordCount: Integer; override;
-    function AllocRecordBuffer: PChar; override;
-    procedure InternalInitRecord(Buffer: PChar); override;
-    procedure FreeRecordBuffer(var Buffer: PChar); override;
+
+
+
     function GetRecordSize: Word; override;
     procedure InternalOpen; override;
     procedure InternalClose; override;
@@ -87,7 +87,6 @@ type
     procedure InternalInitFieldDefs; override;
     procedure InternalFirst; override;
     procedure InternalLast; override;
-    function GetRecord(Buffer: PChar; GetMode: TGetMode; DoCheck: Boolean): TGetResult;override;
     function IsCursorOpen: Boolean; override;
     {$IFDEF FPC}
     procedure InternalGotoBookmark(aBookmark: Pointer); override;
@@ -96,8 +95,21 @@ type
     procedure SetBookmarkData(Buffer: PChar; Data: Pointer); override;
     procedure GetBookmarkData(Buffer: PChar; Data: Pointer); override;
     function GetBookmarkFlag(Buffer: PChar): TBookmarkFlag; override;
+    {$ELSE}
+      {$IFDEF D9P}
+    function AllocRecordBuffer: TRecordBuffer; override;
+    procedure InternalInitRecord(Buffer: TRecBuf);overload;
+    procedure FreeRecordBuffer(var Buffer: TRecordBuffer); override;
+    function GetRecord(Buffer: TRecordBuffer; GetMode: TGetMode; DoCheck: Boolean): TGetResult; override;
+      {$ELSE}
+    function AllocRecordBuffer: PChar; override;
+    procedure InternalInitRecord(Buffer: PChar); override;
+    procedure FreeRecordBuffer(var Buffer: PChar); override;
+    function GetRecord(Buffer: PChar; GetMode: TGetMode; DoCheck: Boolean): TGetResult;override;
+      {$ENDIF}
     {$ENDIF}
   public
+
     {$IFDEF FPC}
     {current record in buffer <freepascal only>}
     property CurrentRecord;
@@ -107,17 +119,20 @@ type
     property BufferCount;
     {number of blob fields in one record <freepascal only>}
     property BlobFieldCount;
-    
-    //property BufferListCount: Integer read GetBufferListCount;
+    {$ELSE}
+      {$IFDEF D9P}
+    function GetFieldData(Field: TField; var Buffer: TValueBuffer): Boolean; overload; override;
+    function GetFieldData(FieldNo: Integer; var Buffer: TValueBuffer): Boolean; overload;  override;
+      {$ELSE}
+    function GetFieldData(Field: TField; Buffer: Pointer): Boolean; overload; override;
+    function GetFieldData(FieldNo: Integer; Buffer: Pointer): Boolean; overload;  override;
+      {$ENDIF}
     {$ENDIF}
+
     {Create an instace of TFBLCustomDataset}
     constructor Create(AOwen: TComponent); override;
     {Free up  all resources associated with this instance.}
     destructor Destroy; override;
-    {Retrieves the current value of a field into a buffer.}
-    function GetFieldData(Field: TField; Buffer: Pointer): Boolean; overload; override; 
-    {Retrieves the current value of a field into a buffer.}
-    function GetFieldData(FieldNo: Integer; Buffer: Pointer): Boolean; overload; {$IFNDEF FPC} override; {$ENDIF }
     {Returns number of records fetched.}
     property RecordCount: Integer read GetRecordCount;
     {Returns a TBlobStream object for reading or writing the data in a specified blob field.}
@@ -188,7 +203,7 @@ begin
     {$ENDIF}
     {$IF defined(VER2_2) or defined(VER2_3_1)}
   SetUniDirectional(False);
-    {$ENDIF}
+    {$IFEND}
   {$ENDIF}
 end;
 
@@ -296,21 +311,44 @@ end;
 
 //------------------------------------------------------------------------------
 
+{$IFDEF D9P}
+function TFBLCustomDataset.AllocRecordBuffer: TRecordBuffer;
+{$ELSE}
 function TFBLCustomDataset.AllocRecordBuffer: PChar;
+{$ENDIF}
 begin
-  GetMem(Result, FRecordBufferSize);
+  {$IFDEF UNICODE}
+   GetMem(Result, FRecordBufferSize);
+  // FillChar(Result, FRecordBufferSize, 0);
+  //FBLMixf.FBLCalloc(Result,FRecordBufferSize);
+  {$ELSE}
+   GetMem(Result, FRecordBufferSize);
+  {$ENDIF}
+
 end;
 
 //------------------------------------------------------------------------------
 
+{$IFDEF D9P}
+procedure TFBLCustomDataset.InternalInitRecord(Buffer: TRecBuf);
+{$ELSE}
 procedure TFBLCustomDataset.InternalInitRecord(Buffer: PChar);
+{$ENDIF}
+
 begin
+  {$IFDEF D9P}
+  FillChar(Buffer, FRecordBufferSize, #0);
+  {$ELSE}
   FillChar(Buffer^, FRecordBufferSize, #0);
+  {$ENDIF}
 end;
 
 //------------------------------------------------------------------------------
-
+{$IFDEF D9P}
+procedure TFBLCustomDataset.FreeRecordBuffer (var Buffer: TRecordBuffer);
+{$ELSE}
 procedure TFBLCustomDataset.FreeRecordBuffer (var Buffer: PChar);
+{$ENDIF}
 begin
   FreeMem (Buffer);
 end;
@@ -327,16 +365,19 @@ end;
 procedure  TFBLCustomDataset.InternalOpen;
 begin
   CheckBeforeOpen;
+  FRecordSize := 0;
   InternalInitFieldDefs;
   if DefaultFields then
      CreateFields;
   BindFields(True);
   {$IFNDEF FPC}
-  FRecordSize := SizeOf(Integer);
+  //FRecordSize := SizeOf(Integer);
+  FRecordBufferSize :=   FRecordSize;
   {$ELSE}
   FRecordBufferSize := FRecordSize + Sizeof(TFBLBookMark);
   EraseBlobList;
   {$ENDIF}
+
   FIsOpen := True;
   FReload := False;
   FisEmpty := False;
@@ -387,7 +428,9 @@ procedure TFBLCustomDataset.InternalInitFieldDefs;
 var
   i : Integer;
   FieldDef: TFieldDef;
+  nSize: Integer;
 begin
+  nSize := 0;
   FieldDefs.Clear;
   for i := 0 to FDsql.FieldCount - 1 do
   begin
@@ -400,14 +443,19 @@ begin
          begin
            FieldDef.DataType := ftString;
            FieldDef.Size := FDSql.FieldSize(i);
+           Inc(nSize,FieldDef.Size);
          end;
 
        SQL_DOUBLE,
        SQL_D_FLOAT,
        SQL_FLOAT:
-           FieldDef.DataType := ftFloat;
-
+           begin
+             FieldDef.DataType := ftFloat;
+             Inc(nSize,FDSql.FieldSize(i));
+           end;
        SQL_LONG:
+          begin
+            Inc(nSize,FDSql.FieldSize(i));
            if Fdsql.FieldScale(i) <> 0 then
            begin
              if  -Fdsql.FieldScale(i) > 4 then
@@ -424,8 +472,11 @@ begin
            end
            else
              FieldDef.DataType :=  ftInteger;
+          end;
 
        SQL_INT64:
+          begin
+            Inc(nSize,FDSql.FieldSize(i));
            if Fdsql.FieldScale(i) <> 0 then
            begin
              if  -Fdsql.FieldScale(i) > 4 then
@@ -448,8 +499,11 @@ begin
            end
            else
              FieldDef.DataType  :=  ftLargeint;
+          end;
 
        SQL_SHORT:
+          begin
+           Inc(nSize,FDSql.FieldSize(i));
            if Fdsql.FieldScale(i) <> 0  then
            begin
               if  -Fdsql.FieldScale(i) > 4 then
@@ -466,36 +520,52 @@ begin
            end
            else
              FieldDef.DataType  :=  ftSmallint;
-
+          end;
 
        SQL_TYPE_TIME:
-           FieldDef.DataType := ftTime;
+           begin
+             Inc(nSize,FDSql.FieldSize(i));
+             FieldDef.DataType := ftTime;
+           end;
        SQL_TYPE_DATE:
+           begin
+           Inc(nSize,FDSql.FieldSize(i));
            FieldDef.DataType := ftDate;
+           end;
        SQL_TIMESTAMP:
-           FieldDef.DataType := ftDateTime;
+           begin
+              Inc(nSize,FDSql.FieldSize(i));
+              FieldDef.DataType := ftDateTime;
+           end;
        SQL_BLOB:
        begin
          if FDsql.FieldSubType(i) = 1 then
            FieldDef.DataType := ftMemo else
            FieldDef.DataType := ftBlob;
          FieldDef.Size := SizeOf(TStream);
+         Inc(nSize,FieldDef.Size);
        end;
        SQL_ARRAY,
        SQL_QUAD:
            begin
             FieldDef.DataType := ftString;
             FieldDef.Size := 12;
+            Inc(nSize,FielDdef.Size);
            end;
        else
           FieldDef.DataType := ftUnknown;
     end;
+    //Inc(FRecordSize, nSize);
+    FRecordSize :=  nSize;
   end;
 end;
 
 //------------------------------------------------------------------------------
-
+{$IFDEF D9P}
+function TFBLCustomDataset.GetRecord(Buffer: TRecordBuffer; GetMode: TGetMode; DoCheck: Boolean): TGetResult;
+{$ELSE}
 function  TFBLCustomDataset.GetRecord(Buffer: PAnsiChar; GetMode: TGetMode; DoCheck: Boolean): TGetResult;
+{$ENDIF}
 begin
   //TGetResult = (grOK, grBOF, grEOF, grError);
   Result := grOk;
@@ -551,12 +621,16 @@ end;
 
 
 //------------------------------------------------------------------------------
-
+{$IFDEF D9P}
+function TFBLCustomDataset.GetFieldData(FieldNo: Integer;var Buffer: TValueBuffer): Boolean;
+{$ELSE}
 function TFBLCustomDataset.GetFieldData(FieldNo: Integer; Buffer: Pointer): Boolean;
+{$ENDIF}
 var
- TempString:string;
+ TempString: String;
  ftype,
- fscale: smallint;
+ fscale: Smallint;
+ Temp : string;
 begin
     Dec(FieldNo);
     Result := False;
@@ -571,7 +645,14 @@ begin
       SQL_TEXT:
         begin
         TempString := FDsql.FieldAsString(FieldNo);
+        //TempString := 'Alessandro';
+        if TempString = '' then TempString := ' ';
+        {$IFDEF UNICODE}
+        Buffer := TEncoding.UTF8.GetBytes(TempString + #0) ;
+        Temp:='1';
+        {$ELSE}
         Move(TempString[1],Buffer^,FDsql.FieldSize(FieldNo));
+        {$ENDIF}
         end;
       SQL_D_FLOAT,
       SQL_FLOAT:
@@ -581,44 +662,19 @@ begin
       SQL_LONG:
         begin
           if fscale <> 0 then
-            if -fscale > 4 then
-               PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
-            else
-              {$IFDEF D6P}
-              DoubleToBCD(FDsql.FieldAsDouble(FieldNo),TBcd(buffer^))
-              {$ELSE}
-              PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
-              {$ENDIF}
+            PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
           else
             PInteger(Buffer)^ := FDsql.FieldAsLong(FieldNo);
         end;
       SQL_SHORT:
          if fscale <> 0 then
-           if -fscale > 4 then
-             PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
-           else
-            {$IFDEF D6P}
-            DoubleToBCD(FDsql.FieldAsDouble(FieldNo),TBcd(buffer^))
-            {$ELSE}
-            PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
-            {$ENDIF}
+           PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
          else
-            PSmallint(Buffer)^ := Smallint(FDsql.FieldAsLong(FieldNo));
+           PSmallint(Buffer)^ := Smallint(FDsql.FieldAsLong(FieldNo));
 
       SQL_INT64:
          if fscale <> 0 then
-           if -fscale > 4 then
-             {$IFDEF D6P}
-             DoubleToBCD(FDsql.FieldAsDouble(FieldNo),TBcd(buffer^))
-             {$ELSE}
              PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
-             {$ENDIF}
-           else
-             {$IFDEF D6P}
-             DoubleToBCD(FDsql.FieldAsDouble(FieldNo),TBcd(buffer^))
-             {$ELSE}
-             PDouble(Buffer)^ := FDsql.FieldAsDouble(FieldNo)
-             {$ENDIF}
          else
             PInt64(Buffer)^ := FDsql.FieldAsInt64(FieldNo);
       SQL_BLOB:
@@ -632,8 +688,12 @@ begin
       SQL_ARRAY,
       SQL_QUAD:
         begin
-           TempString := '<array>';
+            TempString := '<array>';
+           {$IFDEF UNICODE}
+           Buffer := TEncoding.Default.GetBytes(TempString) ;
+           {$ELSE}
            Move(TempString[1],buffer^,Length(TempString));
+           {$ENDIF}
         end;
       SQL_TYPE_TIME:
         PInteger(Buffer)^ := DateTimeToTimeStamp(FDsql.FieldAsDateTime(FieldNo)).Time;
@@ -665,8 +725,11 @@ end;
 
 
 //------------------------------------------------------------------------------
-
+{$IFDEF D9P}
+function TFBLCustomDataset.GetFieldData(Field: TField; var Buffer: TValueBuffer): Boolean;
+{$ELSE}
 function TFBLCustomDataset.GetFieldData(Field: TField; Buffer: Pointer): Boolean;
+{$ENDIF}
 begin
   CheckActive;
   Result := GetFieldData(Field.FieldNo, Buffer);
@@ -700,4 +763,4 @@ end;
 {$IFDEF FPC}
 {$I fbldataset.inc}
 {$ENDIF}
-end.
+end.

@@ -1,13 +1,13 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    File:FBLConst.pas
-   Copyright (c) 2002-2012 Alessandro Batisti
+   Copyright (c) 2002-2004 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -76,13 +76,14 @@ const
 
   (* Character *)
 
-  CR = #13;
-  LF = #10;
+  //CR = #13;
+  //LF = #10;
   INTEND = '  ';
   {$IFDEF UNIX}
-  NEW_LINE = LF;
+  //NEW_LINE = LF;
   {$ELSE}
-  NEW_LINE = CR + LF;
+  //NEW_LINE =  sLineBreak;
+  //NEW_LINE = CR + LF;
   {$ENDIF}
 
   {DSQL Type constant}
@@ -99,6 +100,8 @@ const
   DSQL_TIMESTAMP = 35;
   DSQL_VARCHAR = 37;
   DSQL_BLOB = 261;
+ // var
+   // NEW_LINE : String;
 
 implementation
 

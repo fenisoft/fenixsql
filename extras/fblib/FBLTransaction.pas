@@ -1,12 +1,12 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware to direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    File:FBLTransaction.pas
    Copyright (c) 2002-2004 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -360,12 +360,12 @@ procedure TFBLTransaction.StartTransaction;
 var
   Status_vector: ISC_STATUS_VECTOR;
   Teb: TISC_TEB;      // Transaction Existence Buffer for 'isc_start_multiple'
-  i: integer;
-  TpbLen: integer;    // Transaction Paramerer buffer length
-  TpbIdx: integer;    // Transaction Paramerer buffer Index
-  TabLen: integer;    // Table reservation Name length
-  TabName: string;    // Table reservation Name length
-  TPB: PChar;         // Transaction Paramerer buffer
+  i: Integer;
+  TpbLen: Integer;    // Transaction Paramerer buffer length
+  TpbIdx: Integer;    // Transaction Paramerer buffer Index
+  TabLen: Integer;    // Table reservation Name length
+  TabName: String;    // Table reservation Name length
+  TPB: PAnsiChar;         // Transaction Paramerer buffer
 begin
   CheckDbConnected;
   {$IFDEF  FBL_THREADSAFE}
@@ -382,36 +382,36 @@ begin
       if TpbLen > 0 then
       begin
         FBLMalloc(TPB, TpbLen);
-        TPB[TpbIdx] := char(isc_tpb_version3);
+        TPB[TpbIdx] := AnsiChar(isc_tpb_version3);
         Inc(TpbIdx);
 
         if FAccessMode = amWrite then
-          TPB[TpbIdx] := char(isc_tpb_write)
+          TPB[TpbIdx] := AnsiChar(isc_tpb_write)
         else
-          TPB[TpbIdx] := char(isc_tpb_read);
+          TPB[TpbIdx] := AnsiChar(isc_tpb_read);
         Inc(TpbIdx);
 
         if FLockResolution = lrWait then
-          TPB[TpbIdx] := char(isc_tpb_wait)
+          TPB[TpbIdx] := AnsiChar(isc_tpb_wait)
         else if FLockResolution = lrNoWait then
-          TPB[TpbIdx] := char(isc_tpb_nowait);
+          TPB[TpbIdx] := AnsiChar(isc_tpb_nowait);
         Inc(TpbIdx);
 
         if (FIsolationLevel = ilConcurrency) then
-          TPB[TpbIdx] := char(isc_tpb_concurrency)
+          TPB[TpbIdx] := AnsiChar(isc_tpb_concurrency)
         else if (FIsolationLevel = ilConsistency) then
-          TPB[TpbIdx] := char(isc_tpb_consistency)
+          TPB[TpbIdx] := AnsiChar(isc_tpb_consistency)
         else if (FIsolationLevel = ilReadCommitted_rec_version) then
         begin
-          TPB[TpbIdx] := char(isc_tpb_read_committed);
+          TPB[TpbIdx] := AnsiChar(isc_tpb_read_committed);
           Inc(TpbIdx);
-          TPB[TpbIdx] := char(isc_tpb_rec_version);
+          TPB[TpbIdx] := AnsiChar(isc_tpb_rec_version);
         end
         else if (FIsolationLevel = ilReadCommitted_no_rec_version) then
         begin
-          TPB[TpbIdx] := char(isc_tpb_read_committed);
+          TPB[TpbIdx] := AnsiChar(isc_tpb_read_committed);
           Inc(TpbIdx);
-          TPB[TpbIdx] := char(isc_tpb_no_rec_version);
+          TPB[TpbIdx] := AnsiChar(isc_tpb_no_rec_version);
         end;
         Inc(TpbIdx);
 
@@ -427,13 +427,13 @@ begin
               TabName := Copy(FReservationReadTables.Strings[i], 0,31);
             end;
             if FTableReservationMode = rmShared then
-              TPB[Tpbidx] := char(isc_tpb_shared)
+              TPB[Tpbidx] := AnsiChar(isc_tpb_shared)
             else
-              TPB[TpbIdx] := char(isc_tpb_protected);
+              TPB[TpbIdx] := AnsiChar(isc_tpb_protected);
             Inc(TpbIdx);
-            TPB[TpbIdx] := char(isc_tpb_lock_read);
+            TPB[TpbIdx] := AnsiChar(isc_tpb_lock_read);
             Inc(TpbIdx);
-            TPB[TpbIdx] := char(TabLen);
+            TPB[TpbIdx] := AnsiChar(TabLen);
             Inc(TpbIdx);
             Move(TabName[1], TPB[TpbIdx], TabLen);
             Inc(TpbIdx, TabLen);
@@ -452,13 +452,13 @@ begin
               TabName := Copy(FReservationWriteTables.Strings[i], 0,31);
             end;
             if FTableReservationMode = rmShared then
-              TPB[Tpbidx] := char(isc_tpb_shared)
+              TPB[Tpbidx] := AnsiChar(isc_tpb_shared)
             else
-              TPB[TpbIdx] := char(isc_tpb_protected);
+              TPB[TpbIdx] := AnsiChar(isc_tpb_protected);
             Inc(TpbIdx);
-            TPB[TpbIdx] := char(isc_tpb_lock_write);
+            TPB[TpbIdx] := AnsiChar(isc_tpb_lock_write);
             Inc(TpbIdx);
-            TPB[TpbIdx] := char(TabLen);
+            TPB[TpbIdx] := AnsiChar(TabLen);
             Inc(TpbIdx);
             Move(TabName[1], TPB[TpbIdx], TabLen);
             Inc(TpbIdx, TabLen);
@@ -489,7 +489,7 @@ end;
 procedure TFBLTransaction.EndTransaction(Action: TTRAction);
 var
   Status_vector: ISC_STATUS_VECTOR;
-  i: integer;
+  i: Integer;
 begin
   {$IFDEF FBL_THREADSAFE}
   Lock;

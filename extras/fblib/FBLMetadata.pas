@@ -1,13 +1,13 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    File : FBLMetadata.pas
    Copyright (c) 2002-2004 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -60,7 +60,7 @@ type
     FTriggers: TStringList;
     FSystemTriggers: TStringList;
     FTriggersInTable: TStringList;
-
+    FNewLine : String;
     function GetMetadata: TStringList;
     function GetTables: TStringList;
     function GetSystemTables: TStringList;
@@ -230,7 +230,7 @@ end;
 
 function TFBLMetadata.GetMetadata: TStringList;
 var
-  i,c: integer;
+  i,c: Integer;
   sTemp: string;
   bTemp: boolean;
   PrintHead: Boolean;
@@ -464,12 +464,13 @@ begin
     qry.ExecSQL;
     while not Qry.EOF do
     begin
-      FTables.Add(Trim(Qry.FieldAsString(0)));
+      FTables.Add(trim(Qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
     if FTransaction.InTransaction then FTransaction.Commit;
   finally
+
     qry.Free;
   end;
 end;
@@ -493,7 +494,7 @@ begin
     qry.ExecSQL;
     while not Qry.EOF do
     begin
-      FSystemTables.Add(Trim(Qry.FieldAsString(0)));
+      FSystemTables.Add(trim(Qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -530,7 +531,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FViews.Add(Trim(qry.FieldAsString(0)));
+      FViews.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -558,7 +559,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FProcedures.Add(Trim(qry.FieldAsString(0)));
+      FProcedures.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -587,7 +588,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FGenerators.Add(Trim(qry.FieldAsString(0)));
+      FGenerators.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -616,7 +617,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FDomains.Add(Trim(qry.FieldAsString(0)));
+      FDomains.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -644,7 +645,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      Fudfs.Add(Trim(Qry.FieldAsString(0)));
+      Fudfs.Add(trim(Qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -672,7 +673,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FExceptions.Add(Trim(qry.FieldAsString(0)));
+      FExceptions.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -700,7 +701,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FRoles.Add(Trim(qry.FieldAsString(0)));
+      FRoles.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -732,7 +733,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FTriggers.Add(Trim(qry.FieldAsString(0)));
+      FTriggers.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -764,7 +765,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do
     begin
-      FSystemTriggers.Add(Trim(qry.FieldAsString(0)));
+      FSystemTriggers.Add(trim(qry.FieldAsString(0)));
       qry.Next;
     end;
     qry.UnPrepare;
@@ -843,7 +844,7 @@ begin
           Result := 'BLOB SUB_TYPE TEXT';
       end;
   end;
-  result:=Trim(Result);
+  result:=trim(result);
 end;
 
 //------------------------------------------------------------------------------
@@ -865,7 +866,7 @@ begin
     qry.ExecSQL;
     while not qry.EOF do 
     begin
-      Result := Result + Trim(qry.FieldAsString(0));
+      Result := Result + trim(qry.FieldAsString(0));
       qry.Next;
       if not qry.EOF then Result := Result + ',';
     end;
@@ -897,9 +898,9 @@ begin
     qry.Prepare;
     qry.ParamAsString(0, AConstraintName);
     qry.ExecSQL;
-    pk := Trim(qry.FieldAsString(0));
-    up := Trim(qry.FieldAsString(1));
-    de := Trim(qry.FieldAsString(2));
+    pk := trim(qry.FieldAsString(0));
+    up := trim(qry.FieldAsString(1));
+    de := trim(qry.FieldAsString(2));
     qry.UnPrepare;
     qry.SQL.Text := 'SELECT RDB$RELATION_NAME,' +       //0
       'RDB$INDEX_NAME ' +                //1
@@ -908,9 +909,9 @@ begin
     qry.Prepare;
     qry.ParamAsString(0,pk);
     qry.ExecSQL;
-    Result := 'REFERENCES ' + Trim(qry.FieldAsString(0)) +
-      '(' + Trim(FieldsInIndex(Qry.FieldAsString(1))) +
-      ')' + NEW_LINE + INTEND + 'ON UPDATE ' + up + ' ON DELETE ' + de;
+    Result := 'REFERENCES ' + trim(qry.FieldAsString(0)) +
+      '(' + trim(FieldsInIndex(Qry.FieldAsString(1))) +
+      ')' + sLineBreak  + INTEND + 'ON UPDATE ' + up + ' ON DELETE ' + de;
     qry.UnPrepare;
   finally
     qry.Free;
@@ -980,7 +981,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TFBLMetadata.TableSource(const ATableName: string): string;
+function TFBLMetadata.TableSource(const ATableName: String): String;
 var
   qry: TFBLDsql;
 begin
@@ -1012,22 +1013,22 @@ begin
     qry.Prepare;
     qry.ParamAsString(0,ATableName);
     qry.ExecSQL;
-    Result := 'CREATE TABLE ' + Trim(ATableName) + ' (' + NEW_LINE;
+    Result := 'CREATE TABLE ' + Trim(ATableName) + ' (' + sLineBreak ;
     while not qry.EOF do
     begin
       Result := Result + INTEND +
-        Format('%-31s', [Trim(qry.FieldAsString(0))]) + ' ';
+        Format('%-31s', [trim(qry.FieldAsString(0))]) + ' ';
       if not qry.FieldIsNull(9) then
         Result := Result + 'COMPUTED BY ' + UpperCase(qry.FieldAsString(9))
       else
       begin
-        if copy(qry.FieldAsString(1), 1,4) = 'RDB$' then
+        if Copy(qry.FieldAsString(1), 1,4) = 'RDB$' then
         begin
           Result := Result + FieldType(qry.FieldAsLong(4), qry.FieldAsLong(5),
             qry.FieldAsLong(6), qry.FieldAsLong(7),
             qry.FieldAsLong(8));
           if (not qry.FieldIsNull(10)) and (qry.FieldAsInteger(10) <> 0) then
-            Result := Result + ' CHARACTER SET ' + Trim(qry.FieldAsString(12));
+            Result := Result + ' CHARACTER SET ' + trim(qry.FieldAsString(12));
           if qry.FieldAsLong(11) > 0 then   //array
             Result := Result + ArrayFieldDimension(qry.FieldAsString(1));
           if not qry.FieldIsNull(3) then   // default value
@@ -1042,7 +1043,7 @@ begin
       if qry.EOF then
         Result := Result + ');'
       else
-        Result := Result + ',' + NEW_LINE;
+        Result := Result + ',' + sLineBreak ;
     end;
   finally
     qry.Free;
@@ -1061,7 +1062,7 @@ begin
     FTransaction.Database := FDatabase;
     Qry.Transaction := FTransaction;
     if not FTransaction.InTransaction then FTransaction.StartTransaction;
-    Result := 'CREATE VIEW ' + Trim(AViewName) + NEW_LINE;
+    Result := 'CREATE VIEW ' + Trim(AViewName) + sLineBreak ;
     qry.SQL.Text := 'SELECT RDB$FIELD_NAME ' +
       'FROM RDB$RELATION_FIELDS ' +
       'WHERE RDB$RELATION_NAME = ? ' +
@@ -1069,15 +1070,15 @@ begin
     qry.Prepare;
     qry.ParamAsString(0, AViewName);
     qry.ExecSQL;
-    if not qry.EOF then Result := Result + '(' + NEW_LINE;
+    if not qry.EOF then Result := Result + '(' + sLineBreak;
     while not qry.EOF do
     begin
-      Result := Result + INTEND + Trim(Qry.FieldAsString(0));
+      Result := Result + INTEND + trim(Qry.FieldAsString(0));
       Qry.Next;
       if qry.EOF then
-        Result := Result + NEW_LINE + ')' + NEW_LINE
+        Result := Result + sLineBreak + ')' + sLineBreak
       else
-        Result := Result + ',' + NEW_LINE
+        Result := Result + ',' + sLineBreak
     end;
     qry.UnPrepare;
 
@@ -1086,7 +1087,7 @@ begin
     qry.Prepare;
     qry.ParamAsString(0,AViewName);
     qry.ExecSQL;
-    Result := Result + 'AS' + NEW_LINE + Trim(qry.FieldAsString(0)) + ';';
+    Result := Result + 'AS' + sLineBreak + Trim(qry.FieldAsString(0)) + ';';
     qry.UnPrepare;
     if FTransaction.InTransaction then FTransaction.Commit;
   finally
@@ -1108,7 +1109,7 @@ begin
     if not FTransaction.InTransaction then FTransaction.StartTransaction;
     // intestazione procedura
     if FSetTerm then
-      Result := Result + 'SET TERM ' + FTerminator + ' ;' + NEW_LINE;
+      Result := Result + 'SET TERM ' + FTerminator + ' ;' + sLineBreak;
     Result := Result + 'CREATE PROCEDURE ' + Trim(AProcName);
     //query for procedure parameters
     qry.SQL.Text := 'SELECT ' +
@@ -1131,8 +1132,8 @@ begin
     if not qry.EOF then Result := Result + '(';
     while not qry.EOF do
     begin
-      Result := Result + NEW_LINE;
-      Result := Result + INTEND + Trim(qry.FieldAsString(0)) + ' ' +
+      Result := Result + sLineBreak;
+      Result := Result + INTEND + trim(qry.FieldAsString(0)) + ' ' +
         FieldType(qry.FieldAsInteger(2), qry.FieldAsInteger(3),
         qry.FieldAsInteger(4),
         qry.FieldAsInteger(5), qry.FieldAsInteger(6));
@@ -1146,11 +1147,11 @@ begin
     qry.ParamAsShort(0,1);
     qry.ParamAsString(1,AProcName);
     qry.ExecSQL;
-    if not qry.EOF then Result := Result + NEW_LINE + 'RETURNS (';
+    if not qry.EOF then Result := Result + sLineBreak + 'RETURNS (';
     while not qry.EOF do
     begin
-      Result := Result + NEW_LINE;
-      Result := Result + '  ' + Trim(qry.FieldAsString(0)) + ' ' +
+      Result := Result + sLineBreak;
+      Result := Result + '  ' + trim(qry.FieldAsString(0)) + ' ' +
         FieldType(qry.FieldAsLong(2), qry.FieldAsLong(3),
         qry.FieldAsLong(4),
         qry.FieldAsLong(5), qry.FieldAsLong(6));
@@ -1160,7 +1161,7 @@ begin
         Result := Result + ',';
     end;
     qry.UnPrepare;
-    Result := Result + NEW_LINE + 'AS' + NEW_LINE;
+    Result := Result + sLineBreak + 'AS' + sLineBreak;
     // corpo procedura
     qry.SQL.Text := 'SELECT RDB$PROCEDURE_SOURCE ' + //BLOB SUB_TYPE TEXT
       'FROM RDB$PROCEDURES ' +
@@ -1171,7 +1172,7 @@ begin
     Result := Result + Trim(qry.FieldAsString(0));
     qry.UnPrepare;
     if FSetTerm then
-      Result := Result + FTerminator + NEW_LINE + 'SET TERM ;' + FTerminator;
+      Result := Result + FTerminator + sLineBreak + 'SET TERM ;' + FTerminator;
     if FTransaction.InTransaction then FTransaction.Commit;
   finally
     qry.Free;
@@ -1201,25 +1202,25 @@ begin
     qry.ParamAsString(0,ATriggerName);
     qry.ExecSQL;
     if FSetTerm then
-      Result := Result + 'SET TERM ' + FTerminator + ' ;' + NEW_LINE;
+      Result := Result + 'SET TERM ' + FTerminator + ' ;' + sLineBreak;
     Result := Result + 'CREATE TRIGGER ' + Trim(ATriggerName) + ' FOR ' +
-      qry.FieldAsString(2) + NEW_LINE;
+      qry.FieldAsString(2) + sLineBreak;
     if qry.FieldAsLong(3) = 0 then
       Result := Result + 'ACTIVE ' 
     else 
       Result := Result + 'INACTIVE ';
     case qry.FieldAsLong(1) of
-      1: Result := Result + 'BEFORE INSERT' + NEW_LINE;
-      2: Result := Result + 'AFTER INSERT' + NEW_LINE;
-      3: Result := Result + 'BEFORE UPDATE' + NEW_LINE;
-      4: Result := Result + 'AFTER UPDATE' + NEW_LINE;
-      5: Result := Result + 'BEFORE DELETE' + NEW_LINE;
-      6: Result := Result + 'AFTER DELETE' + NEW_LINE;
+      1: Result := Result + 'BEFORE INSERT' + sLineBreak;
+      2: Result := Result + 'AFTER INSERT' + sLineBreak;
+      3: Result := Result + 'BEFORE UPDATE' + sLineBreak;
+      4: Result := Result + 'AFTER UPDATE' + sLineBreak;
+      5: Result := Result + 'BEFORE DELETE' + sLineBreak;
+      6: Result := Result + 'AFTER DELETE' + sLineBreak;
     end;
-    Result := Result + 'POSITION ' + Trim(qry.FieldAsString(4)) + NEW_LINE;
+    Result := Result + 'POSITION ' + Trim(qry.FieldAsString(4)) + sLineBreak;
     Result := Result + Trim(qry.FieldAsString(0));
     if FSetTerm then
-      Result := Result + FTerminator + NEW_LINE + 'SET TERM ;' + FTerminator;
+      Result := Result + FTerminator + sLineBreak + 'SET TERM ;' + FTerminator;
     qry.UnPrepare;
     if FTransaction.InTransaction then FTransaction.Commit;
   finally
@@ -1261,13 +1262,13 @@ begin
       FieldType(qry.FieldAsLong(3), qry.FieldAsLong(4), qry.FieldAsLong(5),
       qry.FieldAsLong(6), qry.FieldAsLong(7));
     if (not qry.FieldIsNull(8)) and (qry.FieldAsInteger(8) <> 0) then
-      Result := Result + ' CHARACTER SET ' + Trim(qry.FieldAsString(9));
+      Result := Result + ' CHARACTER SET ' + trim(qry.FieldAsString(9));
     if not qry.FieldIsNull(1) then
-      Result := Result + NEW_LINE + Trim(qry.FieldAsString(1));
+      Result := Result + sLineBreak + Trim(qry.FieldAsString(1));
     if qry.FieldAsLong(2) = 1 then
-      Result := Result + NEW_LINE + 'NOT NULL';
+      Result := Result + sLineBreak + 'NOT NULL';
     if not qry.FieldIsNull(0) then
-      Result := Result + NEW_LINE + Trim(qry.FieldAsString(0));
+      Result := Result + sLineBreak + Trim(qry.FieldAsString(0));
     qry.UnPrepare;
     Result := Result + ';';
     if FTransaction.InTransaction then FTransaction.Commit;
@@ -1299,8 +1300,8 @@ begin
     qry.Prepare;
     qry.ParamAsString(0,AUDFName);
     qry.ExecSQL;
-    ModuleName := Trim(qry.FieldAsString(0));
-    EntryPoint := Trim(qry.FieldAsString(1));
+    ModuleName := trim(qry.FieldAsString(0));
+    EntryPoint := trim(qry.FieldAsString(1));
     Return_Argument := qry.FieldAsLong(2);
     qry.UnPrepare;
     qry.SQL.Text := 'SELECT ' +
@@ -1319,7 +1320,7 @@ begin
     qry.ParamAsString(0,AUDFName);
     qry.ExecSQL;
 
-    sText := 'DECLARE EXTERNAL FUNCTION ' + Trim(AUDFName) + NEW_LINE;
+    sText := 'DECLARE EXTERNAL FUNCTION ' + Trim(AUDFName) + sLineBreak;
     while not qry.EOF do 
     begin
       ParamType := FieldType(qry.FieldAsLong(0), qry.FieldAsLong(1), qry.FieldAsLong(2),
@@ -1328,11 +1329,11 @@ begin
       if qry.FieldAsLong(5) = Return_Argument then
       begin
         if qry.FieldAsLong(6) = 0 then
-          ResultType := 'RESULTS ' + ParamType + ' BY VALUE' + NEW_LINE
+          ResultType := 'RESULTS ' + ParamType + ' BY VALUE' + sLineBreak
         else if qry.FieldAsLong(6) = -1 then
-          ResultType := 'RESULTS ' + ParamType + ' FREE_IT' + NEW_LINE
+          ResultType := 'RESULTS ' + ParamType + ' FREE_IT' + sLineBreak
         else
-          ResultType := 'RESULTS ' + ParamType + NEW_LINE;
+          ResultType := 'RESULTS ' + ParamType + sLineBreak;
         qry.Next;
       end
       else
@@ -1340,7 +1341,7 @@ begin
         sText := sText + ParamType;
         qry.Next;
         if qry.EOF then
-          sText := sText + NEW_LINE
+          sText := sText + sLineBreak
         else
           sText := sText + ',';
       end;
@@ -1389,9 +1390,9 @@ begin
       if Qry.FieldAsLong(3) = 1 then
         Result := Result + 'DESC ';
 
-      Result := Result + 'INDEX ' + Trim(Qry.FieldAsString(0)) + NEW_LINE +
+      Result := Result + 'INDEX ' + trim(Qry.FieldAsString(0)) + sLineBreak +
         INTEND + 'ON ' + Trim(ATableName) + '(' +
-        FieldsInIndex(Qry.FieldAsString(0)) + ');' + NEW_LINE;
+        FieldsInIndex(Qry.FieldAsString(0)) + ');' + sLineBreak;
       Qry.Next;
     end;
     qry.UnPrepare;
@@ -1428,8 +1429,8 @@ begin
     if not Qry.EOF then
     begin
       Result := 'ALTER TABLE ' + Trim(ATableName) + ' ADD CONSTRAINT ' +
-        Trim(Qry.FieldAsString(0)) + ' PRIMARY KEY (' +
-        FieldsInIndex(Trim(Qry.FieldAsString(1))) + ');';
+        trim(Qry.FieldAsString(0)) + ' PRIMARY KEY (' +
+        FieldsInIndex(trim(Qry.FieldAsString(1))) + ');';
     end;
     Qry.UnPrepare;
   finally
@@ -1461,9 +1462,9 @@ begin
     while not Qry.EOF do
     begin
       Result := Result + 'ALTER TABLE ' + Trim(ATableName) + ' ADD CONSTRAINT ' +
-        Trim(Qry.FieldAsString(0)) + ' FOREIGN KEY (' +
-        FieldsInIndex(Trim(Qry.FieldAsString(1))) + ') ' + NEW_LINE + INTEND +
-        RefConstraints(Qry.FieldAsString(0)) + ';' + NEW_LINE;
+        trim(Qry.FieldAsString(0)) + ' FOREIGN KEY (' +
+        FieldsInIndex(trim(Qry.FieldAsString(1))) + ') ' + sLineBreak + INTEND +
+        RefConstraints(Qry.FieldAsString(0)) + ';' + sLineBreak;
       qry.Next;
     end;
     Result := Trim(Result);
@@ -1495,11 +1496,11 @@ begin
     while not Qry.EOF do
     begin
       Result := Result + 'ALTER TABLE ' + Trim(ATableName) +
-        ' ADD CONSTRAINT ' + Trim(Qry.FieldAsString(0)) + ' ' +
-        CheckConstraints(qry.FieldAsString(0)) + ';' + NEW_LINE;
+        ' ADD CONSTRAINT ' + trim(Qry.FieldAsString(0)) + ' ' +
+        CheckConstraints(qry.FieldAsString(0)) + ';' + sLineBreak;
       qry.Next;
     end;
-    Result := Trim(Result);
+    Result := trim(Result);
     Qry.UnPrepare;
   finally
     qry.Free;
@@ -1529,8 +1530,8 @@ begin
     while not Qry.EOF do
     begin
       Result := Result + 'ALTER TABLE ' + Trim(ATableName) +
-        ' ADD CONSTRAINT ' + Trim(Qry.FieldAsString(0)) + ' UNIQUE (' +
-        FieldsInIndex(Trim(Qry.FieldAsString(1))) + ');' + NEW_LINE;
+        ' ADD CONSTRAINT ' + trim(Qry.FieldAsString(0)) + ' UNIQUE (' +
+        FieldsInIndex(trim(Qry.FieldAsString(1))) + ');' + sLineBreak;
       qry.Next;
     end;
     Result := Trim(Result);
@@ -1633,7 +1634,7 @@ begin
     qry.SQL.Text := 'SELECT RDB$CHARACTER_SET_NAME FROM RDB$DATABASE';
     qry.ExecSQL;
     if not qry.FieldIsNull(0) then
-      Result := Trim(qry.FieldAsString(0));
+      Result := trim(qry.FieldAsString(0));
     qry.Close;
     FTransaction.Commit;
   finally
@@ -1656,7 +1657,7 @@ begin
     qry.SQL.Text := 'SELECT USER FROM RDB$DATABASE';
     qry.ExecSQL;
     if not qry.FieldIsNull(0) then
-      Result := Trim(qry.FieldAsString(0));
+      Result := trim(qry.FieldAsString(0));
     qry.Close;
     FTransaction.Commit;
   finally

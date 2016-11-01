@@ -1,12 +1,12 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    Copyright (c) 2002-2004 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    --- Extension ----
 
    File:FBLParamDsql.pas
@@ -496,7 +496,7 @@ begin
         while (j <= Length(Line)) and (
           Pos(
             Line[j],
-            '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_'
+            '012345689ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_'
           ) > 0
         ) do
           inc(j);

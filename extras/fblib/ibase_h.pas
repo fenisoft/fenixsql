@@ -5,7 +5,7 @@
 {                                                        }
 {    Modifications                                       }
 {                  Alessandro Batisti                    }
-{                  http://code.google.com/p/fenixsql     }
+{                  fblib@altervista.org                  }
 {                  http://fblib.altervista.org           }
 {    Original Authors                                    }
 {    Copyright (c) 1999-2001 Sergey Seroukhov            }
@@ -27,7 +27,7 @@ type
   {$IFDEF D6M}
   TLibHandle = cardinal;
   PWord = ^word;
-  PPChar = ^PChar;
+  PPChar = ^PAnsiChar;
   {$ELSE}
   TLibHandle = HModule;
   {$ENDIF}
@@ -251,6 +251,8 @@ const
   isc_spb_res_page_size = 10;
   isc_spb_res_length = 11;
   isc_spb_res_access_mode = 12;
+  isc_spb_res_fix_fss_data = 13;
+  isc_spb_res_fix_fss_metadata = 14;
   isc_spb_res_deactivate_idx = $0100;
   isc_spb_res_no_shadow = $0200;
   isc_spb_res_no_validity = $0400;
@@ -923,14 +925,14 @@ type
   Long = longint;
   Short = smallint;
   ULong = cardinal;
-  UChar = char;
+  UChar = AnsiChar;
   UShort = word;
   Pint = ^Int;
   PLong = ^Long;
   PVoid = Pointer;
   PShort = ^Short;
   //PPChar = ^PChar;
-  Float = single;
+  Float = Single;
   ISC_LONG = longint;
   ISC_SCHAR = Byte;
   //ISC_SCHAR = Char;
@@ -1011,10 +1013,10 @@ type
 
   TISC_ARRAY_DESC = record
     array_desc_dtype: UChar;
-    array_desc_scale: char;
+    array_desc_scale: AnsiChar;
     array_desc_length: Short;
-    array_desc_field_name: array[0..31] of char;
-    array_desc_relation_name: array[0..31] of char;
+    array_desc_field_name: array[0..31] of AnsiChar;
+    array_desc_relation_name: array[0..31] of AnsiChar;
     array_desc_dimensions: Short;
     array_desc_flags: Short;
     array_desc_bounds: array[0..15] of TISC_ARRAY_BOUND;
@@ -1034,7 +1036,7 @@ type
 
   TISC_VARYING = record
     strlen: Short;
-    str: array[0..0] of char;
+    str: array[0..0] of Char;
   end;
   PISC_VARYING = ^TISC_VARYING;
 
@@ -1046,21 +1048,21 @@ type
     sqlsubtype: Short;     { datatype subtype - BLOBs }
     { & text types only }
     sqllen: Short;     { length of data area }
-    sqldata: PChar;     { address of data }
+    sqldata: PAnsiChar;     { address of data }
     sqlind: PShort;    { address of indicator }
     { variable }
     sqlname_length: Short;     { length of sqlname field }
     { name of field, name length + space for NULL }
-    sqlname: array[0..31] of Char;
+    sqlname: array[0..31] of AnsiChar;
     relname_length: Short;     { length of relation name }
     { field's relation name + space for NULL }
-    relname: array[0..31] of Char;
+    relname: array[0..31] of AnsiChar;
     ownname_length: Short;     { length of owner name }
     { relation's owner name + space for NULL }
-    ownname: array[0..31] of Char;
+    ownname: array[0..31] of AnsiChar;
     aliasname_length: Short;     { length of alias name }
     { relation's alias name + space for NULL }
-    aliasname: array[0..31] of Char;
+    aliasname: array[0..31] of AnsiChar;
   end;
   PXSQLVAR = ^TXSQLVAR;
 
@@ -1082,8 +1084,8 @@ type
   {****************************************************}
   TISC_START_TRANS = record
     db_handle: PISC_DB_HANDLE;
-    tpb_length: word;
-    tpb_address: PChar;
+    tpb_length: Word;
+    tpb_address: PAnsiChar;
   end;
 
   {****************************************************}
@@ -1092,8 +1094,8 @@ type
   {****************************************************}
   TISC_TEB = record
     db_handle: PISC_DB_HANDLE;
-    tpb_length: longint;
-    tpb_address: PChar;
+    tpb_length: Longint;
+    tpb_address: PAnsiChar;
   end;
   PISC_TEB = ^TISC_TEB;
   TISC_TEB_ARRAY = array[0..0] of TISC_TEB;
@@ -1106,15 +1108,15 @@ type
     uid: Int;                      (** the user's id **)
     gid: Int;                      (** the user's group id **)
     protocol: Int;                 (** protocol to use for connection **)
-    server: PChar;                 (** server to administer **)
-    user_name: PChar;              (** the user's name **)
-    password: PChar;               (** the user's password **)
-    group_name: PChar;             (** the group name **)
-    first_name: PChar;             (** the user's first name **)
-    middle_name: PChar;            (** the user's middle name **)
-    last_name: PChar;              (** the user's last name **)
-    dba_user_name: PChar;          (** the dba user name **)
-    dba_password: PChar;           (** the dba password **)
+    server: PAnsiChar;                 (** server to administer **)
+    user_name: PAnsiChar;              (** the user's name **)
+    password: PAnsiChar;               (** the user's password **)
+    group_name: PAnsiChar;             (** the group name **)
+    first_name: PAnsiChar;             (** the user's first name **)
+    middle_name: PAnsiChar;            (** the user's middle name **)
+    last_name: PAnsiChar;              (** the user's last name **)
+    dba_user_name: PAnsiChar;          (** the dba user name **)
+    dba_password: PAnsiChar;           (** the dba password **)
   end;
   PUSER_SEC_DATA = ^TUSER_SEC_DATA;
 
@@ -1141,10 +1143,10 @@ type
 
   Tisc_service_attach = function(status_vector: PISC_STATUS;
     service_length: UShort;
-    service: PChar;
+    service: PAnsiChar;
     svc_handle: PISC_SVC_HANDLE;
     spb_length: UShort;
-    spb: PChar): ISC_STATUS;
+    spb: PAnsiChar): ISC_STATUS;
   {$IFDEF UNIX} cdecl; {$ELSE} stdcall; {$ENDIF}
 
   Tisc_service_detach = function(status_vector: PISC_STATUS;
@@ -1155,18 +1157,18 @@ type
     service_handle: PISC_SVC_HANDLE;
     recv_handle: PISC_SVC_HANDLE;
     send_spb_length: UShort;
-    send_spb: PChar;
+    send_spb: PAnsiChar;
     request_spb_length: UShort;
-    request_spb: PChar;
+    request_spb: PAnsiChar;
     buffer_length: UShort;
-    buffer: PChar): ISC_STATUS;
+    buffer: PAnsiChar): ISC_STATUS;
   {$IFDEF UNIX} cdecl; {$ELSE} stdcall; {$ENDIF}
 
   Tisc_service_start = function(status_vector: PISC_STATUS;
     service_handle: PISC_SVC_HANDLE;
     recv_handle: PISC_SVC_HANDLE;
     spb_length: UShort;
-    spb: PChar): ISC_STATUS;
+    spb: PAnsiChar): ISC_STATUS;
   {$IFDEF UNIX} cdecl; {$ELSE} stdcall; {$ENDIF}
 
 
@@ -1175,8 +1177,8 @@ type
   { General database routines }
 
   Tisc_attach_database = function(status_vector: PISC_STATUS;
-    db_name_length: Short; db_name: PChar; db_handle: PISC_DB_HANDLE;
-    parm_buffer_length: Short; parm_buffer: PChar): ISC_STATUS;
+    db_name_length: Short; db_name: PAnsiChar; db_handle: PISC_DB_HANDLE;
+    parm_buffer_length: Short; parm_buffer: PAnsiChar): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_detach_database = function(status_vector: PISC_STATUS;
@@ -1189,13 +1191,13 @@ type
 
   Tisc_database_info = function(status_vector: PISC_STATUS;
     db_handle: PISC_DB_HANDLE; item_list_buffer_length: Short;
-    item_list_buffer: PChar; result_buffer_length: Short;
-    result_buffer: PChar): ISC_STATUS; {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
+    item_list_buffer: PAnsiChar; result_buffer_length: Short;
+    result_buffer: PAnsiChar): ISC_STATUS; {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   { Array processing routines }
   Tisc_array_gen_sdl = function(status_vector: PISC_STATUS;
     isc_array_desc: PISC_ARRAY_DESC; isc_arg3: PShort;
-    isc_arg4: PChar; isc_arg5: PShort): ISC_STATUS;
+    isc_arg4: PAnsiChar; isc_arg5: PShort): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_array_get_slice = function(status_vector: PISC_STATUS;
@@ -1206,18 +1208,18 @@ type
 
   Tisc_array_lookup_bounds = function(status_vector: PISC_STATUS;
     db_handle: PISC_DB_HANDLE; trans_handle: PISC_TR_HANDLE;
-    table_name, column_name: PChar; 
+    table_name, column_name: PAnsiChar;
     descriptor: PISC_ARRAY_DESC): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_array_lookup_desc = function(status_vector: PISC_STATUS;
     db_handle: PISC_DB_HANDLE; trans_handle: PISC_TR_HANDLE;
-    table_name, column_name: PChar; 
+    table_name, column_name: PAnsiChar;
     descriptor: PISC_ARRAY_DESC): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_array_set_desc = function(status_vector: PISC_STATUS;
-    table_name: PChar; column_name: PChar;
+    table_name: PAnsiChar; column_name: PAnsiChar;
     sql_dtype, sql_length, sql_dimensions: PShort;
     descriptor: PISC_ARRAY_DESC): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
@@ -1228,23 +1230,23 @@ type
     source_array: PVoid; slice_length: PISC_LONG): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
-  Tisc_free = function(isc_arg1: PChar): ISC_LONG;
+  Tisc_free = function(isc_arg1: PAnsiChar): ISC_LONG;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_sqlcode = function(status_vector: PISC_STATUS): ISC_LONG;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
-  Tisc_sql_interprete = procedure(sqlcode: Short; buffer: PChar;
+  Tisc_sql_interprete = procedure(sqlcode: Short; buffer: PAnsiChar;
     buffer_length: Short); {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
-  Tisc_interprete = function(buffer: PChar; status_vector: PPISC_STATUS): ISC_STATUS;
+  Tisc_interprete = function(buffer: PAnsiChar; status_vector: PPISC_STATUS): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   { Transaction support routines }
 
   Tisc_start_transaction = function(status_vector: PISC_STATUS;
     tran_handle: PISC_TR_HANDLE; db_handle_count: Short;
-    db_handle: PISC_DB_HANDLE; tpb_length: UShort; tpb_address: PChar): ISC_STATUS;
+    db_handle: PISC_DB_HANDLE; tpb_length: UShort; tpb_address: PAnsiChar): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_start_multiple = function(status_vector: PISC_STATUS;
@@ -1297,7 +1299,7 @@ type
 
   Tisc_dsql_execute_immediate = function(status_vector: PISC_STATUS;
     db_handle: PISC_DB_HANDLE; tran_handle: PISC_TR_HANDLE; length: UShort;
-    statement: PChar; dialect: UShort; xsqlda: PXSQLDA): ISC_STATUS;
+    statement: PAnsiChar; dialect: UShort; xsqlda: PXSQLDA): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_dsql_fetch = function(status_vector: PISC_STATUS;
@@ -1310,16 +1312,16 @@ type
 
   Tisc_dsql_prepare = function(status_vector: PISC_STATUS;
     tran_handle: PISC_TR_HANDLE; stmt_handle: PISC_STMT_HANDLE;
-    length: UShort; statement: PChar; dialect: UShort; xsqlda: PXSQLDA): ISC_STATUS;
+    length: UShort; statement: PAnsiChar; dialect: UShort; xsqlda: PXSQLDA): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_dsql_set_cursor_name = function(status_vector: PISC_STATUS;
-    stmt_handle: PISC_STMT_HANDLE; cursor_name: PChar; _type: UShort): ISC_STATUS;
+    stmt_handle: PISC_STMT_HANDLE; cursor_name: PAnsiChar; _type: UShort): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_dsql_sql_info = function(status_vector: PISC_STATUS;
-    stmt_handle: PISC_STMT_HANDLE; item_length: Short; items: PChar;
-    buffer_length: Short; buffer: PChar): ISC_STATUS;
+    stmt_handle: PISC_STMT_HANDLE; item_length: Short; items: PAnsiChar;
+    buffer_length: Short; buffer: PAnsiChar): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   { Blob processing routines }
@@ -1327,17 +1329,17 @@ type
   Tisc_open_blob2 = function(status_vector: PISC_STATUS;
     db_handle: PISC_DB_HANDLE; tran_handle: PISC_TR_HANDLE;
     blob_handle: PISC_BLOB_HANDLE; blob_id: PISC_QUAD; bpb_length: Short;
-    bpb_buffer: PChar): ISC_STATUS; {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
+    bpb_buffer: PAnsiChar): ISC_STATUS; {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_create_blob2 = function(status_vector: PISC_STATUS;
     db_handle: PISC_DB_HANDLE; tran_handle: PISC_TR_HANDLE;
     blob_handle: PISC_BLOB_HANDLE; blob_id: PISC_QUAD; bpb_length: Short;
-    bpb_address: PChar): ISC_STATUS; {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
+    bpb_address: PAnsiChar): ISC_STATUS; {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_blob_info = function(status_vector: PISC_STATUS;
     blob_handle: PISC_BLOB_HANDLE; item_list_buffer_length: Short;
-    item_list_buffer: PChar; result_buffer_length: Short;
-    result_buffer: PChar): ISC_STATUS;
+    item_list_buffer: PAnsiChar; result_buffer_length: Short;
+    result_buffer: PAnsiChar): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_close_blob = function(status_vector: PISC_STATUS;
@@ -1350,30 +1352,30 @@ type
 
   Tisc_get_segment = function(status_vector: PISC_STATUS;
     blob_handle: PISC_BLOB_HANDLE; actual_seg_length: PWord;
-    seg_buffer_length: UShort; seg_buffer: PChar): ISC_STATUS;
+    seg_buffer_length: UShort; seg_buffer: PAnsiChar): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_put_segment = function(status_vector: PISC_STATUS;
     blob_handle: PISC_BLOB_HANDLE; seg_buffer_len: UShort;
-    seg_buffer: PChar): ISC_STATUS;
+    seg_buffer: PAnsiChar): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   { Event processing routines }
 
   {$IFDEF FPC}
-  Tisc_event_block = function(event_buffer: PPChar; result_buffer: PPChar;
+  Tisc_event_block = function(event_buffer: PPAnsiChar; result_buffer: PPAnsiChar;
     id_count: UShort; event1, event2, event3, event4, event5, event6,
     event7, event8, event9,
-    event10, event11, event12, event13, event14, event15: PChar): ISC_LONG;
+    event10, event11, event12, event13, event14, event15: PAnsiChar): ISC_LONG;
   cdecl;
   {$ELSE}
-  Tisc_event_block = function(event_buffer: PPChar; result_buffer: PPChar;
-    id_count: UShort; event_list: array of PChar): ISC_LONG;
+  Tisc_event_block = function(event_buffer: PPAnsiChar; result_buffer: PPAnsiChar;
+    id_count: UShort; event_list: array of PAnsiChar): ISC_LONG;
   cdecl;
   {$ENDIF}
 
   Tisc_event_counts = procedure(status_vector: PISC_STATUS;
-    buffer_length: Short; event_buffer: PChar; result_buffer: PChar);
+    buffer_length: Short; event_buffer: PAnsiChar; result_buffer: PAnsiChar);
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   Tisc_cancel_events = function(status_vector: PISC_STATUS;
@@ -1382,7 +1384,7 @@ type
 
   Tisc_que_events = function(status_vector: PISC_STATUS;
     db_handle: PISC_DB_HANDLE; event_id: PISC_LONG; length: Short;
-    event_buffer: PChar; event_function: TISC_CALLBACK;
+    event_buffer: PAnsiChar; event_function: TISC_CALLBACK;
     event_function_arg: PVoid): ISC_STATUS;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
@@ -1413,7 +1415,7 @@ type
   Tisc_encode_timestamp = procedure(tm_date: PCTimeStructure;
     ib_timestamp: PISC_TIMESTAMP); {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
-  Tisc_vax_integer = function(buffer: PChar; length: Short): ISC_LONG;
+  Tisc_vax_integer = function(buffer: PAnsiChar; length: Short): ISC_LONG;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
 
   {*******************************}
@@ -1421,7 +1423,7 @@ type
   { Only Firebird 1.5             }
   {*******************************}
 
-  Tisc_get_client_version = procedure(Buffer: PChar);
+  Tisc_get_client_version = procedure(Buffer: PAnsiChar);
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
   Tisc_get_client_major_version = function: integer;
   {$IFNDEF UNIX} stdcall {$ELSE} cdecl {$ENDIF};
@@ -1526,11 +1528,11 @@ function FBClientLibraryExists: boolean;
 
 { XSQLDA_LENGTH is defined in C as a macro, but in Pascal we must defined it
    as a function... }
-function XSQLDA_LENGTH(Value: longint): longint;
+function XSQLDA_LENGTH(Value: longint): LongInt;
 
   {Service manager function}
-procedure add_spb_length(var p: PChar; ALength: integer);
-procedure add_spb_numeric(var p: PChar; AData: integer);
+procedure add_spb_length(var p: PAnsiChar; ALength: integer);
+procedure add_spb_numeric(var p: PAnsiChar; AData: integer);
 
 function GetFbClientVersion: integer;
 
@@ -1540,7 +1542,7 @@ var
   {$IFDEF UNIX}
   hCryptDLL: TLibHandle;
   {$ENDIF}
-  _ClientVersion: integer;
+  _ClientVersion: Integer;
   LibLoaded: boolean;
 
 implementation
@@ -1558,7 +1560,7 @@ uses Windows;
 {$ENDIF}
 
 
-function FBClientLibraryExists: boolean;
+function FBClientLibraryExists: Boolean;
 begin
   if hDLL = LibHandleNil then
     LoadFBClientLibrary;
@@ -1570,7 +1572,7 @@ end;
 function GetLibraryHandle(const ALibName: string): TLibHandle;
 begin
   {$IFDEF UNIX}
-  Result := dlopen(PChar(ALibName), RTLD_LAZY);
+  Result := dlopen(PAnsiChar(ALibName), RTLD_LAZY);
   {$ELSE}
   Result := LoadLibrary(PChar(ALibName));
   {$ENDIF}
@@ -1578,15 +1580,15 @@ end;
 
 //------------------------------------------------------------------------------
 
-function GetProcedurePointer(ALib: TLibHandle; const AProcName: string): Pointer;
+function GetProcedurePointer(ALib: TLibHandle; const AProcName: AnsiString): Pointer;
 var
   bErr: boolean;
 begin
   {$IFDEF UNIX}
-  Result := dlsym(Alib, PChar(AProcName));
+  Result := dlsym(Alib, PAnsiChar(AProcName));
   bErr := (Result = nil);
   {$ELSE}
-  Result := GetProcAddress(ALib, PChar(AProcName));
+  Result := GetProcAddress(ALib, PAnsiChar(AProcName));
   bErr := (Result = nil);
   {$ENDIF}
   if bErr then
@@ -1595,13 +1597,13 @@ end;
 
 //------------------------------------------------------------------------------
 
-function TryGetProcedurePointer(ALib: TLibHandle; const AProcName: string): Pointer;
+function TryGetProcedurePointer(ALib: TLibHandle; const AProcName: AnsiString): Pointer;
 begin
   {$IFDEF UNIX}
-  Result := dlsym(Alib, PChar(AProcName));
+  Result := dlsym(Alib, PAnsiChar(AProcName));
   //if (dlerror <> nil) then Result := nil;
   {$ELSE}
-  Result := GetProcAddress(Alib, PChar(AprocName));
+  Result := GetProcAddress(Alib, PAnsiChar(AprocName));
   {$ENDIF}
 end;
 
@@ -1779,25 +1781,26 @@ end;
 
 {Service manager function}
 
-procedure add_spb_length(var p: PChar; ALength: integer);
+procedure add_spb_length(var p: PAnsiChar; ALength: integer);
 begin
-  p^ := char(ALength);
+  p^ := AnsiChar(ALength);
   Inc(p);
-  p^ := char(ALength shr 8);
+  p^ := AnsiChar
+  (ALength shr 8);
   Inc(p);
 end;
 
 //------------------------------------------------------------------------------
 
-procedure add_spb_numeric(var p: PChar; AData: integer);
+procedure add_spb_numeric(var p: PAnsiChar; AData: integer);
 begin
-  p^ := char(AData);
+  p^ := AnsiChar(AData);
   Inc(p);
-  p^ := char(AData shr 8);
+  p^ := AnsiChar(AData shr 8);
   Inc(p);
-  p^ := char(AData shr 16);
+  p^ := AnsiChar(AData shr 16);
   Inc(p);
-  p^ := char(AData shr 24);
+  p^ := AnsiChar(AData shr 24);
   Inc(p);
 end;
 

@@ -5,9 +5,9 @@
 
    File:FBLmixf.pas
    Copyright (c) 2002-2004 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -32,7 +32,11 @@ uses SysUtils, ibase_h
         {$IFDEF FPC}
   , Math
         {$ENDIF}
-     {$ENDIF}     ;
+     {$ENDIF}
+  {$IFDEF D9P}
+  , Windows
+  {$ENDIF}
+  ;
 
 {$IFDEF D6MFPC}
 type
@@ -40,25 +44,29 @@ type
 
 {$ENDIF}
 //memory manager routines
-procedure FBLCalloc(var APointer; ASize: integer);
-procedure FBLMalloc(var APointer; ASize: integer);
+procedure FBLCalloc(var APointer; ASize: Integer);
+procedure FBLMalloc(var APointer; ASize: Integer);
 procedure FBLFree(var APointer);
 //------------------------------------------------------------------------------
-function RandomString: string;
+function RandomString: AnsiString;
 function BlobSize(ABlobHandle: PISC_BLOB_HANDLE): Long;
-function SQLTypeDesc(AObj: TXSQLVAR): string;
-function DateToSql(ADateTime: TDateTime): string;
-function TimeToSql(ADateTime: TDateTime): string;
-function DateTimeToSql(ADateTime: TDateTime): string;
-function DecodeDB_KEY(const AValue: string): string;
+function SQLTypeDesc(AObj: TXSQLVAR): String;
+function DateToSql(ADateTime: TDateTime): String;
+function TimeToSql(ADateTime: TDateTime): String;
+function DateTimeToSql(ADateTime: TDateTime): String;
+function DecodeDB_KEY(const AValue: AnsiString): AnsiString;
 {$IFDEF D6M}
 function EncodeDateTime(const AYear, AMonth, ADay, AHour, AMinute,
   ASecond, AMilliSecond: word): TDateTime;
 procedure DecodeDateTime(const AValue: TDateTime;
-  out AYear, AMonth, ADay, AHour, AMinute, ASecond, AMilliSecond: word);
+  out AYear, AMonth, ADay, AHour, AMinute, ASecond, AMilliSecond: Word);
 {$ENDIF}
 {$IFDEF D6MFPC}
-function RoundTo(const AValue: double; const ADigit: TRoundToRange): double;
+function RoundTo(const AValue: Double; const ADigit: TRoundToRange): double;
+{$ENDIF}
+
+{$IFDEF D9P}
+function WideStringToString(const Source: UnicodeString): AnsiString;
 {$ENDIF}
 
 implementation
@@ -73,10 +81,10 @@ var
 begin
   ReallocMem(Pointer(APointer), ASize);
   for i := 0 to ASize - 1 do
-    PChar(APointer)[i] := #0;
+    PAnsiChar(APointer)[i] := #0;
 end;
 
-procedure FBLMalloc(var APointer; ASize: integer);
+procedure FBLMalloc(var APointer; ASize: Integer);
 begin
   ReallocMem(Pointer(APointer), ASize);
 end;
@@ -88,13 +96,13 @@ end;
 
 //------------------------------------------------------------------------------
 
-function RandomString: string;
+function RandomString: AnsiString;
 var
-  i: integer;
+  i: Integer;
 begin
   SetLength(Result, 15);
   for i := 1 to 15 do
-    Result[i] := Chr(Random(25) + 65);
+    Result[i] := AnsiChar(Random(25) + 65);
 end;
 
 //------------------------------------------------------------------------------
@@ -123,7 +131,7 @@ end;
 {$IFDEF D6MFPC}
 function RoundTo(const AValue: double; const ADigit: TRoundToRange): double;
 var
-  LFactor: extended;
+  LFactor: Extended;
 begin
   LFactor := IntPower(10, ADigit);
   Result := Round(AValue / LFactor) * LFactor;
@@ -134,22 +142,22 @@ end;
 
 function BlobSize(ABlobHandle: PISC_BLOB_HANDLE): Long;
 var
-  Item: char;
-  Buffer: array[0..99] of char;
+  Item: AnsiChar;
+  Buffer: array[0..99] of Ansichar;
   Status_vector: ISC_STATUS_VECTOR;
-  Len: integer;
+  Len: Integer;
 begin
-  Item := char(isc_info_blob_total_length);
+  Item := AnsiChar(isc_info_blob_total_length);
   if isc_blob_info(@Status_Vector, ABlobHandle, SizeOf(Item), @Item,
     SizeOf(Buffer), Buffer) > 0 then
     FBLShowError(@Status_vector);
   Len := isc_vax_integer(@buffer[1], 2);
-  Result := isc_vax_integer(@buffer[3], Short(Len));
+  Result := isc_vax_integer(@Buffer[3], Short(Len));
 end;
 
 //------------------------------------------------------------------------------
 
-function SQLTypeDesc(AObj: TXSQLVAR): string;
+function SQLTypeDesc(AObj: TXSQLVAR): String;
 begin
   case AObj.sqltype and (not 1) of
     SQL_VARYING: Result := Format('VARCHAR(%d)', [AObj.sqllen]);
@@ -215,7 +223,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-function DateToSql(ADateTime: TDateTime): string;
+function DateToSql(ADateTime: TDateTime): String;
 var
   Y, M, D: word;
 begin
@@ -223,12 +231,12 @@ begin
   M := 0;
   D := 0;
   DecodeDate(ADateTime, Y, M, D);
-  Result := Format('%.4d-%.2d-%.2d', [Y, M, D]);
+  Result := Format('%d-%d-%d', [Y, M, D]);
 end;
 
 //------------------------------------------------------------------------------
 
-function TimeToSql(ADateTime: TDateTime): string;
+function TimeToSql(ADateTime: TDateTime): String;
 var
   H, M, S, MS: word;
 begin
@@ -237,37 +245,49 @@ begin
   S := 0;
   MS := 0;
   DecodeTime(ADateTime, H, M, S, MS);
-  if MS = 0 then
-    Result := Format('%.2d:%.2d:%:2d', [H, M, S])
-  else
-    Result := Format('%.2d:%.2d:%:2d.%.4d', [H, M, S, MS]);
-
+  Result := Format('%d:%d.%d.%d', [H, M, S, MS]);
 end;
 
 //------------------------------------------------------------------------------
 
-function DateTimeToSql(ADateTime: TDateTime): string;
+function DateTimeToSql(ADateTime: TDateTime): String;
 var
   Y, M, D, H, MI, S, MS: word;
 begin
   DecodeDateTime(ADateTime, Y, M, D, H, MI, S, MS);
-  if MS = 0  then
-  Result := Format('%.4d-%.2d-%.2d %.2d:%.2d:%.2d', [Y, M, D, H, MI, S])
-  else
-  Result := Format('%.4d-%.2d-%.2d %.2d:%.2d:%.2d.%.4d', [Y, M, D, H, MI, S, MS]);
+  Result := Format('%d-%d-%d %d:%d.%d.%d', [Y, M, D, H, MI, S, MS]);
 end;
 
 //------------------------------------------------------------------------------
 
-function DecodeDB_KEY(const AValue: string): string;
+function DecodeDB_KEY(const AValue: AnsiString): AnsiString;
 var
-  i, l: integer;
+  i, l: Integer;
 begin
   Result := '';
   l := Length(AValue);
   for i := 1 to l do
-    Result := Result + IntToHex(integer(AValue[i]), 2);
+    Result := Result + IntToHex(Integer(AValue[i]), 2);
 end;
 
 //------------------------------------------------------------------------------
+
+
+{$IFDEF D9P}
+function WideStringToString(const Source: UnicodeString): AnsiString;
+var
+  strLen: Integer;
+  Codepage: Cardinal;
+begin
+  Codepage := Windows.GetACP;
+  strLen := LocaleCharsFromUnicode(CodePage, 0, PWideChar(Source), Length(Source), nil, 0, nil, nil);
+  if strLen > 0 then
+  begin
+    SetLength(Result, strLen);
+    LocaleCharsFromUnicode(CodePage, 0, PWideChar(Source), Length(Source), PAnsiChar(Result), strLen, nil, nil);
+    SetCodePage(PRawByteString(@Result)^, CodePage, False);
+  end;
+ end;
+{$ENDIF}
+
 end.

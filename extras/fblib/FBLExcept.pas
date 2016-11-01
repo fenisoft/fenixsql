@@ -1,12 +1,12 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    File:FBLExcept.pas
    Copyright (c) 2002-2004 Alessandro Batisti
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -71,9 +71,9 @@ implementation
 
 procedure FBLShowError(AStatusVectorPtr: PSTATUS_VECTOR);
 var
-  MsgBuffer: array[0..511] of char;
-  ErrMsg: string;
-  LastMsg: string;
+  MsgBuffer: array[0..511] of AnsiChar;
+  ErrMsg: AnsiString;
+  LastMsg: AnsiString;
   ErrCode: ISC_STATUS;
   SQLCode: ISC_LONG;
   ibErr: longint;
@@ -90,9 +90,9 @@ begin
     ErrCode := isc_interprete(@msgBuffer, @AStatusVectorPtr);
     if LastMsg <> string(MsgBuffer) then
     begin
-      LastMsg := string(MsgBuffer);
+      LastMsg := AnsiString(MsgBuffer);
       if Length(ErrMsg) <> 0 then
-        ErrMsg := ErrMsg + NEW_LINE;
+        ErrMsg := ErrMsg + sLineBreak ;
       ErrMsg := ErrMsg + LastMsg;
     end;
   until ErrCode = 0;

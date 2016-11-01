@@ -1,14 +1,14 @@
 {
-   FbLib - Firebird Library
+   Firebird Library
    Open Source Library No Data Aware for direct access to Firebird
    Relational Database from Borland Delphi / Kylix and Freepascal
 
    File:FBLTableToSqlScript.pas
    Copyright (c) 2003-2004 Alessandro Batisti
    abatisti@tiscali.it
+   fblib@altervista.org
    http://fblib.altervista.org
-   http://code.google.com/p/fenixsql
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -149,8 +149,16 @@ var
   i: integer;
   SqlValues: string;
   TempDecimalSeparator: char;
+  {$IFDEF DXE}
+   WFormatoBR: TFormatSettings;
+  {$ENDIF}
 begin
+  {$IFDEF DXE}
+  WFormatoBR :=   TFormatSettings.Create;
+  TempDecimalSeparator := WFormatoBR.DecimalSeparator;
+  {$ELSE}
   TempDecimalSeparator := DecimalSeparator;
+  {$ENDIF}
   if FEOF then Exit;
   if not FPrepared then
     Prepare;
@@ -177,10 +185,18 @@ begin
             else
               begin
                 try
+                  {$IFDEF DXE}
+                  WFormatoBR.DecimalSeparator := '.';
+                  {$ELSE}
                   DecimalSeparator := '.';
+                  {$ENDIF}
                   SqlValues := SqlValues + FQuery.FieldAsString(i);
                 finally
+                  {$IFDEF DXE}
+                  WFormatoBR.DecimalSeparator := TempDecimalSeparator;
+                  {$ELSE}
                   DecimalSeparator := TempDecimalSeparator;
+                  {$ENDIF}
                 end;
               end;
           end;

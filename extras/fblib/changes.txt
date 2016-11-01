@@ -1,5 +1,5 @@
-2012.09.18 ver 0.86
-  
+2016.10.20 ver 0.90
+  Unicode support for  Delphi Berlin 10.1 Starter
 2006.11.18 ver 0.85
   New component TFBLDataset it's a TDataset descentant (unidirectional,readonly).
   Property TFBLDatabase.Connected is now published read/write.

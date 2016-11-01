@@ -16,12 +16,82 @@
   {$DEFINE D6P}
 {$ENDIF}
 
-{$IFDEF VER150}
+{$IFDEF VER150}     //delphi 7
   {$DEFINE D6P}
 {$ENDIF}
 
 {$IFDEF VER180}    // turbo delphi 2006
   {$DEFINE D6P}
+{$ENDIF}
+
+{$IFDEF VER200}    //  delphi 2009
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+{$ENDIF}
+
+{$IFDEF VER210}    //  delphi 2010
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+{$ENDIF}
+
+{$IFDEF VER220}    //  delphi XE
+  {$DEFINE D6P}
+  {$DEFINE DXE}
+  {$DEFINE D9P}
+{$ENDIF}
+
+{$IFDEF VER230}    
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER240}    
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER250}    
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER260}    
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER270}    
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER280}    
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER290}    
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER300}  // delphi seattle 10
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
+{$ENDIF}
+
+{$IFDEF VER310} //delphi berlin 10.1
+  {$DEFINE D6P}
+  {$DEFINE D9P}
+  {$DEFINE DXE}
 {$ENDIF}
 
 {$IFDEF FPC}
